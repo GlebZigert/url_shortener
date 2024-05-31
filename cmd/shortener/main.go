@@ -12,7 +12,7 @@ import (
 
 */
 func mainPage(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte{})
 }
 
