@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
+	"strings"
 )
 
 /*
@@ -14,30 +14,63 @@ import (
 
 */
 func mainPage(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(http.StatusCreated)
-	fmt.Println(".")
-	body := fmt.Sprintf("Method: %s\r\n", req.Method)
-	body += "Header ===============\r\n"
-	for k, v := range req.Header {
-		body += fmt.Sprintf("%s: %v\r\n", k, v)
-	}
-	body += "Query parameters ===============\r\n"
-	if err := req.ParseForm(); err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	for k, v := range req.Form {
-		body += fmt.Sprintf("%s: %v\r\n", k, v)
+
+	if req.Method == http.MethodPost {
+
+		fmt.Println(".")
+		//body += "\r\n"
+		body := fmt.Sprintf("URL: %s\r\n", req.URL)
+		body += fmt.Sprintf("Method: %s\r\n", req.Method)
+
+		body += "Header ===============\r\n"
+		for k, v := range req.Header {
+			body += fmt.Sprintf("%s: %v\r\n", k, v)
+		}
+		body += "Query parameters ===============\r\n"
+		if err := req.ParseForm(); err != nil {
+			w.Write([]byte(err.Error()))
+			return
+		}
+		for k, v := range req.Form {
+			body += fmt.Sprintf("-- %s: %v\r\n", k, v)
+
+			w.WriteHeader(http.StatusCreated)
+			res := "http://localhost:8080/"
+			res += Short(k)
+
+			w.Write([]byte(res))
+		}
+
+		fmt.Println(body)
+		w.Write([]byte{})
 	}
 
-	body_, err := io.ReadAll(req.Body)
-	if err == nil {
-		body += "\r\n"
-		body += string(body_)
+	if req.Method == http.MethodGet {
+		fmt.Printf("URL: %s\r\n", req.URL)
+		str := strings.Replace(req.URL.String(), "/", "", 1)
+		fmt.Println(str)
+		res, err := Origin(str)
+		if err == nil {
+			w.WriteHeader(http.StatusTemporaryRedirect)
+			w.Write([]byte(res))
+		}
+		w.Write([]byte{})
 	}
 
-	fmt.Println(body)
-	w.Write([]byte("http://localhost:8080/EwHXdJfB "))
+}
+
+/*
+Эндпоинт с методом GET и путём /{id}, где id — идентификатор сокращённого URL (например, /EwHXdJfB). В случае успешной обработки запроса сервер возвращает ответ с кодом 307 и оригинальным URL в HTTP-заголовке Location.
+Пример запроса к серверу:
+
+GET /EwHXdJfB HTTP/1.1
+Host: localhost:8080
+Content-Type: text/plain
+
+*/
+
+func Get_original_URL(w http.ResponseWriter, req *http.Request) {
+	w.Write([]byte{})
 }
 
 func main() {
