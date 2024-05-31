@@ -50,7 +50,7 @@ func Origin(shortURL string) (string, error) {
 
 	for k, v := range Map() {
 		if v == shortURL {
-			fmt.Println("Для шорта", shortURL, " найден url: ", v)
+			fmt.Println("Для шорта", shortURL, " найден url: ", k)
 			return k, nil
 		}
 	}
