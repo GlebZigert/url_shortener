@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -13,7 +15,29 @@ import (
 */
 func mainPage(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte{})
+	fmt.Println(".")
+	body := fmt.Sprintf("Method: %s\r\n", req.Method)
+	body += "Header ===============\r\n"
+	for k, v := range req.Header {
+		body += fmt.Sprintf("%s: %v\r\n", k, v)
+	}
+	body += "Query parameters ===============\r\n"
+	if err := req.ParseForm(); err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	for k, v := range req.Form {
+		body += fmt.Sprintf("%s: %v\r\n", k, v)
+	}
+
+	body_, err := io.ReadAll(req.Body)
+	if err == nil {
+		body += "\r\n"
+		body += string(body_)
+	}
+
+	fmt.Println(body)
+	w.Write([]byte("http://localhost:8080/EwHXdJfB "))
 }
 
 func main() {
@@ -30,3 +54,5 @@ func main() {
 		panic(err)
 	}
 }
+
+//url -X POST --data "https://practicum.yandex.ru/ " http://localhost:8080/
