@@ -55,6 +55,7 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 			w.WriteHeader(http.StatusTemporaryRedirect)
 			w.Write([]byte(res))
 		}
+		w.WriteHeader(http.StatusTemporaryRedirect)
 		w.Write([]byte{})
 	}
 
