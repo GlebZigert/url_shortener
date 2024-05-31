@@ -4,12 +4,28 @@ import (
 	"net/http"
 )
 
+/*
+Эндпоинт с методом POST и путём /.
+Сервер принимает в теле запроса строку URL как text/plain
+ и возвращает ответ с кодом 201
+ и сокращённым URL как text/plain.
+
+*/
+func mainPage(w http.ResponseWriter, req *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte{})
+}
+
 func main() {
 
-	/*add server to fix
-	Не удалось дождаться пока порт 8080 станет доступен для запроса: context deadline exceeded
+	/*
+		Сервер должен быть доступен по адресу http://localhost:8080
 	*/
-	err := http.ListenAndServe(`:8080`, nil)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc(`/`, mainPage)
+
+	err := http.ListenAndServe(`:8080`, mux)
 	if err != nil {
 		panic(err)
 	}
