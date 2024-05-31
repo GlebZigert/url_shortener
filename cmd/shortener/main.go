@@ -22,15 +22,15 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 		body := fmt.Sprintf("URL: %s\r\n", req.URL)
 		body += fmt.Sprintf("Method: %s\r\n", req.Method)
 
-		body += "Header ===============\r\n"
-		for k, v := range req.Header {
-			body += fmt.Sprintf("%s: %v\r\n", k, v)
-		}
-		body += "Query parameters ===============\r\n"
-		if err := req.ParseForm(); err != nil {
-			w.Write([]byte(err.Error()))
-			return
-		}
+		//	body += "Header ===============\r\n"
+		//	for k, v := range req.Header {
+		//		body += fmt.Sprintf("%s: %v\r\n", k, v)
+		//	}
+		//	body += "Query parameters ===============\r\n"
+		//	if err := req.ParseForm(); err != nil {
+		//		w.Write([]byte(err.Error()))
+		//		return
+		//	}
 		for k, v := range req.Form {
 			body += fmt.Sprintf("-- %s: %v\r\n", k, v)
 
@@ -90,4 +90,10 @@ func main() {
 	}
 }
 
-//url -X POST --data "https://practicum.yandex.ru/ " http://localhost:8080/
+/*
+curl -X POST --data "https://practicum.yandex.ru/ " http://localhost:8080/
+curl -X POST --data "/" http://localhost:8080/
+
+
+
+*/
