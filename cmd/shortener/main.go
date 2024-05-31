@@ -41,6 +41,7 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 			w.Write([]byte(res))
 		}
 
+		w.WriteHeader(http.StatusCreated)
 		fmt.Println(body)
 		w.Write([]byte{})
 	}
