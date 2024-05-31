@@ -69,10 +69,6 @@ Content-Type: text/plain
 
 */
 
-func Get_original_URL(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte{})
-}
-
 func main() {
 
 	/*
