@@ -35,7 +35,9 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 			body += fmt.Sprintf("-- %s: %v\r\n", k, v)
 
 			w.WriteHeader(http.StatusCreated)
+
 			res := "http://localhost:8080/"
+
 			res += Short(k)
 
 			w.Write([]byte(res))
@@ -53,9 +55,11 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 		res, err := Origin(str)
 		if err == nil {
 			w.WriteHeader(http.StatusTemporaryRedirect)
+			w.Header().Set("Location", res)
 			w.Write([]byte(res))
 		}
 		w.WriteHeader(http.StatusTemporaryRedirect)
+		w.Header().Set("Location", res)
 		w.Write([]byte{})
 	}
 
