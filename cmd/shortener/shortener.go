@@ -39,21 +39,21 @@ func Short(url string) string {
 		return v
 	}
 
-	short_url := generateRandomString(8)
+	shortURL := generateRandomString(8)
 
-	Map()[url] = short_url
-	fmt.Println("Для ", url, " сгенерирован шорт: ", short_url)
-	return short_url
+	Map()[url] = shortURL
+	fmt.Println("Для ", url, " сгенерирован шорт: ", shortURL)
+	return shortURL
 }
 
-func Origin(short_url string) (string, error) {
+func Origin(shortURL string) (string, error) {
 
 	for k, v := range Map() {
-		if v == short_url {
-			fmt.Println("Для шорта", short_url, " найден url: ", v)
+		if v == shortURL {
+			fmt.Println("Для шорта", shortURL, " найден url: ", v)
 			return k, nil
 		}
 	}
-	fmt.Println("Нет такого шорта как", short_url)
+	fmt.Println("Нет такого шорта как", shortURL)
 	return "", errors.New("отстуствует")
 }
