@@ -59,12 +59,14 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(str)
 		res, err := Origin(str)
 		if err == nil {
+			w.Header().Add("Location", res)
 			w.WriteHeader(http.StatusTemporaryRedirect)
-			w.Header().Set("Location", res)
+
 			w.Write([]byte(res))
 		}
-		w.WriteHeader(http.StatusTemporaryRedirect)
 		w.Header().Set("Location", res)
+		w.WriteHeader(http.StatusTemporaryRedirect)
+
 		w.Write([]byte{})
 	}
 
@@ -105,5 +107,5 @@ curl -X POST --data "https://practicum.yandex.ru/ " http://localhost:8080/
 curl -X POST --data "/" http://localhost:8080/
 
 
-
+curl -X POST --data "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location " http://localhost:8080/
 */
