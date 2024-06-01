@@ -16,11 +16,11 @@ import (
 */
 func mainPage(w http.ResponseWriter, req *http.Request) {
 
-	body__, err__ := io.ReadAll(req.Body)
-	if err__ == nil {
-		fmt.Println("body: ", string(body__))
+	bod, err := io.ReadAll(req.Body)
+	if err == nil {
+		fmt.Println("body: ", string(bod))
 	} else {
-		fmt.Println(err__.Error())
+		fmt.Println(err.Error())
 	}
 	if req.Method == http.MethodPost {
 
@@ -38,48 +38,18 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 		*/
 
 		//	body += "Query parameters ===============\r\n"
-		if err := req.ParseForm(); err != nil {
-			w.Write([]byte(err.Error()))
-			return
-		}
-		body += "\r\n"
-		body += "len(req.Form) "
-
-		l := len(req.Form)
-
-		body += fmt.Sprintln(l)
-
-		if l == 0 {
-			w.WriteHeader(http.StatusCreated)
-
-			res := "http://localhost:8080/"
-
-			res += Short("")
-			body += "\r\n"
-			body += "res: "
-			body += res
-
-			w.Write([]byte(res))
-		} else {
-			for k, v := range req.Form {
-				body += fmt.Sprintf("-- %s: %v\r\n", k, v)
-
-				w.WriteHeader(http.StatusCreated)
-
-				res := "http://localhost:8080/"
-
-				res += Short(k)
-				body += "\r\n"
-				body += "res: "
-				body += res
-
-				w.Write([]byte(res))
-			}
-		}
 
 		w.WriteHeader(http.StatusCreated)
-		fmt.Println(body)
-		w.Write([]byte{})
+
+		res := "http://localhost:8080/"
+
+		res += Short(string(bod))
+		body += "\r\n"
+		body += "res: "
+		body += res
+
+		w.Write([]byte(res))
+
 	}
 
 	if req.Method == http.MethodGet {
