@@ -22,7 +22,7 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 		body := fmt.Sprintf("URL: %s\r\n", req.URL)
 		body += fmt.Sprintf("Method: %s\r\n", req.Method)
 
-		body += "Header ===============\r\n"
+		//	body += "Header ===============\r\n"
 
 		/*
 			for k, v := range req.Header {
@@ -30,7 +30,7 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 			}
 		*/
 
-		body += "Query parameters ===============\r\n"
+		//	body += "Query parameters ===============\r\n"
 		if err := req.ParseForm(); err != nil {
 			w.Write([]byte(err.Error()))
 			return
@@ -44,6 +44,9 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 			res := "http://localhost:8080/"
 
 			res += Short(k)
+			body += "\r\n"
+			body += "res: "
+			body += res
 
 			w.Write([]byte(res))
 		}
@@ -108,4 +111,9 @@ curl -X POST --data "/" http://localhost:8080/
 
 
 curl -X POST --data "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location " http://localhost:8080/
+
+http://eg6fmqpnktow.biz/ra8db3c2btyu/ourfhfsq
+
+curl -X POST --data "http://eg6fmqpnktow.biz/ra8db3c2btyu/ourfhfsq" http://localhost:8080/
+
 */
