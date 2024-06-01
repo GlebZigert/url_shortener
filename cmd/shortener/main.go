@@ -15,45 +15,33 @@ import (
 	и сокращённым URL как text/plain.
 */
 func mainPage(w http.ResponseWriter, req *http.Request) {
-
-	bod, err := io.ReadAll(req.Body)
-	if err == nil {
-		fmt.Println("body: ", string(bod))
-	} else {
-		fmt.Println(err.Error())
-	}
+	log := ""
+	defer fmt.Println(log)
+	log += fmt.Sprintf("URL: %s\r\n", req.URL)
+	log += fmt.Sprintf("Method: %s\r\n", req.Method)
 	if req.Method == http.MethodPost {
 
-		fmt.Println(".")
-		//body += "\r\n"
-		body := fmt.Sprintf("URL: %s\r\n", req.URL)
-		body += fmt.Sprintf("Method: %s\r\n", req.Method)
-
-		//	body += "Header ===============\r\n"
-
-		/*
-			for k, v := range req.Header {
-				body += fmt.Sprintf("%s: %v\r\n", k, v)
-			}
-		*/
-
-		//	body += "Query parameters ===============\r\n"
+		body, err := io.ReadAll(req.Body)
+		if err != nil {
+			log += "\r\n"
+			log += fmt.Sprintln("err: ", err.Error())
+			return
+		}
+		url := string(body)
 
 		w.WriteHeader(http.StatusCreated)
 
 		res := "http://localhost:8080/"
 
-		res += Short(string(bod))
-		body += "\r\n"
-		body += "res: "
-		body += res
+		res += Short(url)
+		log += fmt.Sprintln(url, " --> ", res)
 
 		w.Write([]byte(res))
 
 	}
 
 	if req.Method == http.MethodGet {
-		fmt.Printf("URL: %s\r\n", req.URL)
+
 		str := strings.Replace(req.URL.String(), "/", "", 1)
 		fmt.Println(str)
 		res, err := Origin(str)
@@ -63,11 +51,14 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 
 			w.Write([]byte(res))
 		}
+		log += fmt.Sprintln(res, " <-- ", str)
 		w.Header().Set("Location", res)
 		w.WriteHeader(http.StatusTemporaryRedirect)
 
 		w.Write([]byte{})
 	}
+
+	fmt.Println(log)
 
 }
 
