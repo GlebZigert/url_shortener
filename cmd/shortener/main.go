@@ -14,6 +14,7 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
+
 func mainPage(w http.ResponseWriter, req *http.Request) {
 	log := ""
 	defer fmt.Println(log)
@@ -91,17 +92,3 @@ func main() {
 		panic(err)
 	}
 }
-
-/*
-curl -X POST --data "https://practicum.yandex.ru/ " http://localhost:8080/
-curl -X POST --data "/" http://localhost:8080/
-
-curl -X POST --data "" http://localhost:8080/
-
-curl -X POST --data "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location " http://localhost:8080/
-
-http://eg6fmqpnktow.biz/ra8db3c2btyu/ourfhfsq
-
-curl -X POST --data "http://eg6fmqpnktow.biz/ra8db3c2btyu/ourfhfsq" http://localhost:8080/
-
-*/
