@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -15,6 +16,12 @@ import (
 */
 func mainPage(w http.ResponseWriter, req *http.Request) {
 
+	body__, err__ := io.ReadAll(req.Body)
+	if err__ == nil {
+		fmt.Println("body: ", string(body__))
+	} else {
+		fmt.Println(err__.Error())
+	}
 	if req.Method == http.MethodPost {
 
 		fmt.Println(".")
