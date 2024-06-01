@@ -35,20 +35,39 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 			w.Write([]byte(err.Error()))
 			return
 		}
+		body += "\r\n"
+		body += "len(req.Form) "
 
-		for k, v := range req.Form {
-			body += fmt.Sprintf("-- %s: %v\r\n", k, v)
+		l := len(req.Form)
 
+		body += fmt.Sprintln(l)
+
+		if l == 0 {
 			w.WriteHeader(http.StatusCreated)
 
 			res := "http://localhost:8080/"
 
-			res += Short(k)
+			res += Short("")
 			body += "\r\n"
 			body += "res: "
 			body += res
 
 			w.Write([]byte(res))
+		} else {
+			for k, v := range req.Form {
+				body += fmt.Sprintf("-- %s: %v\r\n", k, v)
+
+				w.WriteHeader(http.StatusCreated)
+
+				res := "http://localhost:8080/"
+
+				res += Short(k)
+				body += "\r\n"
+				body += "res: "
+				body += res
+
+				w.Write([]byte(res))
+			}
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -109,6 +128,7 @@ func main() {
 curl -X POST --data "https://practicum.yandex.ru/ " http://localhost:8080/
 curl -X POST --data "/" http://localhost:8080/
 
+curl -X POST --data "" http://localhost:8080/
 
 curl -X POST --data "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location " http://localhost:8080/
 
