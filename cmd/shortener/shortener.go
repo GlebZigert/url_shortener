@@ -13,7 +13,7 @@ func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	seed := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(seed)
-
+	//diff
 	result := make([]byte, length)
 	for i := range result {
 		result[i] = charset[random.Intn(len(charset))]
