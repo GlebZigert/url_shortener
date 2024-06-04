@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
+
+	"github.com/go-chi/chi/v5"
 )
 
 /*
@@ -86,11 +89,7 @@ func main() {
 		Сервер должен быть доступен по адресу http://localhost:8080
 	*/
 
-	mux := http.NewServeMux()
-	mux.HandleFunc(`/`, Handler)
-
-	err := http.ListenAndServe(`:8080`, mux)
-	if err != nil {
-		panic(err)
-	}
+	r := chi.NewRouter()
+	r.Get(`/`, Handler)
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
