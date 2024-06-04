@@ -91,5 +91,6 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Get(`/`, Handler)
+	r.Post(`/`, Handler)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
