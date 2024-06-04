@@ -41,6 +41,8 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 
 	}
 
+	//
+
 	if req.Method == http.MethodGet {
 
 		str := strings.Replace(req.URL.String(), "/", "", 1)
