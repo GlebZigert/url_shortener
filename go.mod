@@ -1,3 +1,3 @@
 module github.com/GlebZigert/url_shortener.git
 
-go 1.23
+go 1.22
