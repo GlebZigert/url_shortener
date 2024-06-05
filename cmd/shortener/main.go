@@ -17,7 +17,8 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
-func Handler(w http.ResponseWriter, req *http.Request) {
+func Post(w http.ResponseWriter, req *http.Request) {
+
 	log := ""
 	defer fmt.Println(log)
 	log += fmt.Sprintf("URL: %s\r\n", req.URL)
@@ -42,7 +43,12 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte(res))
 
 	}
-
+}
+func Get(w http.ResponseWriter, req *http.Request) {
+	log := ""
+	defer fmt.Println(log)
+	log += fmt.Sprintf("URL: %s\r\n", req.URL)
+	log += fmt.Sprintf("Method: %s\r\n", req.Method)
 	if req.Method == http.MethodGet {
 
 		str := strings.Replace(req.URL.String(), "/", "", 1)
@@ -87,7 +93,11 @@ func main() {
 	*/
 
 	r := chi.NewRouter()
-	r.Get(`/`, Handler)
-	r.Post(`/`, Handler)
+
+	// r.Get(`/`, Get)
+
+	r.Post(`/`, Post)
+	r.Get(`/*`, Get)
+
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
