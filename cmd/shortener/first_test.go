@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestStatusHandler(t *testing.T) {
+func TestHandler(t *testing.T) {
 	type want struct {
 		code int
 		//	response    string
-		//	contentType string
+		contentType string
 	}
 	tests := []struct {
 		name string
@@ -23,9 +23,9 @@ func TestStatusHandler(t *testing.T) {
 		{
 			name: "positive test #1",
 			want: want{
-				code: 201,
+				code: http.StatusCreated,
 				//	response:    `{"status":"ok"}`,
-				//	contentType: "application/json",
+				//	contentType: "text/plain",
 			},
 		},
 	}

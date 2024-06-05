@@ -17,7 +17,6 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
-
 func Handler(w http.ResponseWriter, req *http.Request) {
 	log := ""
 	defer fmt.Println(log)
@@ -43,8 +42,6 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte(res))
 
 	}
-
-	//
 
 	if req.Method == http.MethodGet {
 
