@@ -20,11 +20,12 @@ func POST(addr, data string) error {
 	fmt.Println("POST ", url, " ", data)
 
 	resp, err := http.Post(url, "text/plain", strings.NewReader(data))
+
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
-
+	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
@@ -49,10 +50,12 @@ func GET(addr, data string) error {
 	fmt.Println("GET ", url)
 
 	resp, err := http.Get(url)
+
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
