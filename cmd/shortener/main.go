@@ -14,7 +14,7 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
-func mainPage(w http.ResponseWriter, req *http.Request) {
+func Handler(w http.ResponseWriter, req *http.Request) {
 	log := ""
 	defer fmt.Println(log)
 	log += fmt.Sprintf("URL: %s\r\n", req.URL)
@@ -84,7 +84,7 @@ func main() {
 	*/
 
 	mux := http.NewServeMux()
-	mux.HandleFunc(`/`, mainPage)
+	mux.HandleFunc(`/`, Handler)
 
 	err := http.ListenAndServe(`:8080`, mux)
 	if err != nil {
