@@ -34,7 +34,7 @@ func TestHandler(t *testing.T) {
 			request := httptest.NewRequest(http.MethodPost, "/", nil)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
-			Handler(w, request)
+			Post(w, request)
 
 			res := w.Result()
 			// проверяем код ответа
