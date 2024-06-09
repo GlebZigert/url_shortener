@@ -62,7 +62,7 @@ func Get(w http.ResponseWriter, req *http.Request) {
 			w.Write([]byte(res))
 		}
 		log += fmt.Sprintln(res, " <-- ", str)
-		w.Header().Set("Location", res)
+		w.Header().Set("Location", "")
 		w.WriteHeader(http.StatusTemporaryRedirect)
 
 		w.Write([]byte{})
