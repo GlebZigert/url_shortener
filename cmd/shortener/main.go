@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
@@ -101,6 +102,14 @@ func ParseFlags() {
 	flag.StringVar(&BaseURL, "b", "http://localhost:8080", "base address for short URL")
 	// парсим переданные серверу аргументы в зарегистрированные переменные
 	flag.Parse()
+
+	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
+		RunAddr = envRunAddr
+	}
+
+	if envBaseURL := os.Getenv("BASE_URL"); envBaseURL != "" {
+		BaseURL = envBaseURL
+	}
 }
 
 func main() {
