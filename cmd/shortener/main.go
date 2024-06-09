@@ -60,12 +60,15 @@ func Get(w http.ResponseWriter, req *http.Request) {
 			w.WriteHeader(http.StatusTemporaryRedirect)
 
 			w.Write([]byte(res))
-		}
-		log += fmt.Sprintln(res, " <-- ", str)
-		w.Header().Set("Location", "")
-		w.WriteHeader(http.StatusTemporaryRedirect)
+			log += fmt.Sprintln(res, " <-- ", str)
 
-		w.Write([]byte{})
+		} else {
+			log += fmt.Sprintln(res, " <-- ", str)
+			w.Header().Set("Location", "")
+			w.WriteHeader(http.StatusTemporaryRedirect)
+
+			w.Write([]byte{})
+		}
 	}
 
 	fmt.Println(log)
