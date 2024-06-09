@@ -36,7 +36,7 @@ func Post(w http.ResponseWriter, req *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 
-		res := BaseURL + RunAddr
+		res := BaseURL + RunAddr + "/"
 
 		res += Short(url)
 		log += fmt.Sprintln(url, " --> ", res)
