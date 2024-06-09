@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -35,7 +36,7 @@ func Post(w http.ResponseWriter, req *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 
-		res := "http://localhost:8080/"
+		res := BaseURL + RunAddr
 
 		res += Short(url)
 		log += fmt.Sprintln(url, " --> ", res)
@@ -86,8 +87,23 @@ Content-Type: text/plain
 
 */
 
+var RunAddr string
+
+var BaseURL string
+
+func ParseFlags() {
+	// регистрируем переменную flagRunAddr
+	// как аргумент -a со значением :8080 по умолчанию
+	flag.StringVar(&RunAddr, "a", ":8080", "address and port to run server")
+	flag.StringVar(&BaseURL, "b", "http://localhost", "base address for short URL")
+	// парсим переданные серверу аргументы в зарегистрированные переменные
+	flag.Parse()
+}
+
 func main() {
 
+	ParseFlags()
+	fmt.Println("Running server on", RunAddr, " with BasURL ", BaseURL)
 	/*
 		Сервер должен быть доступен по адресу http://localhost:8080
 	*/
@@ -99,5 +115,5 @@ func main() {
 	r.Post(`/`, Post)
 	r.Get(`/*`, Get)
 
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(RunAddr, r))
 }
