@@ -60,7 +60,7 @@ Content-Type: text/plain
 
 */
 
-func GetUrl(w http.ResponseWriter, req *http.Request) {
+func GetURL(w http.ResponseWriter, req *http.Request) {
 	log := ""
 	defer fmt.Println(log)
 	log += fmt.Sprintf("URL: %s\r\n", req.URL)

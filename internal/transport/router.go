@@ -16,7 +16,7 @@ func InitRouter() {
 	// r.Get(`/`, Get)
 
 	r.Post(`/`, CreateShortURL)
-	r.Get(`/*`, GetUrl)
+	r.Get(`/*`, GetURL)
 
 	log.Fatal(http.ListenAndServe(config.RunAddr, r))
 }
