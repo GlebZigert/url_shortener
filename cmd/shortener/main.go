@@ -5,10 +5,5 @@ import (
 )
 
 func main() {
-
-	/*
-		Сервер должен быть доступен по адресу http://localhost:8080
-	*/
-
 	app.Run()
 }
