@@ -17,7 +17,7 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
-func Post(w http.ResponseWriter, req *http.Request) {
+func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 
 	log := ""
 	defer fmt.Println(log)
@@ -44,7 +44,23 @@ func Post(w http.ResponseWriter, req *http.Request) {
 
 	}
 }
-func Get(w http.ResponseWriter, req *http.Request) {
+
+/*
+Эндпоинт с методом GET и путём /{id}, где id — идентификатор сокращённого URL (например, /EwHXdJfB).
+В случае успешной обработки запроса сервер возвращает ответ
+с кодом 307
+и оригинальным URL
+в HTTP-заголовке Location.
+
+Пример запроса к серверу:
+
+GET /EwHXdJfB HTTP/1.1
+Host: localhost:8080
+Content-Type: text/plain
+
+*/
+
+func GetUrl(w http.ResponseWriter, req *http.Request) {
 	log := ""
 	defer fmt.Println(log)
 	log += fmt.Sprintf("URL: %s\r\n", req.URL)
@@ -73,18 +89,3 @@ func Get(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(log)
 
 }
-
-/*
-Эндпоинт с методом GET и путём /{id}, где id — идентификатор сокращённого URL (например, /EwHXdJfB).
-В случае успешной обработки запроса сервер возвращает ответ
-с кодом 307
-и оригинальным URL
-в HTTP-заголовке Location.
-
-Пример запроса к серверу:
-
-GET /EwHXdJfB HTTP/1.1
-Host: localhost:8080
-Content-Type: text/plain
-
-*/

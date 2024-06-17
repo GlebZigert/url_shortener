@@ -35,7 +35,7 @@ func TestHandler(t *testing.T) {
 			request := httptest.NewRequest(http.MethodPost, "/", nil)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
-			transport.Post(w, request)
+			transport.CreateShortURL(w, request)
 
 			res := w.Result()
 			// проверяем код ответа
