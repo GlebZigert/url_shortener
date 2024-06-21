@@ -44,7 +44,7 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 		Log.Debug("got incoming HTTP request",
 			zap.String("method", r.Method),
 			zap.String("path", r.URL.Path),
-			zap.String("dt", time.Now().Sub(t1).String()),
+			zap.String("dt", time.Since(t1).String()),
 		)
 
 	})
