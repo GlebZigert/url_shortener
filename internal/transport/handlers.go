@@ -121,8 +121,6 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 
 	url := string(msg.URL)
 
-	w.WriteHeader(http.StatusCreated)
-
 	res := config.BaseURL + "/"
 
 	res += services.Short(url)
@@ -136,8 +134,10 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+
 	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
 	w.Write(resp)
 
 }
