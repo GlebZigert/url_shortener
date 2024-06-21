@@ -2,6 +2,7 @@ package logger
 
 import (
 	"net/http"
+	"time"
 
 	"go.uber.org/zap"
 )
@@ -35,10 +36,16 @@ func Initialize(level string) error {
 // RequestLogger — middleware-логер для входящих HTTP-запросов.
 func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		t1 := time.Now()
+
+		h(w, r)
+
 		Log.Debug("got incoming HTTP request",
 			zap.String("method", r.Method),
 			zap.String("path", r.URL.Path),
+			zap.String("dt", time.Now().Sub(t1).String()),
 		)
-		h(w, r)
+
 	})
 }
