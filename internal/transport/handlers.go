@@ -110,7 +110,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println(string(buf.Bytes()))
+	fmt.Println(buf.String())
 
 	if err = json.Unmarshal(buf.Bytes(), &msg); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
