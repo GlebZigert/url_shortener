@@ -137,6 +137,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(resp)
 
 }
