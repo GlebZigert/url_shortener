@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/go-chi/chi"
 )
 
@@ -17,9 +17,9 @@ func InitRouter() {
 
 	// r.Get(`/`, Get)
 
-	r.Post(`/`, logger.RequestLogger(CreateShortURL))
-	r.Post(`/api/shorten`, logger.RequestLogger(CreateShortURLfromJSON))
-	r.Get(`/*`, logger.RequestLogger(GetURL))
+	r.Post(`/`, middleware.RequestLogger(CreateShortURL))
+	r.Post(`/api/shorten`, middleware.RequestLogger(CreateShortURLfromJSON))
+	r.Get(`/*`, middleware.RequestLogger(GetURL))
 
 	log.Fatal(http.ListenAndServe(config.RunAddr, r))
 }
