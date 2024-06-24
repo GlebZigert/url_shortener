@@ -66,20 +66,20 @@ func ctn() Icontainer {
 	return pointer
 }
 
-func Short(oririn_url string) string {
+func Short(oririn string) string {
 
-	v, ok := ctn().Get_short(oririn_url)
+	v, ok := ctn().Get_short(oririn)
 	if ok {
-		fmt.Println(oririn_url, " уже есть: ", v)
+		fmt.Println(oririn, " уже есть: ", v)
 		return v
 	}
 
 	shortURL := generateRandomString(8)
 
 	//Map()[url] = shortURL
-	ctn().Set_short(shortURL, oririn_url)
+	ctn().Set_short(shortURL, oririn)
 
-	fmt.Println("Для ", oririn_url, " сгенерирован шорт: ", shortURL)
+	fmt.Println("Для ", oririn, " сгенерирован шорт: ", shortURL)
 	return shortURL
 }
 
