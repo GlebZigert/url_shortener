@@ -1,0 +1,112 @@
+package storager
+
+import (
+	"bufio"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"os"
+)
+
+type File_storager struct {
+	path string
+	id   int
+}
+
+func New_file_storager(path string) *File_storager {
+	fmt.Println("file storager: ", path)
+	fs := File_storager{path, 0}
+
+	//проверка на path
+
+	return &fs
+}
+
+func (one *File_storager) Load(f func(short, origin string)) error {
+	fmt.Println("Load")
+	if f == nil {
+		fmt.Println("определи функцию ")
+		return nil
+	}
+
+	file, err := os.OpenFile(one.path, os.O_RDONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	defer file.Close()
+
+	reader := bufio.NewReader(file)
+
+	var data []byte
+	err = nil
+	for err == nil {
+		data, err = reader.ReadBytes('\n')
+		fmt.Println("storage data:", string(data))
+
+		var shorten Shorten
+		err = json.Unmarshal(data, &shorten)
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+
+		f(shorten.Short_url, shorten.Original_url)
+		one.id = shorten.Id + 1
+
+	}
+
+	fmt.Println("id:", one.id)
+
+	if err != nil && err != errors.New("EOF") {
+		fmt.Println(err.Error())
+
+		if !errors.Is(err, io.EOF) {
+			fmt.Println("IO  EOF", err)
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (one *File_storager) StorageWrite(short, origin string) error {
+	fmt.Println("write ", origin, " ", short, " to ", one.path)
+
+	file, err := os.OpenFile(one.path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
+
+	shorten := Shorten{one.id, short, origin}
+
+	data, err := json.Marshal(&shorten)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	data = append(data, '\n')
+	fmt.Println("data: ", len(data), string(data))
+	// записываем событие в буфер
+	nn, err := writer.Write(data)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	err = writer.Flush()
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	fmt.Println("Записалось :", nn)
+	one.id++
+	return nil
+}
