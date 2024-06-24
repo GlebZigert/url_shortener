@@ -43,6 +43,11 @@ func (one *FileStorager) Load(f func(short, origin string)) error {
 	err = nil
 	for err == nil {
 		data, err = reader.ReadBytes('\n')
+		if err != nil {
+			fmt.Println(err.Error())
+
+			return err
+		}
 		fmt.Println("storage data:", string(data))
 
 		var shorten Shorten
@@ -60,7 +65,7 @@ func (one *FileStorager) Load(f func(short, origin string)) error {
 
 	fmt.Println("id:", one.id)
 
-	if err != nil && err != errors.New("EOF") {
+	if err != nil || err != errors.New("EOF") {
 		fmt.Println(err.Error())
 
 		if !errors.Is(err, io.EOF) {
