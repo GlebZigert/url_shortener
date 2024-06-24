@@ -7,7 +7,7 @@ type IStorager interface {
 }
 
 type Shorten struct {
-	Id          int
+	ID          int
 	ShortURL    string
 	OriginalURL string
 }

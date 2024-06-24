@@ -54,7 +54,7 @@ func (one *FileStorager) Load(f func(short, origin string)) error {
 		}
 
 		f(shorten.ShortURL, shorten.OriginalURL)
-		one.id = shorten.Id + 1
+		one.id = shorten.ID + 1
 
 	}
 
