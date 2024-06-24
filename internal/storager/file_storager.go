@@ -46,6 +46,7 @@ func (one *FileStorager) Load(f func(short, origin string)) error {
 
 			return err
 		}
+
 		fmt.Println("storage data:", string(data))
 
 		var shorten Shorten
