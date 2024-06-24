@@ -3,9 +3,7 @@ package storager
 import (
 	"bufio"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"os"
 )
 
@@ -64,16 +62,6 @@ func (one *FileStorager) Load(f func(short, origin string)) error {
 	}
 
 	fmt.Println("id:", one.id)
-
-	if err != nil || err != errors.New("EOF") {
-		fmt.Println(err.Error())
-
-		if !errors.Is(err, io.EOF) {
-			fmt.Println("IO  EOF", err)
-			return err
-		}
-
-	}
 
 	return nil
 }
