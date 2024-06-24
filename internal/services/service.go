@@ -17,10 +17,10 @@ type Icontainer interface {
 		ok - есть ли уже его шорт в контейнере
 		short -значение шорта
 	*/
-	Get_short(origin string) (short string, ok bool)
+	GetShort(origin string) (short string, ok bool)
 
 	//Кладу в контейнер шорт short для оригина origin
-	Set_short(short, origin string)
+	SetShort(short, origin string)
 	/*
 		Беру из контейнера оригин по шорту:
 		short -значение шорта
@@ -29,7 +29,7 @@ type Icontainer interface {
 
 	*/
 
-	Get_origin(short string) (origin string, err error)
+	GetOrigin(short string) (origin string, err error)
 }
 
 var pointer Icontainer
@@ -68,7 +68,7 @@ func ctn() Icontainer {
 
 func Short(oririn string) string {
 
-	v, ok := ctn().Get_short(oririn)
+	v, ok := ctn().GetShort(oririn)
 	if ok {
 		fmt.Println(oririn, " уже есть: ", v)
 		return v
@@ -77,7 +77,7 @@ func Short(oririn string) string {
 	shortURL := generateRandomString(8)
 
 	//Map()[url] = shortURL
-	ctn().Set_short(shortURL, oririn)
+	ctn().SetShort(shortURL, oririn)
 
 	fmt.Println("Для ", oririn, " сгенерирован шорт: ", shortURL)
 	return shortURL
@@ -85,6 +85,6 @@ func Short(oririn string) string {
 
 func Origin(short string) (string, error) {
 
-	return ctn().Get_origin(short)
+	return ctn().GetOrigin(short)
 
 }

@@ -20,27 +20,27 @@ func New_map_container(store storager.IStorager) *Map_container {
 
 	if store != nil {
 		ctn.IStorager = store
-		ctn.Load(ctn.Set_short_without_db)
+		ctn.Load(ctn.SetShortWithoutDB)
 
 	}
 	return &ctn
 }
 
-func (one *Map_container) Get_short(origin string) (v string, ok bool) {
+func (one *Map_container) GetShort(origin string) (v string, ok bool) {
 
 	v, ok = one.mapa[origin]
 	return
 
 }
-func (one *Map_container) Set_short_without_db(short, origin string) {
-	fmt.Println("Set_short_without_db ", short, " ", origin)
+func (one *Map_container) SetShortWithoutDB(short, origin string) {
+	fmt.Println("SetShortWithoutDB ", short, " ", origin)
 	one.mapa[origin] = short
 
 }
 
-func (one *Map_container) Set_short(short, origin string) {
-	fmt.Println("Set_short ", short, " ", origin)
-	one.Set_short_without_db(short, origin)
+func (one *Map_container) SetShort(short, origin string) {
+	fmt.Println("SetShort ", short, " ", origin)
+	one.SetShortWithoutDB(short, origin)
 	err := one.StorageWrite(short, origin)
 	if err != nil {
 		fmt.Println("запись не прошла: ", err.Error())
@@ -50,7 +50,7 @@ func (one *Map_container) Set_short(short, origin string) {
 
 }
 
-func (one *Map_container) Get_origin(short string) (string, error) {
+func (one *Map_container) GetOrigin(short string) (string, error) {
 
 	for k, v := range one.mapa {
 		if v == short {
