@@ -56,9 +56,9 @@ func ctn() Icontainer {
 
 		// Задаю тип контейнера
 		if config.FileStoragePath != "" {
-			pointer = container.New_map_container(storager.New_file_storager(config.FileStoragePath))
+			pointer = container.NewMapContainer(storager.NewFileStorager(config.FileStoragePath))
 		} else {
-			pointer = container.New_map_container(nil)
+			pointer = container.NewMapContainer(nil)
 		}
 
 	}

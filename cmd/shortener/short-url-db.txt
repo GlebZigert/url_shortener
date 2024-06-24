@@ -1,3 +1,3 @@
-{"Id":0,"Short_url":"QDV9q4WH","Original_url":"https://www.mirf.ru/"}
-{"Id":1,"Short_url":"0LwhNNiR","Original_url":"https://www.yandex.ru/"}
-{"Id":2,"Short_url":"QF6sEPgX","Original_url":"https://www.lenta.ru/"}
+{"Id":0,"ShortURL":"QDV9q4WH","OriginalURL":"https://www.mirf.ru/"}
+{"Id":1,"ShortURL":"0LwhNNiR","OriginalURL":"https://www.yandex.ru/"}
+{"Id":2,"ShortURL":"QF6sEPgX","OriginalURL":"https://www.lenta.ru/"}

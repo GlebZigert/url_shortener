@@ -94,7 +94,7 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 
 /*
 принимать в теле запроса JSON-объект {"url":"<some_url>"}
-и возвращать в ответ объект {"result":"<short_url>"}.
+и возвращать в ответ объект {"result":"<ShortURL>"}.
 */
 
 func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {

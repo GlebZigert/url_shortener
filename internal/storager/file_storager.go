@@ -9,21 +9,21 @@ import (
 	"os"
 )
 
-type File_storager struct {
+type FileStorager struct {
 	path string
 	id   int
 }
 
-func New_file_storager(path string) *File_storager {
+func NewFileStorager(path string) *FileStorager {
 	fmt.Println("file storager: ", path)
-	fs := File_storager{path, 0}
+	fs := FileStorager{path, 0}
 
 	//проверка на path
 
 	return &fs
 }
 
-func (one *File_storager) Load(f func(short, origin string)) error {
+func (one *FileStorager) Load(f func(short, origin string)) error {
 	fmt.Println("Load")
 	if f == nil {
 		fmt.Println("определи функцию ")
@@ -49,10 +49,11 @@ func (one *File_storager) Load(f func(short, origin string)) error {
 		err = json.Unmarshal(data, &shorten)
 		if err != nil {
 			fmt.Println(err.Error())
+
 			return err
 		}
 
-		f(shorten.Short_url, shorten.Original_url)
+		f(shorten.ShortURL, shorten.OriginalURL)
 		one.id = shorten.Id + 1
 
 	}
@@ -72,7 +73,7 @@ func (one *File_storager) Load(f func(short, origin string)) error {
 	return nil
 }
 
-func (one *File_storager) StorageWrite(short, origin string) error {
+func (one *FileStorager) StorageWrite(short, origin string) error {
 	fmt.Println("write ", origin, " ", short, " to ", one.path)
 
 	file, err := os.OpenFile(one.path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)

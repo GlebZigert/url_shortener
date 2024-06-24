@@ -8,14 +8,14 @@ import (
 )
 
 // Контейнер на основе мапы
-type Map_container struct {
+type MapContainer struct {
 	mapa map[string]string
 	storager.IStorager
 }
 
-func New_map_container(store storager.IStorager) *Map_container {
+func NewMapContainer(store storager.IStorager) *MapContainer {
 	fmt.Println("обьявляю мапу")
-	ctn := Map_container{}
+	ctn := MapContainer{}
 	ctn.mapa = make(map[string]string)
 
 	if store != nil {
@@ -26,19 +26,19 @@ func New_map_container(store storager.IStorager) *Map_container {
 	return &ctn
 }
 
-func (one *Map_container) GetShort(origin string) (v string, ok bool) {
+func (one *MapContainer) GetShort(origin string) (v string, ok bool) {
 
 	v, ok = one.mapa[origin]
 	return
 
 }
-func (one *Map_container) SetShortWithoutDB(short, origin string) {
+func (one *MapContainer) SetShortWithoutDB(short, origin string) {
 	fmt.Println("SetShortWithoutDB ", short, " ", origin)
 	one.mapa[origin] = short
 
 }
 
-func (one *Map_container) SetShort(short, origin string) {
+func (one *MapContainer) SetShort(short, origin string) {
 	fmt.Println("SetShort ", short, " ", origin)
 	one.SetShortWithoutDB(short, origin)
 	err := one.StorageWrite(short, origin)
@@ -50,7 +50,7 @@ func (one *Map_container) SetShort(short, origin string) {
 
 }
 
-func (one *Map_container) GetOrigin(short string) (string, error) {
+func (one *MapContainer) GetOrigin(short string) (string, error) {
 
 	for k, v := range one.mapa {
 		if v == short {
