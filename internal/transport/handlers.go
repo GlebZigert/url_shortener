@@ -1,6 +1,8 @@
 package transport
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -87,5 +89,55 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 	}
 
 	fmt.Println(log)
+
+}
+
+/*
+принимать в теле запроса JSON-объект {"url":"<some_url>"}
+и возвращать в ответ объект {"result":"<short_url>"}.
+*/
+
+func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
+	//fmt.Println("CreateShortURLfromJSON")
+
+	var msg URLmessage
+
+	var buf bytes.Buffer
+	// читаем тело запроса
+	_, err := buf.ReadFrom(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	//
+	fmt.Println(buf.String())
+
+	if err = json.Unmarshal(buf.Bytes(), &msg); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Println(msg.URL)
+
+	url := string(msg.URL)
+
+	res := config.BaseURL + "/"
+
+	res += services.Short(url)
+
+	var answer URLanswer
+
+	answer.Result = res
+
+	resp, err := json.Marshal(answer)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
+	w.Write(resp)
 
 }
