@@ -1,4 +1,4 @@
-package transport
+package server
 
 type URLmessage struct {
 	URL string `json:"url"`

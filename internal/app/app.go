@@ -3,8 +3,8 @@ package app
 import (
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/server"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"github.com/GlebZigert/url_shortener.git/internal/transport"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +19,7 @@ func Run() error {
 	services.Init()
 	logger.Log.Info("Running server", zap.String("address", config.RunAddr))
 
-	transport.InitRouter()
+	server.InitRouter()
 
 	return nil
 }
