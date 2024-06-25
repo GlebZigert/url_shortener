@@ -40,6 +40,9 @@ func (one *MapContainer) SetShortWithoutDB(short, origin string) {
 
 func (one *MapContainer) SetShort(short, origin string) {
 	fmt.Println("SetShort ", short, " ", origin)
+	if one.IStorager == nil {
+		return
+	}
 	one.SetShortWithoutDB(short, origin)
 	err := one.StorageWrite(short, origin)
 	if err != nil {
