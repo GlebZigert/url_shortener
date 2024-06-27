@@ -1,3 +1,0 @@
-{"Id":0,"ShortURL":"QDV9q4WH","OriginalURL":"https://www.mirf.ru/"}
-{"Id":1,"ShortURL":"0LwhNNiR","OriginalURL":"https://www.yandex.ru/"}
-{"Id":2,"ShortURL":"QF6sEPgX","OriginalURL":"https://www.lenta.ru/"}

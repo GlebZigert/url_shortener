@@ -21,7 +21,7 @@ func ParseFlags() {
 	flag.StringVar(&RunAddr, "a", "localhost:8080", "address and port to run server")
 	flag.StringVar(&BaseURL, "b", "http://localhost:8080", "base address for short URL")
 	flag.StringVar(&FlagLogLevel, "l", "info", "log level")
-	flag.StringVar(&FileStoragePath, "f", "./short-url-db.txt", "file storage path")
+	flag.StringVar(&FileStoragePath, "f", "./short-url-db.json", "file storage path")
 	// парсим переданные серверу аргументы в зарегистрированные переменные
 	flag.Parse()
 
