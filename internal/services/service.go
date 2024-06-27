@@ -1,13 +1,38 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/container"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
-var mapa map[string]string
+type Icontainer interface {
+	/*
+		Беру из контейнера шорт для оригина:
+		origin - оригинальный url
+		ok - есть ли уже его шорт в контейнере
+		short -значение шорта
+	*/
+	GetShort(origin string) (short string, ok bool)
+
+	//Кладу в контейнер шорт short для оригина origin
+	SetShort(short, origin string)
+	/*
+		Беру из контейнера оригин по шорту:
+		short -значение шорта
+		origin - оригинальный url
+		err - ошибка
+
+	*/
+
+	GetOrigin(short string) (origin string, err error)
+}
+
+var pointer Icontainer
 
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -21,39 +46,45 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func Map() map[string]string {
-
-	if mapa == nil {
-		fmt.Println("обьявляю мапу")
-		mapa = make(map[string]string)
-	}
-
-	return mapa
+func Init() {
+	ctn()
 }
 
-func Short(url string) string {
+func ctn() Icontainer {
 
-	v, ok := Map()[url]
+	if pointer == nil {
+
+		// Задаю тип контейнера
+		if config.FileStoragePath != "" {
+			pointer = container.NewMapContainer(storager.NewFileStorager(config.FileStoragePath))
+		} else {
+			pointer = container.NewMapContainer(nil)
+		}
+
+	}
+
+	return pointer
+}
+
+func Short(oririn string) string {
+
+	v, ok := ctn().GetShort(oririn)
 	if ok {
-		fmt.Println(url, " уже есть в мапе: ", v)
+		fmt.Println(oririn, " уже есть: ", v)
 		return v
 	}
 
 	shortURL := generateRandomString(8)
 
-	Map()[url] = shortURL
-	fmt.Println("Для ", url, " сгенерирован шорт: ", shortURL)
+	//Map()[url] = shortURL
+	ctn().SetShort(shortURL, oririn)
+
+	fmt.Println("Для ", oririn, " сгенерирован шорт: ", shortURL)
 	return shortURL
 }
 
-func Origin(shortURL string) (string, error) {
+func Origin(short string) (string, error) {
 
-	for k, v := range Map() {
-		if v == shortURL {
-			fmt.Println("Для шорта", shortURL, " найден url: ", k)
-			return k, nil
-		}
-	}
-	fmt.Println("Нет такого шорта как", shortURL)
-	return "", errors.New("отстуствует")
+	return ctn().GetOrigin(short)
+
 }
