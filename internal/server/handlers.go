@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -193,7 +194,12 @@ func Ping(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodGet {
 
-		w.WriteHeader(http.StatusOK)
+		if err := db.Ping(); err == nil {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 
 		w.Write([]byte{})
 
