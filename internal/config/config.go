@@ -13,6 +13,8 @@ var (
 	FlagLogLevel string
 
 	FileStoragePath string
+
+	DatabaseDSN string
 )
 
 func ParseFlags() {
@@ -22,6 +24,7 @@ func ParseFlags() {
 	flag.StringVar(&BaseURL, "b", "http://localhost:8080", "base address for short URL")
 	flag.StringVar(&FlagLogLevel, "l", "info", "log level")
 	flag.StringVar(&FileStoragePath, "f", "./short-url-db.json", "file storage path")
+	flag.StringVar(&DatabaseDSN, "d", "", "database dsn")
 	// парсим переданные серверу аргументы в зарегистрированные переменные
 	flag.Parse()
 
