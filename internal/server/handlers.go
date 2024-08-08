@@ -63,6 +63,7 @@ Content-Type: text/plain
 */
 
 func GetURL(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("GetURL")
 	log := ""
 	defer fmt.Println(log)
 	log += fmt.Sprintf("URL: %s\r\n", req.URL)
@@ -184,7 +185,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 }
 
 func Ping(w http.ResponseWriter, req *http.Request) {
-
+	fmt.Println("Ping")
 	log := ""
 	defer fmt.Println(log)
 	log += fmt.Sprintf("URL: %s\r\n", req.URL)
@@ -192,7 +193,6 @@ func Ping(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodGet {
 
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
 		w.Write([]byte{})
