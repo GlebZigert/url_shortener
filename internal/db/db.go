@@ -19,8 +19,6 @@ func Init() error {
 	var err error
 	fmt.Println("config.DatabaseDSN: ", config.DatabaseDSN)
 	db, err = sql.Open("pgx", config.DatabaseDSN)
-	if err != nil {
-	}
 
 	fmt.Println(err)
 	return err
