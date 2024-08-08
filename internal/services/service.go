@@ -5,9 +5,14 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/GlebZigert/url_shortener.git/storager"
 )
 
-var mapa map[string]string
+var (
+	mapa map[string]string
+	id   int
+)
 
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -21,39 +26,50 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func Map() map[string]string {
+func Init() {
+	mapa = make(map[string]string)
+	_ = storager.Load(&mapa)
 
-	if mapa == nil {
-		fmt.Println("обьявляю мапу")
-		mapa = make(map[string]string)
-	}
-
-	return mapa
 }
 
-func Short(url string) string {
+func Short(oririn string) string {
 
-	v, ok := Map()[url]
+	v, ok := mapa[oririn]
+
 	if ok {
-		fmt.Println(url, " уже есть в мапе: ", v)
+		fmt.Println(oririn, " уже есть: ", v)
 		return v
 	}
 
-	shortURL := generateRandomString(8)
+	short := generateRandomString(8)
 
-	Map()[url] = shortURL
-	fmt.Println("Для ", url, " сгенерирован шорт: ", shortURL)
-	return shortURL
+	//Map()[url] = shortURL
+	mapa[oririn] = short
+
+	err := storager.StorageWrite(short, oririn, len(mapa))
+	if err != nil {
+		fmt.Println("запись не прошла: ", err.Error())
+	} else {
+		fmt.Println("запись должна была пройти успешно")
+	}
+
+	fmt.Println("Для ", oririn, " сгенерирован шорт: ", short)
+	return short
 }
 
-func Origin(shortURL string) (string, error) {
+func Origin(short string) (string, error) {
 
-	for k, v := range Map() {
-		if v == shortURL {
-			fmt.Println("Для шорта", shortURL, " найден url: ", k)
+	for k, v := range mapa {
+		if v == short {
+			fmt.Println("Для шорта", short, " найден url: ", k)
 			return k, nil
 		}
 	}
-	fmt.Println("Нет такого шорта как", shortURL)
+	fmt.Println("Нет такого шорта как", short)
 	return "", errors.New("отстуствует")
+
+}
+
+func GetAll() map[string]string {
+	return mapa
 }
