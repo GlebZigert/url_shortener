@@ -28,6 +28,6 @@ func Ping() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	err := db.PingContext(ctx)
-	fmt.Println("ping: ", err)
+	fmt.Println("ping:  ", err)
 	return err
 }
