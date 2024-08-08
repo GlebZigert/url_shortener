@@ -141,3 +141,44 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	w.Write(resp)
 
 }
+
+/*
+
+ */
+
+func GetURLs(w http.ResponseWriter, req *http.Request) {
+
+	log := ""
+	defer fmt.Println(log)
+	log += fmt.Sprintf("URL: %s\r\n", req.URL)
+	log += fmt.Sprintf("Method: %s\r\n", req.Method)
+
+	type URLs struct {
+		ShortURL    string `json:"shortURL"`
+		OriginalURL string `json:"originalURL"`
+	}
+
+	res := []URLs{}
+	for a, b := range services.GetAll() {
+		//fmt.Println(a, " ", b)
+		res = append(res, URLs{a, b})
+	}
+
+	resp, err := json.Marshal(res)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if req.Method == http.MethodGet {
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		w.Write(resp)
+
+	}
+
+	fmt.Println(log)
+
+}
