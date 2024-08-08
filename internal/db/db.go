@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/GlebZigert/url_shortener.git/internal/config"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -13,10 +14,11 @@ var db *sql.DB
 
 func Init() error {
 
-	ps := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
-		`localhost`, `shortener`, `userpassword`, `shortener`)
+	//host=localhost user=shortener password=userpassword dbname=shortener sslmode=disable
+
 	var err error
-	db, err = sql.Open("pgx", ps)
+	fmt.Println("config.DatabaseDSN: ", config.DatabaseDSN)
+	db, err = sql.Open("pgx", config.DatabaseDSN)
 	if err != nil {
 	}
 
