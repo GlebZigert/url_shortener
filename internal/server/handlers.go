@@ -182,3 +182,23 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(log)
 
 }
+
+func Ping(w http.ResponseWriter, req *http.Request) {
+
+	log := ""
+	defer fmt.Println(log)
+	log += fmt.Sprintf("URL: %s\r\n", req.URL)
+	log += fmt.Sprintf("Method: %s\r\n", req.Method)
+
+	if req.Method == http.MethodGet {
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		w.Write([]byte{})
+
+	}
+
+	fmt.Println(log)
+
+}
