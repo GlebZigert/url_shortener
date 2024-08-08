@@ -6,7 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/GlebZigert/url_shortener.git/internal/transport"
+	"github.com/GlebZigert/url_shortener.git/internal/server"
+	"github.com/GlebZigert/url_shortener.git/internal/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,12 +31,13 @@ func TestHandler(t *testing.T) {
 			},
 		},
 	}
+	services.Init()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			request := httptest.NewRequest(http.MethodPost, "/", nil)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
-			transport.CreateShortURL(w, request)
+			server.CreateShortURL(w, request)
 
 			res := w.Result()
 			// проверяем код ответа
