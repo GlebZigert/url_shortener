@@ -144,12 +144,13 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	short, err := services.Short(url)
 
 	fl := false
+	var header int
 	if err == nil {
 		fl = true
-		w.WriteHeader(http.StatusCreated)
+		header = http.StatusCreated
 	} else if err.Error() == config.Conflict409 {
 		fl = true
-		w.WriteHeader(http.StatusConflict)
+		header = http.StatusConflict
 	} else {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -170,7 +171,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	w.Header().Add("Content-Type", "application/json")
-
+	w.WriteHeader(header)
 	w.Write(resp)
 
 }
