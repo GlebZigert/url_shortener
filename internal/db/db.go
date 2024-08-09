@@ -51,17 +51,7 @@ func Ping() error {
 }
 
 func Insert(ctx context.Context, short, origin string, id int) error {
-	// здесь будем вставлять записи в базу данных
-	// ...
 
-	//str := fmt.Sprintf("INSERT INTO strazh (id, origin, short) VALUES (%d,'%s','%s')", id, origin, short)
-
-	//str := "INSERT INTO strazh (id, origin, short) VALUES (1,'kkk','hhh')"
-	/*
-		str := fmt.Sprintf("INSERT INTO strazh (id, origin, short)"+
-			" VALUES(%d,`%s`,`%s`)", id, origin, short)
-	*/
-	//fmt.Println(str)
 	_, err := db.ExecContext(ctx, "insert into strazh (origin, short) values ($1, $2)", origin, short)
 	if err != nil {
 		fmt.Println(err)
