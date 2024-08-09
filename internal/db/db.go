@@ -14,7 +14,7 @@ var table string = `
 CREATE TABLE IF NOT EXISTS strazh (
 	id          INTEGER PRIMARY KEY,
 	origin        TEXT,
-	short       TEXT,
+	short       TEXT
 )`
 
 var db *sql.DB
