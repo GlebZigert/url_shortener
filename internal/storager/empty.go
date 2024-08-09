@@ -1,0 +1,18 @@
+package storager
+
+type EmptyStorager struct {
+}
+
+func (one *EmptyStorager) Load(mapa *map[string]string) error {
+	return nil
+}
+
+func (one *EmptyStorager) StorageWrite(short, origin string, id int) error {
+	return nil
+}
+
+func (one *EmptyStorager) Init() error {
+
+	return nil
+
+}
