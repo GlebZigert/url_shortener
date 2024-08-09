@@ -240,3 +240,70 @@ func Ping(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(log)
 
 }
+
+type Batch struct {
+	Correlation_id string `json:"correlation_id"`
+	Original_url   string `json:"original_url"`
+}
+
+type BatchBack struct {
+	Correlation_id string `json:"correlation_id"`
+	Short_url      string `json:"short_url"`
+}
+
+func Batcher(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("Batch")
+	log := ""
+	defer fmt.Println(log)
+	log += fmt.Sprintf("URL: %s\r\n", req.URL)
+	log += fmt.Sprintf("Method: %s\r\n", req.Method)
+
+	if req.Method == http.MethodPost {
+
+		var batches []Batch
+
+		var buf bytes.Buffer
+		// читаем тело запроса
+		_, err := buf.ReadFrom(req.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		//
+		fmt.Println(buf.String())
+
+		if err := json.Unmarshal(buf.Bytes(), &batches); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		fmt.Println(batches)
+
+		var batchback []BatchBack
+
+		for _, b := range batches {
+
+			ress, _ := services.Short(b.Original_url)
+			res := config.BaseURL + "/" + ress
+			batchback = append(batchback, BatchBack{b.Correlation_id, res})
+		}
+
+		resp, err := json.Marshal(batchback)
+		if err != nil {
+			fmt.Println("err: ", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Println("resp: ", string(resp))
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+
+		w.Write(resp)
+
+	}
+
+	fmt.Println(log)
+
+}
