@@ -4,18 +4,18 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
 
-type DbStorager struct {
+type DBStorager struct {
 }
 
-func (one *DbStorager) Load(mapa *map[string]string) error {
+func (one *DBStorager) Load(mapa *map[string]string) error {
 	return nil
 }
 
-func (one *DbStorager) StorageWrite(short, origin string, id int) error {
+func (one *DBStorager) StorageWrite(short, origin string, id int) error {
 	return nil
 }
 
-func (one *DbStorager) Init() error {
+func (one *DBStorager) Init() error {
 
 	return db.Ping()
 

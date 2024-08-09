@@ -24,7 +24,7 @@ func StorageWrite(short, origin string, id int) error {
 
 func Init() {
 
-	store = &DbStorager{}
+	store = &DBStorager{}
 	if err := store.Init(); err == nil {
 		fmt.Println("Хранилище в БД ", config.DatabaseDSN)
 		return
