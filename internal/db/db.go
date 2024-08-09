@@ -10,6 +10,13 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+var table string = `
+CREATE TABLE IF NOT EXISTS strazh (
+	id          INTEGER PRIMARY KEY,
+	origin        TEXT,
+	short       TEXT,
+)`
+
 var db *sql.DB
 
 func Init() error {
@@ -20,7 +27,18 @@ func Init() error {
 	fmt.Println("config.DatabaseDSN: ", config.DatabaseDSN)
 	db, err = sql.Open("pgx", config.DatabaseDSN)
 
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println("err1: ", err)
+		return err
+	}
+
+	res, err := db.Exec(table)
+
+	if err != nil {
+		fmt.Println("err2: ", err)
+		return err
+	}
+	fmt.Println("res: ", res)
 	return err
 }
 
