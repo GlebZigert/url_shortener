@@ -6,6 +6,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/server"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 	"go.uber.org/zap"
 )
 
@@ -17,6 +18,7 @@ func Run() error {
 		return err
 	}
 	db.Init()
+	storager.Init()
 	services.Init()
 	logger.Log.Info("Running server", zap.String("address", config.RunAddr))
 

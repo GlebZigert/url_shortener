@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/GlebZigert/url_shortener.git/storager"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
 var (
@@ -28,6 +28,7 @@ func generateRandomString(length int) string {
 
 func Init() {
 	mapa = make(map[string]string)
+
 	_ = storager.Load(&mapa)
 
 }

@@ -15,7 +15,21 @@ type Shorten struct {
 	OriginalURL string
 }
 
-func Load(mapa *map[string]string) error {
+type FileStorager struct {
+}
+
+func (one *FileStorager) Init() error {
+	fmt.Println(config.FileStoragePath)
+	file, err := os.OpenFile(config.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	defer file.Close()
+	return err
+}
+
+func (one *FileStorager) Load(mapa *map[string]string) error {
 	fmt.Println("Load")
 
 	file, err := os.OpenFile(config.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
@@ -57,7 +71,7 @@ func Load(mapa *map[string]string) error {
 	return nil
 }
 
-func StorageWrite(short, origin string, id int) error {
+func (one *FileStorager) StorageWrite(short, origin string, id int) error {
 	fmt.Println("write ", origin, " ", short, " to ", config.FileStoragePath)
 
 	file, err := os.OpenFile(config.FileStoragePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
