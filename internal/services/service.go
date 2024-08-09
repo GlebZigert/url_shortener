@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
@@ -33,13 +34,13 @@ func Init() {
 
 }
 
-func Short(oririn string) string {
+func Short(oririn string) (string, error) {
 
 	v, ok := mapa[oririn]
 
 	if ok {
 		fmt.Println(oririn, " уже есть: ", v)
-		return v
+		return v, errors.New(config.Conflict409)
 	}
 
 	short := generateRandomString(8)
@@ -55,7 +56,7 @@ func Short(oririn string) string {
 	}
 
 	fmt.Println("Для ", oririn, " сгенерирован шорт: ", short)
-	return short
+	return short, nil
 }
 
 func Origin(short string) (string, error) {

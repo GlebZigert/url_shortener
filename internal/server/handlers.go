@@ -36,12 +36,23 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		}
 		url := string(body)
 
-		w.WriteHeader(http.StatusCreated)
-
 		res := config.BaseURL + "/"
 
-		res += services.Short(url)
-		log += fmt.Sprintln(url, " --> ", res)
+		if short, err := services.Short(url); err == nil || err.Error() == config.Conflict409 {
+			res += short
+
+			log += fmt.Sprintln(url, " --> ", res)
+
+			if err == nil {
+				w.WriteHeader(http.StatusCreated)
+			} else {
+				w.WriteHeader(http.StatusConflict)
+			}
+
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		w.Write([]byte(res))
 
@@ -124,21 +135,30 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	url := string(msg.URL)
 
 	res := config.BaseURL + "/"
+	var resp []byte
+	if short, err := services.Short(url); err == nil || err.Error() == config.Conflict409 {
+		res += short
 
-	res += services.Short(url)
+		var answer URLanswer
 
-	var answer URLanswer
+		answer.Result = res
 
-	answer.Result = res
+		resp, err = json.Marshal(answer)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Add("Content-Type", "application/json")
 
-	resp, err := json.Marshal(answer)
-	if err != nil {
+		if err == nil {
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			w.WriteHeader(http.StatusConflict)
+		}
+	} else {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
 
 	w.Write(resp)
 

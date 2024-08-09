@@ -17,6 +17,8 @@ var (
 	DatabaseDSN string
 )
 
+const Conflict409 = "попытка сократить уже имеющийся в базе URL"
+
 func ParseFlags() {
 	// регистрируем переменную flagRunAddr
 	// как аргумент -a со значением :8080 по умолчанию
