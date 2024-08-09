@@ -1,15 +1,28 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/transport"
+	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/server"
+	"github.com/GlebZigert/url_shortener.git/internal/services"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
+	"go.uber.org/zap"
 )
 
-func Run() {
+func Run() error {
 
 	config.ParseFlags()
-	fmt.Println("Running server on", config.RunAddr, " with BasURL ", config.BaseURL)
-	transport.InitRouter()
+
+	if err := logger.Initialize(config.FlagLogLevel); err != nil {
+		return err
+	}
+	db.Init()
+	storager.Init()
+	services.Init()
+	logger.Log.Info("Running server", zap.String("address", config.RunAddr))
+
+	server.InitRouter()
+
+	return nil
 }
