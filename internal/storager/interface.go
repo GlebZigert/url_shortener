@@ -19,6 +19,7 @@ func Load(mapa *map[string]string) error {
 }
 
 func StorageWrite(short, origin string, id int) error {
+	fmt.Println("StorageWrite")
 	return store.StorageWrite(short, origin, id)
 }
 
