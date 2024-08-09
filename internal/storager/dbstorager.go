@@ -1,6 +1,8 @@
 package storager
 
 import (
+	"context"
+
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
 
@@ -12,6 +14,7 @@ func (one *DBStorager) Load(mapa *map[string]string) error {
 }
 
 func (one *DBStorager) StorageWrite(short, origin string, id int) error {
+	db.Insert(context.Background(), short, origin, id)
 	return nil
 }
 

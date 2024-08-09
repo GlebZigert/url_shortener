@@ -49,3 +49,17 @@ func Ping() error {
 	fmt.Println("ping:  ", err)
 	return err
 }
+
+func Insert(ctx context.Context, short, origin string, id int) error {
+	// здесь будем вставлять записи в базу данных
+	// ...
+
+	_, err := db.ExecContext(ctx,
+		"INSERT INTO strazh (id, origin, short)"+
+			" VALUES(?,?,?,?,?)", id, origin, short)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
