@@ -243,12 +243,12 @@ func Ping(w http.ResponseWriter, req *http.Request) {
 
 type Batch struct {
 	Correlation_id string `json:"correlation_id"`
-	Original_url   string `json:"original_url"`
+	OriginalUrl    string `json:"original_url"`
 }
 
 type BatchBack struct {
 	Correlation_id string `json:"correlation_id"`
-	Short_url      string `json:"short_url"`
+	ShortUrl       string `json:"short_url"`
 }
 
 func Batcher(w http.ResponseWriter, req *http.Request) {
@@ -283,7 +283,7 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 
 		for _, b := range batches {
 
-			ress, _ := services.Short(b.Original_url)
+			ress, _ := services.Short(b.OriginalUrl)
 			res := config.BaseURL + "/" + ress
 			batchback = append(batchback, BatchBack{b.Correlation_id, res})
 		}
