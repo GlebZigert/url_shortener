@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
@@ -26,5 +25,5 @@ func InitRouter() {
 	r.Get(`/ping`, middleware.RequestLogger(Ping))
 	r.Get(`/*`, middleware.RequestLogger(GetURL))
 
-	log.Fatal(http.ListenAndServe(config.RunAddr, r))
+	http.ListenAndServe(config.RunAddr, r)
 }
