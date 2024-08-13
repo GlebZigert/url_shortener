@@ -9,7 +9,6 @@ import (
 	"net/http"
 )
 
-// Compress сжимает слайс байт
 func Compress(data []byte) ([]byte, error) {
 	var b bytes.Buffer
 	w, err := flate.NewWriter(&b, flate.BestCompression)
@@ -31,7 +30,6 @@ func Compress(data []byte) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-// Decompress распаковывает слайс байт
 func Decompress(data []byte) ([]byte, error) {
 	r := flate.NewReader(bytes.NewReader(data))
 	defer r.Close()

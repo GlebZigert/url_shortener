@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -14,6 +13,14 @@ var (
 	mapa map[string]string
 	id   int
 )
+
+type ErrConflict409 struct {
+	s string
+}
+
+func (e *ErrConflict409) Error() string {
+	return e.s
+}
 
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -39,8 +46,7 @@ func Short(oririn string) (string, error) {
 	v, ok := mapa[oririn]
 
 	if ok {
-		fmt.Println(oririn, " уже есть: ", v)
-		return v, errors.New(config.Conflict409)
+		return v, &ErrConflict409{config.Conflict409}
 	}
 
 	short := generateRandomString(8)
@@ -48,14 +54,6 @@ func Short(oririn string) (string, error) {
 	//Map()[url] = shortURL
 	mapa[oririn] = short
 
-	err := storager.StorageWrite(short, oririn, len(mapa))
-	if err != nil {
-		fmt.Println("запись не прошла: ", err.Error())
-	} else {
-		fmt.Println("запись должна была пройти успешно")
-	}
-
-	fmt.Println("Для ", oririn, " сгенерирован шорт: ", short)
 	return short, nil
 }
 
@@ -63,11 +61,11 @@ func Origin(short string) (string, error) {
 
 	for k, v := range mapa {
 		if v == short {
-			fmt.Println("Для шорта", short, " найден url: ", k)
+
 			return k, nil
 		}
 	}
-	fmt.Println("Нет такого шорта как", short)
+
 	return "", errors.New("отстуствует")
 
 }

@@ -16,8 +16,7 @@ import (
 
 func TestHandler(t *testing.T) {
 	type want struct {
-		code int
-		//	response    string
+		code        int
 		contentType string
 	}
 	tests := []struct {
@@ -28,8 +27,6 @@ func TestHandler(t *testing.T) {
 			name: "positive test #1",
 			want: want{
 				code: http.StatusCreated,
-				//	response:    `{"status":"ok"}`,
-				//	contentType: "text/plain",
 			},
 		},
 	}
@@ -39,20 +36,14 @@ func TestHandler(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			request := httptest.NewRequest(http.MethodPost, "/", nil)
-			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			server.CreateShortURL(w, request)
-
 			res := w.Result()
-			// проверяем код ответа
 			assert.Equal(t, test.want.code, res.StatusCode)
-			// получаем и проверяем тело запроса
 			defer res.Body.Close()
 			_, err := io.ReadAll(res.Body)
-
 			require.NoError(t, err)
-			//	assert.JSONEq(t, test.want.response, string(resBody))
-			//	assert.Equal(t, test.want.contentType, res.Header.Get("Content-Type"))
+
 		})
 	}
 }
