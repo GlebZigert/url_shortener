@@ -51,7 +51,6 @@ func Short(oririn string) (string, error) {
 
 	short := generateRandomString(8)
 
-	//Map()[url] = shortURL
 	mapa[oririn] = short
 	storager.StorageWrite(short, oririn, len(mapa))
 
