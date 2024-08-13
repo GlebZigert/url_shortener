@@ -10,6 +10,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -39,12 +40,15 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		if err == nil {
 			fl = true
 			w.WriteHeader(http.StatusCreated)
-		} else if errors.As(err, &conflict) {
-			fl = true
-			w.WriteHeader(http.StatusConflict)
 		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			logger.Log.Error(err.Error())
+			if errors.As(err, &conflict) {
+				fl = true
+				w.WriteHeader(http.StatusConflict)
+			} else {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
 		if fl {
@@ -87,7 +91,7 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 			w.Write([]byte(res))
 
 		} else {
-
+			logger.Log.Error(err.Error())
 			w.Header().Set("Location", "")
 			w.WriteHeader(http.StatusTemporaryRedirect)
 
@@ -110,11 +114,13 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 
 	_, err := buf.ReadFrom(req.Body)
 	if err != nil {
+		logger.Log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err = json.Unmarshal(buf.Bytes(), &msg); err != nil {
+		logger.Log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -132,12 +138,15 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	if err == nil {
 		fl = true
 		header = http.StatusCreated
-	} else if errors.As(err, &conflict) {
-		fl = true
-		header = http.StatusConflict
 	} else {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		logger.Log.Error(err.Error())
+		if errors.As(err, &conflict) {
+			fl = true
+			header = http.StatusConflict
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if fl {
@@ -178,6 +187,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 	resp, err := json.Marshal(res)
 	if err != nil {
+		logger.Log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
