@@ -53,6 +53,7 @@ func Short(oririn string) (string, error) {
 
 	//Map()[url] = shortURL
 	mapa[oririn] = short
+	storager.StorageWrite(short, oririn, len(mapa))
 
 	return short, nil
 }
