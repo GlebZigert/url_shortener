@@ -35,7 +35,7 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		short, err := services.Short(url)
 
 		fl := false
-		conflict := services.ErrConflict409{}
+		var conflict *services.ErrConflict409
 		if err == nil {
 			fl = true
 			w.WriteHeader(http.StatusCreated)
@@ -128,7 +128,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 
 	fl := false
 	var header int
-	conflict := services.ErrConflict409{}
+	var conflict *services.ErrConflict409
 	if err == nil {
 		fl = true
 		header = http.StatusCreated
@@ -239,7 +239,7 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 		}
 		ll := len(batches)
 		batchback := make([]BatchBack, ll)
-		conflict := services.ErrConflict409{}
+		var conflict *services.ErrConflict409
 		for i, b := range batches {
 
 			ress, err := services.Short(b.OriginalURL)
