@@ -35,10 +35,11 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		short, err := services.Short(url)
 
 		fl := false
+		conflict := &services.ErrConflict409{}
 		if err == nil {
 			fl = true
 			w.WriteHeader(http.StatusCreated)
-		} else if errors.As(err, &services.ErrConflict409{}) {
+		} else if errors.As(err, &conflict) {
 			fl = true
 			w.WriteHeader(http.StatusConflict)
 		} else {
@@ -127,10 +128,11 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 
 	fl := false
 	var header int
+	conflict := &services.ErrConflict409{}
 	if err == nil {
 		fl = true
 		header = http.StatusCreated
-	} else if errors.As(err, &services.ErrConflict409{}) {
+	} else if errors.As(err, conflict) {
 		fl = true
 		header = http.StatusConflict
 	} else {
@@ -237,11 +239,11 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 		}
 		ll := len(batches)
 		batchback := make([]BatchBack, ll)
-
+		conflict := &services.ErrConflict409{}
 		for i, b := range batches {
 
 			ress, err := services.Short(b.OriginalURL)
-			if err == nil || errors.As(err, &services.ErrConflict409{}) {
+			if err == nil || errors.As(err, conflict) {
 				res := config.BaseURL + "/" + ress
 				batchback[i] = BatchBack{b.CorrelationID, res}
 			}
