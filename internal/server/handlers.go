@@ -2,11 +2,13 @@ package server
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -206,8 +208,9 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 func Ping(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodGet {
-
-		if err := db.Ping(); err == nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+		if err := db.Ping(ctx); err == nil {
 			w.WriteHeader(http.StatusOK)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)

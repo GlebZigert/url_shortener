@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -35,9 +34,8 @@ func Init() error {
 	return err
 }
 
-func Ping() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
+func Ping(ctx context.Context) error {
+
 	err := db.PingContext(ctx)
 	return err
 }
