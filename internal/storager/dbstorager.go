@@ -2,6 +2,7 @@ package storager
 
 import (
 	"context"
+	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
@@ -20,7 +21,8 @@ func (one *DBStorager) StorageWrite(short, origin string, id int) error {
 }
 
 func (one *DBStorager) Init() error {
-
-	return db.Ping()
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	return db.Ping(ctx)
 
 }
