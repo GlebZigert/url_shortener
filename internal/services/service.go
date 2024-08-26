@@ -2,12 +2,25 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
-var mapa map[string]string
+var (
+	mapa map[string]string
+	id   int
+)
+
+type ErrConflict409 struct {
+	s string
+}
+
+func (e *ErrConflict409) Error() string {
+	return e.s
+}
 
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -21,39 +34,42 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func Map() map[string]string {
+func Init() {
+	mapa = make(map[string]string)
 
-	if mapa == nil {
-		fmt.Println("обьявляю мапу")
-		mapa = make(map[string]string)
-	}
+	_ = storager.Load(&mapa)
 
-	return mapa
 }
 
-func Short(url string) string {
+func Short(oririn string) (string, error) {
 
-	v, ok := Map()[url]
+	v, ok := mapa[oririn]
+
 	if ok {
-		fmt.Println(url, " уже есть в мапе: ", v)
-		return v
+		return v, &ErrConflict409{config.Conflict409}
 	}
 
-	shortURL := generateRandomString(8)
+	short := generateRandomString(8)
 
-	Map()[url] = shortURL
-	fmt.Println("Для ", url, " сгенерирован шорт: ", shortURL)
-	return shortURL
+	mapa[oririn] = short
+	storager.StorageWrite(short, oririn, len(mapa))
+
+	return short, nil
 }
 
-func Origin(shortURL string) (string, error) {
+func Origin(short string) (string, error) {
 
-	for k, v := range Map() {
-		if v == shortURL {
-			fmt.Println("Для шорта", shortURL, " найден url: ", k)
+	for k, v := range mapa {
+		if v == short {
+
 			return k, nil
 		}
 	}
-	fmt.Println("Нет такого шорта как", shortURL)
+
 	return "", errors.New("отстуствует")
+
+}
+
+func GetAll() map[string]string {
+	return mapa
 }
