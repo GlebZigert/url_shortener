@@ -208,9 +208,8 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 func Ping(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodGet {
-		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-		//	rctx := req.Context()
-		//	ctx, cancel := context.WithTimeout(rctx, 1*time.Second)
+
+		ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)
 		defer cancel()
 		if err := db.Ping(ctx); err == nil {
 			w.WriteHeader(http.StatusOK)
