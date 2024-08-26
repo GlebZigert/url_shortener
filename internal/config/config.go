@@ -42,4 +42,5 @@ func ParseFlags() {
 	if envFileStoragePath := os.Getenv("FILE_STORAGE_PATH"); envFileStoragePath != "" {
 		FileStoragePath = envFileStoragePath
 	}
+
 }
