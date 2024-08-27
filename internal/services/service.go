@@ -72,6 +72,6 @@ func Origin(short string) (string, error) {
 }
 
 func GetAll() map[string]string {
-	fmt.Println("GetAll")
+	
 	return mapa
 }

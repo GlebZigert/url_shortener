@@ -179,13 +179,13 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 	type URLs struct {
-		ShortURL    string `json:"shortURL"`
-		OriginalURL string `json:"originalURL"`
+		ShortURL    string `json:"short_url"`
+		OriginalURL string `json:"original_url"`
 	}
 
 	res := []URLs{}
 	for a, b := range services.GetAll() {
-		res = append(res, URLs{a, b})
+		res = append(res, URLs{config.BaseURL + "/" + b, a})
 	}
 	fmt.Println(" len(res) ", len(res))
 	if len(res) == 0 {
@@ -207,7 +207,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-
+		fmt.Println("resp: ", string(resp))
 		w.Write(resp)
 
 	}
