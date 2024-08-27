@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -32,7 +33,7 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		url := string(body)
-
+		fmt.Println("url: ", url)
 		res := config.BaseURL + "/"
 
 		short, err := services.Short(url)
@@ -185,6 +186,14 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 	res := []URLs{}
 	for a, b := range services.GetAll() {
 		res = append(res, URLs{a, b})
+	}
+	fmt.Println(" len(res) ", len(res))
+	if len(res) == 0 {
+		fmt.Println("нет ничего")
+		//	w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNoContent)
+
+		w.Write([]byte{})
 	}
 
 	resp, err := json.Marshal(res)
