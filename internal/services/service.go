@@ -1,13 +1,30 @@
 package services
 
 import (
+	"container/list"
 	"errors"
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
-var mapa map[string]string
+var (
+	mapa map[string]string
+	id   int
+)
+
+var shortuser map[string]*list.List
+
+type ErrConflict409 struct {
+	s string
+}
+
+func (e *ErrConflict409) Error() string {
+	return e.s
+}
 
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -21,39 +38,82 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func Map() map[string]string {
+func Init() {
 
-	if mapa == nil {
-		fmt.Println("обьявляю мапу")
-		mapa = make(map[string]string)
-	}
+	l := list.New()
+	fmt.Println(l)
 
-	return mapa
+	shortuser = make(map[string]*list.List)
+	mapa = make(map[string]string)
+
+	_ = storager.Load(&mapa)
+
 }
 
-func Short(url string) string {
+func Short(oririn string) (string, error) {
 
-	v, ok := Map()[url]
+	v, ok := mapa[oririn]
+
 	if ok {
-		fmt.Println(url, " уже есть в мапе: ", v)
-		return v
+		return v, &ErrConflict409{config.Conflict409}
 	}
 
-	shortURL := generateRandomString(8)
+	short := generateRandomString(8)
 
-	Map()[url] = shortURL
-	fmt.Println("Для ", url, " сгенерирован шорт: ", shortURL)
-	return shortURL
+	mapa[oririn] = short
+	storager.StorageWrite(short, oririn, len(mapa))
+
+	return short, nil
 }
 
-func Origin(shortURL string) (string, error) {
+func AddUserToShort(user int, short string) {
+	l, ok := shortuser[short]
+	if !ok {
+		l = list.New()
+		shortuser[short] = l
 
-	for k, v := range Map() {
-		if v == shortURL {
-			fmt.Println("Для шорта", shortURL, " найден url: ", k)
+	}
+	l.PushFront(user)
+	for k, v := range shortuser {
+		fmt.Println(k)
+		for e := v.Front(); e != nil; e = e.Next() {
+			fmt.Println(e.Value)
+		}
+
+	}
+}
+
+func CheckUserForShort(user int, short string) bool {
+	l, ok := shortuser[short]
+	if !ok {
+		fmt.Println("-1")
+		return false
+
+	}
+	for e := l.Front(); e != nil; e = e.Next() {
+		if e.Value == user {
+			fmt.Println("+")
+			return true
+		}
+	}
+	fmt.Println("-2")
+	return false
+}
+
+func Origin(short string) (string, error) {
+
+	for k, v := range mapa {
+		if v == short {
+
 			return k, nil
 		}
 	}
-	fmt.Println("Нет такого шорта как", shortURL)
+
 	return "", errors.New("отстуствует")
+
+}
+
+func GetAll() map[string]string {
+
+	return mapa
 }
