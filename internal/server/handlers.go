@@ -189,11 +189,21 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		OriginalURL string `json:"original_url"`
 	}
 
+	vv, ok := req.Context().Value("new").(bool)
+	fmt.Println("new: ", vv)
+	if ok && vv == true {
+
+		w.WriteHeader(http.StatusUnauthorized)
+
+		w.Write([]byte{})
+		return
+	}
+
 	user, ok := req.Context().Value("user").(int)
 
 	if !ok {
 
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
 		return

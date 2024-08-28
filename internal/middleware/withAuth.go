@@ -25,6 +25,7 @@ func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
 			jwt, _ := auth.BuildJWTString()
 			userid, _ = auth.GetUserId(jwt)
 			ctx = context.WithValue(ctx, "jwt", jwt)
+			ctx = context.WithValue(ctx, "new", true)
 		}
 
 		ctx = context.WithValue(ctx, "user", userid)
