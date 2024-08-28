@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+type Key int
+type JWT string
+type New bool
+
 var (
 	RunAddr string
 

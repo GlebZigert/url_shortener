@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
+	"github.com/GlebZigert/url_shortener.git/internal/config"
 )
 
 func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
@@ -18,17 +19,17 @@ func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
 		authv := r.Header.Get("Authorization")
 		fmt.Println("auth: ", authv)
 
-		userid, err := auth.GetUserId(authv)
+		userid, err := auth.GetUserID(authv)
 		ctx := r.Context()
 		if err != nil {
 			fmt.Println("auth err: ", err)
 			jwt, _ := auth.BuildJWTString()
-			userid, _ = auth.GetUserId(jwt)
-			ctx = context.WithValue(ctx, "jwt", jwt)
-			ctx = context.WithValue(ctx, "new", true)
+			userid, _ = auth.GetUserID(jwt)
+			ctx = context.WithValue(ctx, "jwt", config.JWT(jwt))
+			ctx = context.WithValue(ctx, "new", config.New(true))
 		}
 
-		ctx = context.WithValue(ctx, "user", userid)
+		ctx = context.WithValue(ctx, "user", config.Key(userid))
 		r = r.WithContext(ctx)
 		h.ServeHTTP(ow, r)
 	}
