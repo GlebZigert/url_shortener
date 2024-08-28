@@ -38,10 +38,10 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 
 		short, err := services.Short(url)
 
-		user, ok := req.Context().Value("user").(int)
+		user, ok := req.Context().Value("user").(config.Key)
 		if ok {
 			fmt.Println("user", user)
-			services.AddUserToShort(user, short)
+			services.AddUserToShort(int(user), short)
 		}
 
 		fl := false
