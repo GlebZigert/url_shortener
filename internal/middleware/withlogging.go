@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"go.uber.org/zap"
 )
@@ -58,7 +59,7 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 
 		id := r.Context().Value("user")
 		fmt.Println("user: ", id)
-		jwt, ok := r.Context().Value("jwt").(string)
+		jwt, ok := r.Context().Value("jwt").(config.JWT)
 		if ok {
 			fmt.Println("jwt", jwt)
 			lw.Header().Add("Authorization", string(jwt))

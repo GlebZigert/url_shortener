@@ -189,7 +189,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		OriginalURL string `json:"original_url"`
 	}
 
-	vv, ok := req.Context().Value("new").(bool)
+	vv, ok := req.Context().Value("new").(config.New)
 	fmt.Println("new: ", vv)
 	if ok && vv == true {
 
@@ -199,7 +199,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, ok := req.Context().Value("user").(int)
+	user, ok := req.Context().Value("user").(config.Key)
 
 	if !ok {
 
@@ -213,7 +213,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 	res := []URLs{}
 	for a, b := range services.GetAll() {
-		if services.CheckUserForShort(user, b) {
+		if services.CheckUserForShort(int(user), b) {
 			res = append(res, URLs{config.BaseURL + "/" + b, a})
 		}
 	}
