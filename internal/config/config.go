@@ -5,7 +5,16 @@ import (
 	"os"
 )
 
-type Key int
+type key int
+
+const (
+	UIDkey = iota
+	JWTkey = iota
+	NEWkey = iota
+	// ...
+)
+
+type UID int
 type JWT string
 type New bool
 

@@ -57,11 +57,11 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 			responseData:   responseData,
 		}
 
-		id := r.Context().Value("user")
+		id := r.Context().Value(config.UIDkey)
 		fmt.Println("user: ", id)
-		jwt, ok := r.Context().Value("jwt").(config.JWT)
+		jwt, ok := r.Context().Value(config.JWTkey).(config.JWT)
 		if ok {
-			fmt.Println("jwt", jwt)
+			fmt.Println(config.JWTkey, jwt)
 			lw.Header().Add("Authorization", string(jwt))
 		}
 		h(&lw, r)

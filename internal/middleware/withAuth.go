@@ -25,11 +25,11 @@ func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
 			fmt.Println("auth err: ", err)
 			jwt, _ := auth.BuildJWTString()
 			userid, _ = auth.GetUserID(jwt)
-			ctx = context.WithValue(ctx, "jwt", config.JWT(jwt))
-			ctx = context.WithValue(ctx, "new", config.New(true))
+			ctx = context.WithValue(ctx, config.JWTkey, config.JWT(jwt))
+			ctx = context.WithValue(ctx, config.NEWkey, config.New(true))
 		}
 
-		ctx = context.WithValue(ctx, "user", config.Key(userid))
+		ctx = context.WithValue(ctx, config.UIDkey, config.UID(userid))
 		r = r.WithContext(ctx)
 		h.ServeHTTP(ow, r)
 	}
