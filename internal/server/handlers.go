@@ -191,7 +191,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 	vv, ok := req.Context().Value(config.NEWkey).(config.New)
 	fmt.Println("new: ", vv)
-	if ok && vv == true {
+	if ok && bool(vv) == true {
 
 		w.WriteHeader(http.StatusUnauthorized)
 

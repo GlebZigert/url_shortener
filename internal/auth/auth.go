@@ -58,8 +58,8 @@ func GetUserID(tokenString string) (int, error) {
 	}
 
 	if !token.Valid {
-		fmt.Println("Token is not valid")
-		str := "Token is not valid"
+		fmt.Println("token is not valid")
+		str := "token is not valid"
 		err = errors.New(str)
 		return -1, err
 	}
