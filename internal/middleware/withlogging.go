@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -26,6 +27,7 @@ type (
 
 func (r *loggingResponseWriter) Write(b []byte) (int, error) {
 	// записываем ответ, используя оригинальный http.ResponseWriter
+
 	size, err := r.ResponseWriter.Write(b)
 	r.responseData.size += size // захватываем размер
 	r.responseData.body = string(b)
@@ -54,6 +56,13 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 			responseData:   responseData,
 		}
 
+		id := r.Context().Value("user")
+		fmt.Println("user: ", id)
+		jwt, ok := r.Context().Value("jwt").(string)
+		if ok {
+			fmt.Println("jwt", jwt)
+			lw.Header().Add("Authorization", string(jwt))
+		}
 		h(&lw, r)
 
 		logger.Log.Info("got incoming HTTP request",
