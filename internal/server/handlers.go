@@ -38,7 +38,7 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 
 		short, err := services.Short(url)
 
-		user, ok := req.Context().Value(config.UIDkey).(config.UID)
+		user, ok := req.Context().Value(config.UIDkey).(int)
 		if ok {
 			fmt.Println(config.UIDkey, user)
 			services.AddUserToShort(int(user), short)
@@ -189,7 +189,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		OriginalURL string `json:"original_url"`
 	}
 
-	vv, ok := req.Context().Value(config.NEWkey).(config.New)
+	vv, ok := req.Context().Value(config.NEWkey).(bool)
 	fmt.Println("new: ", vv)
 	if ok && bool(vv) == true {
 
@@ -199,7 +199,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, ok := req.Context().Value(config.UIDkey).(config.UID)
+	user, ok := req.Context().Value(config.UIDkey).(int)
 
 	if !ok {
 

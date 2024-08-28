@@ -14,10 +14,6 @@ const (
 	// ...
 )
 
-type UID int
-type JWT string
-type New bool
-
 var (
 	RunAddr string
 
