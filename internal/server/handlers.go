@@ -38,6 +38,12 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 
 		short, err := services.Short(url)
 
+		user, ok := req.Context().Value("user").(int)
+		if ok {
+			fmt.Println("user", user)
+			services.AddUserToShort(user, short)
+		}
+
 		fl := false
 		var conflict *services.ErrConflict409
 		if err == nil {
@@ -183,9 +189,23 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		OriginalURL string `json:"original_url"`
 	}
 
+	user, ok := req.Context().Value("user").(int)
+
+	if !ok {
+
+		w.WriteHeader(http.StatusNoContent)
+
+		w.Write([]byte{})
+		return
+	} else {
+		fmt.Println(ok)
+	}
+
 	res := []URLs{}
 	for a, b := range services.GetAll() {
-		res = append(res, URLs{config.BaseURL + "/" + b, a})
+		if services.CheckUserForShort(user, b) {
+			res = append(res, URLs{config.BaseURL + "/" + b, a})
+		}
 	}
 	fmt.Println(" len(res) ", len(res))
 	if len(res) == 0 {
