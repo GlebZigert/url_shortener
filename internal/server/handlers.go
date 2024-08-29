@@ -319,6 +319,26 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 
 func Delete(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("DELETE")
+
+	var todel []string
+	var buf bytes.Buffer
+
+	_, err := buf.ReadFrom(req.Body)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := json.Unmarshal(buf.Bytes(), &todel); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	for _, del := range todel {
+		fmt.Println("надо удалить ", del)
+	}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 
