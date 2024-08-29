@@ -326,11 +326,13 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 	_, err := buf.ReadFrom(req.Body)
 
 	if err != nil {
+		fmt.Println("err 1: ", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := json.Unmarshal(buf.Bytes(), &todel); err != nil {
+		fmt.Println("err 2: ", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
