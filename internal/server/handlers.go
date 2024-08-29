@@ -41,7 +41,7 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 			fmt.Println(config.UIDkey, user)
 
 			short, err = services.Short(url, user)
-			services.AddUserToShort(int(user), short)
+
 		}
 
 		fl := false
@@ -314,5 +314,14 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 		w.Write(resp)
 
 	}
+
+}
+
+func Delete(w http.ResponseWriter, req *http.Request) {
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusAccepted)
+
+	w.Write([]byte{})
 
 }
