@@ -326,19 +326,33 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 	_, err := buf.ReadFrom(req.Body)
 
 	if err != nil {
-		fmt.Println("err 1: ", err)
+		//	fmt.Println("err 1: ", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := json.Unmarshal(buf.Bytes(), &todel); err != nil {
-		fmt.Println("err 2: ", err)
+		//	fmt.Println("err 2: ", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("len(todel): ", len(todel))
+	//fmt.Println("len(todel): ", len(todel))
+	user, ok := req.Context().Value(config.UIDkey).(int)
+	if !ok {
+
+		w.WriteHeader(http.StatusUnauthorized)
+
+		w.Write([]byte{})
+		return
+	}
+
 	for _, del := range todel {
-		fmt.Println("надо удалить ", del)
+
+		if services.CheckUserForShort(int(user), del) {
+			fmt.Println("надо удалить ", del)
+		} else {
+			fmt.Println("нельзя удалить ", del)
+		}
 	}
 
 	w.Header().Add("Content-Type", "application/json")
