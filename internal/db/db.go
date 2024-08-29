@@ -9,12 +9,12 @@ import (
 )
 
 var table string = `
-CREATE TABLE IF NOT EXISTS urls (
+CREATE TABLE IF NOT EXISTS strazh (
 	id          SERIAL PRIMARY KEY,
-  UUID          TEXT,  
-  ShortURL      TEXT,  
-  OriginslURL   TEXT,  
-  DeletedFlag   BOOLEAN     
+	uid 		INT ,
+	origin        TEXT,
+	short       TEXT,
+	deleted		BOOLEAN,
 )`
 
 var db *sql.DB
