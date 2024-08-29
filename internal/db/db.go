@@ -11,10 +11,10 @@ import (
 var table string = `
 CREATE TABLE IF NOT EXISTS urls (
 	id          SERIAL PRIMARY KEY,
-  UUID          string,  
-  ShortURL      string,  
-  OriginslURL   string,  
-  DeletedFlag   bool    
+  UUID          TEXT,  
+  ShortURL      TEXT,  
+  OriginslURL   TEXT,  
+  DeletedFlag   BOOLEAN     
 )`
 
 var db *sql.DB
