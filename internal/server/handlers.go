@@ -35,12 +35,12 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		url := string(body)
 		fmt.Println("url: ", url)
 		res := config.BaseURL + "/"
-
-		short, err := services.Short(url)
-
+		var short string
 		user, ok := req.Context().Value(config.UIDkey).(int)
 		if ok {
 			fmt.Println(config.UIDkey, user)
+
+			short, err = services.Short(url, user)
 			services.AddUserToShort(int(user), short)
 		}
 
@@ -139,7 +139,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	res := config.BaseURL + "/"
 	var resp []byte
 
-	short, err := services.Short(url)
+	short, err := services.Short(url, -1)
 
 	fl := false
 	var header int
@@ -294,7 +294,7 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 		var conflict *services.ErrConflict409
 		for i, b := range batches {
 
-			ress, err := services.Short(b.OriginalURL)
+			ress, err := services.Short(b.OriginalURL, -1)
 			if err == nil || errors.As(err, &conflict) {
 				res := config.BaseURL + "/" + ress
 				batchback[i] = BatchBack{b.CorrelationID, res}

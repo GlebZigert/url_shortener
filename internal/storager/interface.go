@@ -7,7 +7,7 @@ import (
 type Storager interface {
 	Init() error
 	Load(mapa *map[string]string) error
-	StorageWrite(short, origin string, id int) error
+	StorageWrite(short, origin string, id, UUID int) error
 }
 
 var store Storager
@@ -16,8 +16,8 @@ func Load(mapa *map[string]string) error {
 	return store.Load(mapa)
 }
 
-func StorageWrite(short, origin string, id int) error {
-	return store.StorageWrite(short, origin, id)
+func StorageWrite(short, origin string, id, UUID int) error {
+	return store.StorageWrite(short, origin, id, UUID)
 }
 
 func Init() {

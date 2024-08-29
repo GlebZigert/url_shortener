@@ -10,6 +10,7 @@ import (
 
 type Shorten struct {
 	ID          int
+	UUID        int
 	ShortURL    string
 	OriginalURL string
 }
@@ -58,7 +59,7 @@ func (one *FileStorager) Load(mapa *map[string]string) error {
 	return nil
 }
 
-func (one *FileStorager) StorageWrite(short, origin string, id int) error {
+func (one *FileStorager) StorageWrite(short, origin string, id, UUID int) error {
 
 	file, err := os.OpenFile(config.FileStoragePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -69,7 +70,7 @@ func (one *FileStorager) StorageWrite(short, origin string, id int) error {
 
 	writer := bufio.NewWriter(file)
 
-	shorten := Shorten{id, short, origin}
+	shorten := Shorten{id, UUID, short, origin}
 
 	data, err := json.Marshal(&shorten)
 	if err != nil {

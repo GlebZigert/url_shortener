@@ -50,7 +50,7 @@ func Init() {
 
 }
 
-func Short(oririn string) (string, error) {
+func Short(oririn string, uuid int) (string, error) {
 
 	v, ok := mapa[oririn]
 
@@ -59,9 +59,9 @@ func Short(oririn string) (string, error) {
 	}
 
 	short := generateRandomString(8)
-
+	AddUserToShort(int(uuid), short)
 	mapa[oririn] = short
-	storager.StorageWrite(short, oririn, len(mapa))
+	storager.StorageWrite(short, oririn, len(mapa), uuid)
 
 	return short, nil
 }

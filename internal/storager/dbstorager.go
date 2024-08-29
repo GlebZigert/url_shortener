@@ -14,9 +14,9 @@ func (one *DBStorager) Load(mapa *map[string]string) error {
 	return nil
 }
 
-func (one *DBStorager) StorageWrite(short, origin string, id int) error {
+func (one *DBStorager) StorageWrite(short, origin string, id, UUID int) error {
 
-	return db.Insert(context.Background(), short, origin, id)
+	return db.Insert(context.Background(), short, origin, UUID)
 
 }
 

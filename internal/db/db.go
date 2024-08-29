@@ -9,10 +9,12 @@ import (
 )
 
 var table string = `
-CREATE TABLE IF NOT EXISTS strazh (
+CREATE TABLE IF NOT EXISTS urls (
 	id          SERIAL PRIMARY KEY,
-	origin        TEXT,
-	short       TEXT
+  UUID          string  
+  ShortURL      string  
+  OriginslURL   string  
+  DeletedFlag   bool    
 )`
 
 var db *sql.DB
@@ -40,9 +42,9 @@ func Ping(ctx context.Context) error {
 	return err
 }
 
-func Insert(ctx context.Context, short, origin string, id int) error {
+func Insert(ctx context.Context, short, origin string, UUID int) error {
 
-	_, err := db.ExecContext(ctx, "insert into strazh (origin, short) values ($1, $2)", origin, short)
+	_, err := db.ExecContext(ctx, "insert into urls (UUID,OriginslURL, ShortURL) values ($1, $2, $3)", UUID, origin, short)
 	if err != nil {
 		return err
 	}
