@@ -334,7 +334,7 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	fmt.Println("len(todel): ", len(todel))
 	for _, del := range todel {
 		fmt.Println("надо удалить ", del)
 	}
