@@ -11,9 +11,9 @@ import (
 var table string = `
 CREATE TABLE IF NOT EXISTS urls (
 	id          SERIAL PRIMARY KEY,
-  UUID          string  
-  ShortURL      string  
-  OriginslURL   string  
+  UUID          string,  
+  ShortURL      string,  
+  OriginslURL   string,  
   DeletedFlag   bool    
 )`
 
