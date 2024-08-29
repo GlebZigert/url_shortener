@@ -11,11 +11,22 @@ import (
 var table string = `
 CREATE TABLE IF NOT EXISTS strazh (
 	id          SERIAL PRIMARY KEY,
+		uid 		INT ,
+	origin        TEXT,
+	short       TEXT,
+deleted		BOOLEAN
+)`
+
+/*
+var table string = `
+CREATE TABLE IF NOT EXISTS strazh (
+	id          SERIAL PRIMARY KEY,
 	uid 		INT ,
 	origin        TEXT,
 	short       TEXT,
-	deleted		BOOLEAN,
+	deleted		BOOLEAN
 )`
+*/
 
 var db *sql.DB
 
@@ -44,7 +55,7 @@ func Ping(ctx context.Context) error {
 
 func Insert(ctx context.Context, short, origin string, UUID int) error {
 
-	_, err := db.ExecContext(ctx, "insert into urls (UUID,OriginslURL, ShortURL) values ($1, $2, $3)", UUID, origin, short)
+	_, err := db.ExecContext(ctx, "insert into strazh (uid,origin, short) values ($1, $2, $3)", UUID, origin, short)
 	if err != nil {
 		return err
 	}
