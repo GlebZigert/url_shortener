@@ -9,6 +9,7 @@ type Shorten struct {
 	UUID        int
 	ShortURL    string
 	OriginalURL string
+	DeletedFlag bool
 }
 
 type Storager interface {

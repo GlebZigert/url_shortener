@@ -88,6 +88,8 @@ Content-Type: text/plain
 
 func GetURL(w http.ResponseWriter, req *http.Request) {
 
+	var deleted *services.ErrDeleted
+
 	if req.Method == http.MethodGet {
 
 		str := strings.Replace(req.URL.String(), "/", "", 1)
@@ -99,6 +101,12 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 
 			w.Write([]byte(res))
 
+		} else if errors.As(err, deleted) {
+			fmt.Println("запрос удаленного шорта")
+			//w.Header().Add("Location", res)
+			w.WriteHeader(http.StatusGone)
+
+			w.Write([]byte(res))
 		} else {
 			logger.Log.Error(err.Error())
 			w.Header().Set("Location", "")
@@ -350,6 +358,7 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 
 		if services.CheckUserForShort(int(user), del) {
 			fmt.Println("надо удалить ", del)
+
 		} else {
 			fmt.Println("нельзя удалить ", del)
 		}

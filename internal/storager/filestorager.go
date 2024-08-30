@@ -61,7 +61,7 @@ func (one *FileStorager) StorageWrite(short, origin string, id, UUID int) error 
 
 	writer := bufio.NewWriter(file)
 
-	shorten := Shorten{id, UUID, short, origin}
+	shorten := Shorten{id, UUID, short, origin, false}
 
 	data, err := json.Marshal(&shorten)
 	if err != nil {

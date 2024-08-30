@@ -23,6 +23,14 @@ type ErrConflict409 struct {
 	s string
 }
 
+type ErrDeleted struct {
+	s string
+}
+
+func (e *ErrDeleted) Error() string {
+	return e.s
+}
+
 func (e *ErrConflict409) Error() string {
 	return e.s
 }
@@ -63,8 +71,8 @@ func Short(oririn string, uuid int) (string, error) {
 
 	short := generateRandomString(8)
 	AddUserToShort(int(uuid), short)
-	sh := storager.Shorten{0, 0, short, oririn}
-	shorten = append(shorten, storager.Shorten{0, 0, short, oririn})
+	sh := storager.Shorten{0, 0, short, oririn, false}
+	shorten = append(shorten, storager.Shorten{0, 0, short, oririn, false})
 
 	storager.StorageWrite(sh)
 
@@ -105,10 +113,24 @@ func CheckUserForShort(user int, short string) bool {
 	return false
 }
 
+func Delete(short string, uid int) {
+	for _, sh := range shorten {
+		if sh.ShortURL == short && sh.UUID == uid {
+
+			sh.DeletedFlag = true
+		}
+	}
+}
+
 func Origin(short string) (string, error) {
 
 	for _, sh := range shorten {
 		if sh.ShortURL == short {
+
+			if sh.DeletedFlag == true {
+				str := "шорт " + short + " удален"
+				return sh.OriginalURL, &ErrDeleted{str}
+			}
 
 			return sh.OriginalURL, nil
 		}
