@@ -70,7 +70,7 @@ func Short(oririn string, uuid int) (string, error) {
 	}
 
 	short := generateRandomString(8)
-	AddUserToShort(int(uuid), short)
+	//AddUserToShort(int(uuid), short)
 	sh := storager.Shorten{0, 0, short, oririn, false}
 	shorten = append(shorten, &storager.Shorten{0, 0, short, oririn, false})
 
