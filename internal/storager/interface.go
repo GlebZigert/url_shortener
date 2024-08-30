@@ -5,11 +5,11 @@ import (
 )
 
 type Shorten struct {
-	ID          int
-	UUID        int
-	ShortURL    string
-	OriginalURL string
-	DeletedFlag bool
+	ID          int    `db:"id"`
+	UUID        int    `db:"user_id"`
+	ShortURL    string `db:"short_url"`
+	OriginalURL string `db:"original_url"`
+	DeletedFlag bool   `db:"is_deleted"`
 }
 
 type Storager interface {
