@@ -11,9 +11,10 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
+var shorten []storager.Shorten
+
 var (
-	mapa map[string]string
-	id   int
+	id int
 )
 
 var shortuser map[string]*list.List
@@ -44,24 +45,28 @@ func Init() {
 	fmt.Println(l)
 
 	shortuser = make(map[string]*list.List)
-	mapa = make(map[string]string)
+	shorten = []storager.Shorten{}
 
-	_ = storager.Load(&mapa)
+	_ = storager.Load(&shorten)
 
 }
 
 func Short(oririn string, uuid int) (string, error) {
 
-	v, ok := mapa[oririn]
+	//v, ok := mapa[oririn]
+	for _, sh := range shorten {
+		if sh.OriginalURL == oririn {
 
-	if ok {
-		return v, &ErrConflict409{config.Conflict409}
+			return sh.ShortURL, &ErrConflict409{config.Conflict409}
+		}
 	}
 
 	short := generateRandomString(8)
 	AddUserToShort(int(uuid), short)
-	mapa[oririn] = short
-	storager.StorageWrite(short, oririn, len(mapa), uuid)
+	sh := storager.Shorten{0, 0, short, oririn}
+	shorten = append(shorten, storager.Shorten{0, 0, short, oririn})
+
+	storager.StorageWrite(sh)
 
 	return short, nil
 }
@@ -102,10 +107,10 @@ func CheckUserForShort(user int, short string) bool {
 
 func Origin(short string) (string, error) {
 
-	for k, v := range mapa {
-		if v == short {
+	for _, sh := range shorten {
+		if sh.ShortURL == short {
 
-			return k, nil
+			return sh.OriginalURL, nil
 		}
 	}
 
@@ -113,7 +118,7 @@ func Origin(short string) (string, error) {
 
 }
 
-func GetAll() map[string]string {
+func GetAll() *[]storager.Shorten {
 
-	return mapa
+	return &shorten
 }

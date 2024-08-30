@@ -3,7 +3,7 @@ package storager
 type EmptyStorager struct {
 }
 
-func (one *EmptyStorager) Load(mapa *map[string]string) error {
+func (one *EmptyStorager) Load(shorten *[]Shorten) error {
 	return nil
 }
 

@@ -212,9 +212,9 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 	}
 
 	res := []URLs{}
-	for a, b := range services.GetAll() {
-		if services.CheckUserForShort(int(user), b) {
-			res = append(res, URLs{config.BaseURL + "/" + b, a})
+	for _, sh := range *services.GetAll() {
+		if sh.UUID == int(user) {
+			res = append(res, URLs{config.BaseURL + "/" + sh.ShortURL, sh.OriginalURL})
 		}
 	}
 	fmt.Println(" len(res) ", len(res))
