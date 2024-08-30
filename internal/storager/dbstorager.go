@@ -10,7 +10,7 @@ import (
 type DBStorager struct {
 }
 
-func (one *DBStorager) Load(shorten *[]Shorten) error {
+func (one *DBStorager) Load(shorten *[]*Shorten) error {
 	return nil
 }
 

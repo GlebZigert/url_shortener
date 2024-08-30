@@ -21,7 +21,7 @@ func (one *FileStorager) Init() error {
 	return err
 }
 
-func (one *FileStorager) Load(shorten *[]Shorten) error {
+func (one *FileStorager) Load(shorten *[]*Shorten) error {
 
 	file, err := os.OpenFile(config.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {

@@ -14,13 +14,13 @@ type Shorten struct {
 
 type Storager interface {
 	Init() error
-	Load(*[]Shorten) error
+	Load(*[]*Shorten) error
 	StorageWrite(short, origin string, id, UUID int) error
 }
 
 var store Storager
 
-func Load(shorten *[]Shorten) error {
+func Load(shorten *[]*Shorten) error {
 	return store.Load(shorten)
 }
 

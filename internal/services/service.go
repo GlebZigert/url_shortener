@@ -11,7 +11,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
-var shorten []storager.Shorten
+var shorten []*storager.Shorten
 
 var (
 	id int
@@ -53,7 +53,7 @@ func Init() {
 	fmt.Println(l)
 
 	shortuser = make(map[string]*list.List)
-	shorten = []storager.Shorten{}
+	shorten = []*storager.Shorten{}
 
 	_ = storager.Load(&shorten)
 
@@ -72,7 +72,7 @@ func Short(oririn string, uuid int) (string, error) {
 	short := generateRandomString(8)
 	AddUserToShort(int(uuid), short)
 	sh := storager.Shorten{0, 0, short, oririn, false}
-	shorten = append(shorten, storager.Shorten{0, 0, short, oririn, false})
+	shorten = append(shorten, &storager.Shorten{0, 0, short, oririn, false})
 
 	storager.StorageWrite(sh)
 
@@ -140,7 +140,7 @@ func Origin(short string) (string, error) {
 
 }
 
-func GetAll() *[]storager.Shorten {
+func GetAll() *[]*storager.Shorten {
 
 	return &shorten
 }
