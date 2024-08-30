@@ -71,8 +71,8 @@ func Short(oririn string, uuid int) (string, error) {
 
 	short := generateRandomString(8)
 	//AddUserToShort(int(uuid), short)
-	sh := storager.Shorten{0, 0, short, oririn, false}
-	shorten = append(shorten, &storager.Shorten{0, 0, short, oririn, false})
+	sh := storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
+	shorten = append(shorten, &storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false})
 
 	storager.StorageWrite(sh)
 
@@ -127,7 +127,7 @@ func Origin(short string) (string, error) {
 	for _, sh := range shorten {
 		if sh.ShortURL == short {
 
-			if sh.DeletedFlag == true {
+			if sh.DeletedFlag {
 				str := "шорт " + short + " удален"
 				return sh.OriginalURL, &ErrDeleted{str}
 			}
