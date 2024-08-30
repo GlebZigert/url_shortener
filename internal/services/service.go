@@ -116,7 +116,7 @@ func CheckUserForShort(user int, short string) bool {
 func Delete(short string, uid int) {
 	for _, sh := range shorten {
 		if sh.ShortURL == short && sh.UUID == uid {
-
+			fmt.Println("надо удалить ", short)
 			sh.DeletedFlag = true
 		}
 	}
