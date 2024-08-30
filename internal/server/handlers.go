@@ -101,7 +101,7 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 
 			w.Write([]byte(res))
 
-		} else if errors.As(err, deleted) {
+		} else if errors.As(err, &deleted) {
 			fmt.Println("запрос удаленного шорта")
 			//w.Header().Add("Location", res)
 			w.WriteHeader(http.StatusGone)
@@ -356,12 +356,16 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 
 	for _, del := range todel {
 
-		if services.CheckUserForShort(int(user), del) {
-			fmt.Println("надо удалить ", del)
+		services.Delete(del, int(user))
 
-		} else {
-			fmt.Println("нельзя удалить ", del)
-		}
+		/*
+			if services.CheckUserForShort(int(user), del) {
+				fmt.Println("надо удалить ", del)
+
+			} else {
+				fmt.Println("нельзя удалить ", del)
+			}
+		*/
 	}
 
 	w.Header().Add("Content-Type", "application/json")
