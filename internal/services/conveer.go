@@ -11,9 +11,10 @@ func Delete(shorts []string, uid int) {
 			id := -1
 			for _, sh := range shorten {
 				if sh.ShortURL == short && sh.UUID == uid {
-					fmt.Println("удаляю ", short, " ", id)
+
 					sh.DeletedFlag = true
 					id = sh.ID
+					fmt.Println("удаляю ", short, " ", id)
 					break
 				}
 			}
