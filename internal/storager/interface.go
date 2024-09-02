@@ -4,21 +4,29 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 )
 
+type Shorten struct {
+	ID          int    `db:"id"`
+	UUID        int    `db:"user_id"`
+	ShortURL    string `db:"short_url"`
+	OriginalURL string `db:"original_url"`
+	DeletedFlag bool   `db:"is_deleted"`
+}
+
 type Storager interface {
 	Init() error
-	Load(mapa *map[string]string) error
+	Load(*[]*Shorten) error
 	StorageWrite(short, origin string, id, UUID int) error
 	Delete(string)
 }
 
 var store Storager
 
-func Load(mapa *map[string]string) error {
-	return store.Load(mapa)
+func Load(shorten *[]*Shorten) error {
+	return store.Load(shorten)
 }
 
-func StorageWrite(short, origin string, id, UUID int) error {
-	return store.StorageWrite(short, origin, id, UUID)
+func StorageWrite(sh Shorten) error {
+	return store.StorageWrite(sh.ShortURL, sh.OriginalURL, sh.ID, sh.UUID)
 }
 
 func Init() {

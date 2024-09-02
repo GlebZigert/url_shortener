@@ -11,15 +11,24 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
+var shorten []*storager.Shorten
+
 var (
-	mapa map[string]string
-	id   int
+	id int
 )
 
 var shortuser map[string]*list.List
 
 type ErrConflict409 struct {
 	s string
+}
+
+type ErrDeleted struct {
+	s string
+}
+
+func (e *ErrDeleted) Error() string {
+	return e.s
 }
 
 func (e *ErrConflict409) Error() string {
@@ -44,24 +53,28 @@ func Init() {
 	fmt.Println(l)
 
 	shortuser = make(map[string]*list.List)
-	mapa = make(map[string]string)
+	shorten = []*storager.Shorten{}
 
-	_ = storager.Load(&mapa)
+	_ = storager.Load(&shorten)
 
 }
 
 func Short(oririn string, uuid int) (string, error) {
 
-	v, ok := mapa[oririn]
+	//v, ok := mapa[oririn]
+	for _, sh := range shorten {
+		if sh.OriginalURL == oririn {
 
-	if ok {
-		return v, &ErrConflict409{config.Conflict409}
+			return sh.ShortURL, &ErrConflict409{config.Conflict409}
+		}
 	}
 
 	short := generateRandomString(8)
-	AddUserToShort(int(uuid), short)
-	mapa[oririn] = short
-	storager.StorageWrite(short, oririn, len(mapa), uuid)
+	//AddUserToShort(int(uuid), short)
+	sh := storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
+	shorten = append(shorten, &storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false})
+
+	storager.StorageWrite(sh)
 
 	return short, nil
 }
@@ -100,12 +113,26 @@ func CheckUserForShort(user int, short string) bool {
 	return false
 }
 
+func Delete(short string, uid int) {
+	for _, sh := range shorten {
+		if sh.ShortURL == short && sh.UUID == uid {
+			fmt.Println("надо удалить ", short)
+			sh.DeletedFlag = true
+		}
+	}
+}
+
 func Origin(short string) (string, error) {
 
-	for k, v := range mapa {
-		if v == short {
+	for _, sh := range shorten {
+		if sh.ShortURL == short {
 
-			return k, nil
+			if sh.DeletedFlag {
+				str := "шорт " + short + " удален"
+				return sh.OriginalURL, &ErrDeleted{str}
+			}
+
+			return sh.OriginalURL, nil
 		}
 	}
 
@@ -113,9 +140,9 @@ func Origin(short string) (string, error) {
 
 }
 
-func GetAll() map[string]string {
+func GetAll() *[]*storager.Shorten {
 
-	return mapa
+	return &shorten
 }
 
 

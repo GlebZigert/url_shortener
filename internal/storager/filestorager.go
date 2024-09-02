@@ -8,13 +8,6 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 )
 
-type Shorten struct {
-	ID          int
-	UUID        int
-	ShortURL    string
-	OriginalURL string
-}
-
 type FileStorager struct {
 }
 
@@ -28,7 +21,7 @@ func (one *FileStorager) Init() error {
 	return err
 }
 
-func (one *FileStorager) Load(mapa *map[string]string) error {
+func (one *FileStorager) Load(shorten *[]*Shorten) error {
 
 	file, err := os.OpenFile(config.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
@@ -52,8 +45,6 @@ func (one *FileStorager) Load(mapa *map[string]string) error {
 			return err
 		}
 
-		(*mapa)[shorten.OriginalURL] = shorten.ShortURL
-
 	}
 
 	return nil
@@ -74,7 +65,7 @@ func (one *FileStorager) StorageWrite(short, origin string, id, UUID int) error 
 
 	writer := bufio.NewWriter(file)
 
-	shorten := Shorten{id, UUID, short, origin}
+	shorten := Shorten{id, UUID, short, origin, false}
 
 	data, err := json.Marshal(&shorten)
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 type DBStorager struct {
 }
 
-func (one *DBStorager) Load(mapa *map[string]string) error {
+func (one *DBStorager) Load(shorten *[]*Shorten) error {
 	return nil
 }
 
