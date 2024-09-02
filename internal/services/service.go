@@ -113,6 +113,7 @@ func CheckUserForShort(user int, short string) bool {
 	return false
 }
 
+/*
 func Delete(short string, uid int) {
 	for _, sh := range shorten {
 		if sh.ShortURL == short && sh.UUID == uid {
@@ -121,6 +122,7 @@ func Delete(short string, uid int) {
 		}
 	}
 }
+*/
 
 func Origin(short string) (string, error) {
 
@@ -144,5 +146,3 @@ func GetAll() *[]*storager.Shorten {
 
 	return &shorten
 }
-
-
