@@ -117,3 +117,5 @@ func GetAll() map[string]string {
 
 	return mapa
 }
+
+

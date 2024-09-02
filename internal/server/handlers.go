@@ -346,15 +346,19 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	for _, del := range todel {
+	services.Delete(todel, user)
+	/*
+		for _, del := range todel {
 
-		if services.CheckUserForShort(int(user), del) {
-			fmt.Println("надо удалить ", del)
-		} else {
-			fmt.Println("нельзя удалить ", del)
+
+			if services.CheckUserForShort(int(user), del) {
+				fmt.Println("надо удалить ", del)
+			} else {
+				fmt.Println("нельзя удалить ", del)
+			}
+
 		}
-	}
-
+	*/
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 

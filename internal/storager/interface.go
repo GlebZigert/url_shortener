@@ -8,6 +8,7 @@ type Storager interface {
 	Init() error
 	Load(mapa *map[string]string) error
 	StorageWrite(short, origin string, id, UUID int) error
+	Delete(string)
 }
 
 var store Storager

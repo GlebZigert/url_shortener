@@ -59,6 +59,10 @@ func (one *FileStorager) Load(mapa *map[string]string) error {
 	return nil
 }
 
+func (one *FileStorager) Delete(str string) {
+
+}
+
 func (one *FileStorager) StorageWrite(short, origin string, id, UUID int) error {
 
 	file, err := os.OpenFile(config.FileStoragePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)

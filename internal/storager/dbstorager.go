@@ -2,6 +2,7 @@ package storager
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -25,4 +26,8 @@ func (one *DBStorager) Init() error {
 	defer cancel()
 	return db.Ping(ctx)
 
+}
+
+func (one *DBStorager) Delete(str string) {
+	fmt.Println("DBStorager delete ", str)
 }

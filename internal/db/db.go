@@ -62,3 +62,13 @@ func Insert(ctx context.Context, short, origin string, UUID int) error {
 
 	return nil
 }
+
+func Del(ctx context.Context, short string) error {
+
+	_, err := db.ExecContext(ctx, "UPDATE strazh SET deleted = true WHERE short = $1;", short)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
