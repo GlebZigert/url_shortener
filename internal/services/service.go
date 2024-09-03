@@ -73,7 +73,7 @@ func Short(oririn string, uuid int) (string, error) {
 	//AddUserToShort(int(uuid), short)
 	id := 0
 	if len(shorten) > 0 {
-		id = shorten[len(shorten)-1].ID
+		id = shorten[len(shorten)-1].ID + 1
 	}
 
 	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
