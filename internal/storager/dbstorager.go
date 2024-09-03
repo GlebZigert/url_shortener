@@ -16,14 +16,14 @@ func (one *DBStorager) Load(shorten *[]*Shorten) error {
 	rows, err := db.Get().Query("SELECT * FROM strazh")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	for rows.Next() {
 		var u Shorten
 		err = rows.Scan(&u.ID, &u.UUID, &u.ShortURL, &u.OriginalURL, &u.DeletedFlag)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		*shorten = append(*shorten, &u)
 	}
