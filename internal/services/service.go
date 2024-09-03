@@ -74,7 +74,7 @@ func Short(oririn string, uuid int) (string, error) {
 	}
 	fmt.Println("Short ", len(shorten), " ", id)
 	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
-	shorten = append(shorten, &storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false})
+	shorten = append(shorten, &sh)
 
 	storager.StorageWrite(sh)
 
