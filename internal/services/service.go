@@ -71,46 +71,12 @@ func Short(oririn string, uuid int) (string, error) {
 
 	short := generateRandomString(8)
 	//AddUserToShort(int(uuid), short)
-	sh := storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
+	sh := storager.Shorten{ID: shorten[len(shorten)-1].ID, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
 	shorten = append(shorten, &storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false})
 
 	storager.StorageWrite(sh)
 
 	return short, nil
-}
-
-func AddUserToShort(user int, short string) {
-	l, ok := shortuser[short]
-	if !ok {
-		l = list.New()
-		shortuser[short] = l
-
-	}
-	l.PushFront(user)
-	for k, v := range shortuser {
-		fmt.Println(k)
-		for e := v.Front(); e != nil; e = e.Next() {
-			fmt.Println(e.Value)
-		}
-
-	}
-}
-
-func CheckUserForShort(user int, short string) bool {
-	l, ok := shortuser[short]
-	if !ok {
-		fmt.Println("-1")
-		return false
-
-	}
-	for e := l.Front(); e != nil; e = e.Next() {
-		if e.Value == user {
-			fmt.Println("+")
-			return true
-		}
-	}
-	fmt.Println("-2")
-	return false
 }
 
 /*

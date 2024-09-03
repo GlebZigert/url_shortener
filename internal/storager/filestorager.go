@@ -8,6 +8,8 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 )
 
+var id int
+
 type FileStorager struct {
 }
 
@@ -54,7 +56,7 @@ func (one *FileStorager) Delete(str string) {
 
 }
 
-func (one *FileStorager) StorageWrite(short, origin string, id, UUID int) error {
+func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 
 	file, err := os.OpenFile(config.FileStoragePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {

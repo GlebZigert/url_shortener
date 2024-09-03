@@ -15,7 +15,7 @@ type Shorten struct {
 type Storager interface {
 	Init() error
 	Load(*[]*Shorten) error
-	StorageWrite(short, origin string, id, UUID int) error
+	StorageWrite(short, origin string, UUID int) error
 	Delete(string)
 }
 
@@ -26,7 +26,7 @@ func Load(shorten *[]*Shorten) error {
 }
 
 func StorageWrite(sh Shorten) error {
-	return store.StorageWrite(sh.ShortURL, sh.OriginalURL, sh.ID, sh.UUID)
+	return store.StorageWrite(sh.ShortURL, sh.OriginalURL, sh.UUID)
 }
 
 func Init() {

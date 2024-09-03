@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS strazh (
 
 var db *sql.DB
 
+func Get() *sql.DB {
+	return db
+}
+
 func Init() error {
 
 	var err error
