@@ -49,9 +49,6 @@ func generateRandomString(length int) string {
 
 func Init() {
 
-	l := list.New()
-	fmt.Println(l)
-
 	shortuser = make(map[string]*list.List)
 	shorten = []*storager.Shorten{}
 
@@ -75,7 +72,7 @@ func Short(oririn string, uuid int) (string, error) {
 	if len(shorten) > 0 {
 		id = shorten[len(shorten)-1].ID + 1
 	}
-
+	fmt.Println("Short ", len(shorten), " ", id)
 	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
 	shorten = append(shorten, &storager.Shorten{ID: 0, UUID: 0, ShortURL: short, OriginalURL: oririn, DeletedFlag: false})
 
