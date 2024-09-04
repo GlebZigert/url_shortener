@@ -1,6 +1,12 @@
 package services
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"strings"
+
+	"github.com/GlebZigert/url_shortener.git/internal/db"
+)
 
 func Delete(shorts []string, uid int) {
 	channels := make([]chan int, len(shorts))
@@ -29,5 +35,13 @@ func Delete(shorts []string, uid int) {
 	for i, ch := range channels {
 		listID[i] = <-ch
 	}
+	var tags []string
+
+	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE tags = ?", true,
+		strings.Join(tags, "|"), listID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Println(listID)
 }

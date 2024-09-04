@@ -44,6 +44,6 @@ func (one *DBStorager) Init() error {
 
 }
 
-func (one *DBStorager) Delete(str string) {
-	fmt.Println("DBStorager delete ", str)
+func (one *DBStorager) Delete(listID []int) {
+	fmt.Println("DBStorager delete ", listID)
 }
