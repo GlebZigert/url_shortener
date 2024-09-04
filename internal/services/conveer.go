@@ -2,10 +2,10 @@ package services
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
 )
 
 func Delete(shorts []string, uid int) {
@@ -37,10 +37,10 @@ func Delete(shorts []string, uid int) {
 	}
 	var tags []string
 
-	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE tags = ?", true,
+	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id = ?", true,
 		strings.Join(tags, "|"), listID)
 	if err != nil {
-		log.Fatal(err)
+		logger.Log.Error(err.Error())
 	}
 
 	fmt.Println(listID)

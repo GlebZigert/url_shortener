@@ -354,7 +354,7 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	services.Delete(todel, user)
+	go services.Delete(todel, user)
 	/*
 		for _, del := range todel {
 
