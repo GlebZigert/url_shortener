@@ -8,8 +8,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var userid int
-
 // Claims — структура утверждений, которая включает стандартные утверждения
 // и одно пользовательское — UserID
 type Claims struct {
@@ -29,10 +27,8 @@ func BuildJWTString() (string, error) {
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TOKENEXP)),
 		},
 		// собственное утверждение
-		UserID: userid,
+		UserID: 0,
 	})
-
-	userid = userid + 1
 
 	// создаём строку токена
 	tokenString, err := token.SignedString([]byte(SECRETKEY))
