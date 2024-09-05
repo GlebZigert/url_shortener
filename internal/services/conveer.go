@@ -39,7 +39,7 @@ func Delete(shorts []string, uid int) {
 	}
 	var tags []string
 
-	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id id IN (?)", true,
+	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id IN (?)", true,
 		strings.Join(tags, ","), listID)
 	if err != nil {
 		logger.Log.Error(err.Error())
