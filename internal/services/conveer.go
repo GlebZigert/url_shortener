@@ -41,7 +41,7 @@ func Delete(shorts []string, uid int) {
 
 	fmt.Println("arg: ", strings.Join(listID, ","))
 	//_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE id IN (1,2)")
-	_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE id IN (?)",
+	_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE id IN (?);",
 		strings.Join(listID, ","))
 	if err != nil {
 		logger.Log.Error(err.Error())
