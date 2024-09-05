@@ -24,6 +24,10 @@ var (
 	FileStoragePath string
 
 	DatabaseDSN string
+
+	TOKENEXP int
+
+	SECRETKEY string
 )
 
 const Conflict409 = "попытка сократить уже имеющийся в базе URL"
@@ -34,6 +38,10 @@ func ParseFlags() {
 	flag.StringVar(&FlagLogLevel, "l", "info", "log level")
 	flag.StringVar(&FileStoragePath, "f", "" /*"./short-url-db.json"*/, "file storage path")
 	flag.StringVar(&DatabaseDSN, "d", "", "database dsn")
+
+	flag.StringVar(&SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
+	flag.IntVar(&TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
+
 	flag.Parse()
 
 	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
