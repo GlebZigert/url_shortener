@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	. "github.com/GlebZigert/url_shortener.git/internal/errors"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -43,7 +44,7 @@ func GetUserID(tokenString string) (int, error) {
 	token, err := jwt.ParseWithClaims(tokenString, claims,
 		func(t *jwt.Token) (interface{}, error) {
 			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+				return nil, NewTimeError(fmt.Errorf("unexpected signing method: %v", t.Header["alg"]))
 			}
 			return []byte(config.SECRETKEY), nil
 		})
