@@ -56,9 +56,11 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 			responseData:   responseData,
 		}
 
-		id := r.Context().Value(config.UIDkey)
-
-		logger.Log.Info("user id: ", zap.Int("", id.(int)))
+		id, ok := r.Context().Value(config.UIDkey).(int)
+		if ok {
+			logger.Log.Info("user id: ", zap.Int("", id))
+		}
+		//
 
 		jwt, ok := r.Context().Value(config.JWTkey).(string)
 		if ok {
@@ -72,7 +74,7 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 			zap.String("path", r.URL.Path),
 			zap.String("dt", time.Since(t1).String()),
 			zap.String("size", strconv.Itoa(responseData.size)),
-			zap.Int("userID", id.(int)),
+			zap.Int("userID", id),
 			zap.String("status", strconv.Itoa(responseData.status)),
 			zap.String("body", responseData.body),
 		)
