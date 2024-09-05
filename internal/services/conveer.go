@@ -6,6 +6,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"go.uber.org/zap"
 )
 
 func Delete(shorts []string, uid int) {
@@ -20,7 +21,8 @@ func Delete(shorts []string, uid int) {
 
 					sh.DeletedFlag = true
 					id = sh.ID
-					fmt.Println("удаляю ", short, " ", id)
+
+					logger.Log.Info("удаляю: ", zap.String("short", short))
 					break
 				}
 			}

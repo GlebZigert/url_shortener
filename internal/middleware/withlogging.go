@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -58,10 +57,12 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 		}
 
 		id := r.Context().Value(config.UIDkey)
-		fmt.Println("user: ", id)
+
+		logger.Log.Info("user id: ", zap.Int("", id.(int)))
+
 		jwt, ok := r.Context().Value(config.JWTkey).(string)
 		if ok {
-			fmt.Println(config.JWTkey, jwt)
+
 			lw.Header().Add("Authorization", string(jwt))
 		}
 		h(&lw, r)
@@ -71,6 +72,7 @@ func RequestLogger(h http.HandlerFunc) http.HandlerFunc {
 			zap.String("path", r.URL.Path),
 			zap.String("dt", time.Since(t1).String()),
 			zap.String("size", strconv.Itoa(responseData.size)),
+			zap.Int("userID", id.(int)),
 			zap.String("status", strconv.Itoa(responseData.status)),
 			zap.String("body", responseData.body),
 		)

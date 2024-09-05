@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"go.uber.org/zap"
 )
 
 func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
@@ -17,12 +18,13 @@ func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
 
 		// проверяем, что клиент умеет получать от сервера сжатые данные в формате gzip
 		authv := r.Header.Get("Authorization")
-		fmt.Println("auth: ", authv)
+		logger.Log.Info("auth: ", zap.String("", authv))
 
 		userid, err := auth.GetUserID(authv)
 		ctx := r.Context()
 		if err != nil {
-			fmt.Println("auth err: ", err)
+			logger.Log.Error("auth err: ", zap.String("", err.Error()))
+
 			jwt, _ := auth.BuildJWTString()
 			userid, _ = auth.GetUserID(jwt)
 			ctx = context.WithValue(ctx, config.JWTkey, string(jwt))

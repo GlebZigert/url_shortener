@@ -17,17 +17,6 @@ CREATE TABLE IF NOT EXISTS strazh (
 deleted		BOOLEAN
 )`
 
-/*
-var table string = `
-CREATE TABLE IF NOT EXISTS strazh (
-	id          SERIAL PRIMARY KEY,
-	uid 		INT ,
-	origin        TEXT,
-	short       TEXT,
-	deleted		BOOLEAN
-)`
-*/
-
 var db *sql.DB
 
 func Get() *sql.DB {

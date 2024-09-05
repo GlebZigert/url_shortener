@@ -52,12 +52,11 @@ func GetUserID(tokenString string) (int, error) {
 	}
 
 	if !token.Valid {
-		fmt.Println("token is not valid")
+
 		str := "token is not valid"
 		err = errors.New(str)
 		return -1, err
 	}
 
-	fmt.Println("Token os valid")
 	return claims.UserID, nil
 }
