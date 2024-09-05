@@ -32,7 +32,7 @@ func BuildJWTString() (string, error) {
 		UserID: userid,
 	})
 
-	//userid = userid + 1
+	userid = userid + 1
 
 	// создаём строку токена
 	tokenString, err := token.SignedString([]byte(SECRETKEY))
