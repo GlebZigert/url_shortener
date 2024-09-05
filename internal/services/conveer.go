@@ -39,10 +39,10 @@ func Delete(shorts []string, uid int) {
 		listID[i] = strconv.Itoa(<-ch)
 	}
 
-	fmt.Println("arg: ", strings.Join(listID, ","))
+	str := "UPDATE strazh SET deleted = true WHERE id IN (" + strings.Join(listID, ",") + ")"
+	fmt.Println("query: ", str)
 	//_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE id IN (1,2)")
-	_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE id IN (?);",
-		strings.Join(listID, ","))
+	_, err := db.Get().Exec(str)
 	if err != nil {
 		logger.Log.Error(err.Error())
 	}
