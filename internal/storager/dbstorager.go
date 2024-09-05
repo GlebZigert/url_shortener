@@ -37,10 +37,12 @@ func (one *DBStorager) StorageWrite(short, origin string, UUID int) error {
 
 }
 
-func (one *DBStorager) Init() error {
+func NewDBStorager() (*DBStorager, error) {
+
+	store := &DBStorager{}
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
-	return db.Ping(ctx)
+	return store, db.Ping(ctx)
 
 }
 

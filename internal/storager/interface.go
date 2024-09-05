@@ -13,7 +13,6 @@ type Shorten struct {
 }
 
 type Storager interface {
-	Init() error
 	Load(*[]*Shorten) error
 	StorageWrite(short, origin string, UUID int) error
 	Delete([]int)
@@ -31,14 +30,14 @@ func StorageWrite(sh Shorten) error {
 
 func Init() {
 	var err error
-	store = &DBStorager{}
-	if err = store.Init(); err == nil {
+	store, err = NewDBStorager()
+	if err == nil {
 		logger.Log.Info("DB Storager")
 		return
 	}
 	logger.Log.Error(err.Error())
-	store = &FileStorager{}
-	if err = store.Init(); err == nil {
+	store, err = NewFileStorager()
+	if err == nil {
 
 		logger.Log.Info("File Storager")
 		return
