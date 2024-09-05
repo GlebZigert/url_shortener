@@ -38,7 +38,7 @@ func Delete(shorts []string, uid int) {
 		listID[i] = <-ch
 	}
 	var tags []string
-
+	fmt.Println("arg: ", strings.Join(tags, ","), listID)
 	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id IN (?)", true,
 		strings.Join(tags, ","), listID)
 	if err != nil {
