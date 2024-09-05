@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	. "github.com/GlebZigert/url_shortener.git/internal/errors"
+
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
@@ -63,7 +63,7 @@ func Short(oririn string, uuid int) (string, error) {
 	for _, sh := range shorten {
 		if sh.OriginalURL == oririn {
 
-			return sh.ShortURL, NewTimeError(&ErrConflict409{config.Conflict409})
+			return sh.ShortURL, &ErrConflict409{config.Conflict409}
 		}
 	}
 
