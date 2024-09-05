@@ -32,7 +32,7 @@ func BuildJWTString() (string, error) {
 	// создаём строку токена
 	tokenString, err := token.SignedString([]byte(config.SECRETKEY))
 	if err != nil {
-		return "", err
+		return "", NewTimeError(err)
 	}
 
 	// возвращаем строку токена
@@ -49,14 +49,14 @@ func GetUserID(tokenString string) (int, error) {
 			return []byte(config.SECRETKEY), nil
 		})
 	if err != nil {
-		return -1, err
+		return -1, NewTimeError(err)
 	}
 
 	if !token.Valid {
 
 		str := "token is not valid"
 		err = errors.New(str)
-		return -1, err
+		return -1, NewTimeError(err)
 	}
 
 	return claims.UserID, nil
