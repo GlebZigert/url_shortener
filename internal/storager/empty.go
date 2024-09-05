@@ -15,8 +15,8 @@ func (one *EmptyStorager) Delete(listID []int) {
 
 }
 
-func (one *EmptyStorager) Init() error {
-
-	return nil
+func NewEmptyStorager() (*EmptyStorager, error) {
+	store := &EmptyStorager{}
+	return store, nil
 
 }

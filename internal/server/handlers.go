@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -15,6 +14,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
+	"go.uber.org/zap"
 )
 
 /*
@@ -33,12 +33,12 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		url := string(body)
-		fmt.Println("url: ", url)
+		logger.Log.Info("auth: ", zap.String("url", url))
+
 		res := config.BaseURL + "/"
 		var short string
 		user, ok := req.Context().Value(config.UIDkey).(int)
 		if ok {
-			fmt.Println(config.UIDkey, user)
 
 			short, err = services.Short(url, user)
 
@@ -102,7 +102,8 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 			w.Write([]byte(res))
 
 		} else if errors.As(err, &deleted) {
-			fmt.Println("запрос удаленного шорта")
+
+			logger.Log.Info("запрос удаленного шорта: ", zap.String("", err.Error()))
 			//w.Header().Add("Location", res)
 			w.WriteHeader(http.StatusGone)
 
@@ -186,10 +187,6 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 
 }
 
-/*
-
- */
-
 func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 	type URLs struct {
@@ -198,7 +195,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 	}
 
 	vv, ok := req.Context().Value(config.NEWkey).(bool)
-	fmt.Println("new: ", vv)
+
 	if ok && vv {
 
 		w.WriteHeader(http.StatusUnauthorized)
@@ -215,8 +212,6 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 		w.Write([]byte{})
 		return
-	} else {
-		fmt.Println(ok)
 	}
 
 	res := []URLs{}
@@ -225,9 +220,9 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 			res = append(res, URLs{config.BaseURL + "/" + sh.ShortURL, sh.OriginalURL})
 		}
 	}
-	fmt.Println(" len(res) ", len(res))
+
 	if len(res) == 0 {
-		fmt.Println("нет ничего")
+
 		//	w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNoContent)
 
@@ -245,7 +240,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Println("resp: ", string(resp))
+
 		w.Write(resp)
 
 	}
@@ -326,7 +321,6 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 }
 
 func Delete(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("DELETE")
 
 	var todel []string
 	var buf bytes.Buffer
@@ -334,17 +328,17 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 	_, err := buf.ReadFrom(req.Body)
 
 	if err != nil {
-		//	fmt.Println("err 1: ", err)
+
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := json.Unmarshal(buf.Bytes(), &todel); err != nil {
-		//	fmt.Println("err 2: ", err)
+
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	//fmt.Println("len(todel): ", len(todel))
+
 	user, ok := req.Context().Value(config.UIDkey).(int)
 	if !ok {
 
@@ -354,19 +348,8 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	services.Delete(todel, user)
-	/*
-		for _, del := range todel {
+	go services.Delete(todel, user)
 
-
-			if services.CheckUserForShort(int(user), del) {
-				fmt.Println("надо удалить ", del)
-			} else {
-				fmt.Println("нельзя удалить ", del)
-			}
-
-		}
-	*/
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 

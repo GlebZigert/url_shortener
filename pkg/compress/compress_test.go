@@ -14,7 +14,7 @@ func TestCompress(t *testing.T) {
 	b, err := Compress(data)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatalf("%q", err.Error())
 	}
 
 	t.Logf("%d bytes has been compressed to %d bytes\r\n", len(data), len(b))
@@ -22,7 +22,7 @@ func TestCompress(t *testing.T) {
 	out, err := Decompress(b)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatalf("%q", err.Error())
 	}
 
 	if !bytes.Equal(data, out) {

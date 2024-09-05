@@ -1,6 +1,13 @@
 package services
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"go.uber.org/zap"
+)
 
 func Delete(shorts []string, uid int) {
 	channels := make([]chan int, len(shorts))
@@ -14,7 +21,8 @@ func Delete(shorts []string, uid int) {
 
 					sh.DeletedFlag = true
 					id = sh.ID
-					fmt.Println("удаляю ", short, " ", id)
+
+					logger.Log.Info("удаляю: ", zap.String("short", short))
 					break
 				}
 			}
@@ -29,5 +37,13 @@ func Delete(shorts []string, uid int) {
 	for i, ch := range channels {
 		listID[i] = <-ch
 	}
+	var tags []string
+
+	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id = ?", true,
+		strings.Join(tags, "|"), listID)
+	if err != nil {
+		logger.Log.Error(err.Error())
+	}
+
 	fmt.Println(listID)
 }

@@ -3,7 +3,6 @@ package services
 import (
 	"container/list"
 	"errors"
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -72,7 +71,7 @@ func Short(oririn string, uuid int) (string, error) {
 	if len(shorten) > 0 {
 		id = shorten[len(shorten)-1].ID + 1
 	}
-	fmt.Println("Short ", len(shorten), " ", id)
+
 	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
 	shorten = append(shorten, &sh)
 
@@ -80,17 +79,6 @@ func Short(oririn string, uuid int) (string, error) {
 
 	return short, nil
 }
-
-/*
-func Delete(short string, uid int) {
-	for _, sh := range shorten {
-		if sh.ShortURL == short && sh.UUID == uid {
-			fmt.Println("надо удалить ", short)
-			sh.DeletedFlag = true
-		}
-	}
-}
-*/
 
 func Origin(short string) (string, error) {
 

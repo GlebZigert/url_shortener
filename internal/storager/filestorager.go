@@ -13,14 +13,14 @@ var id int
 type FileStorager struct {
 }
 
-func (one *FileStorager) Init() error {
-
+func NewFileStorager() (*FileStorager, error) {
+	store := &FileStorager{}
 	file, err := os.OpenFile(config.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
-		return err
+		return store, err
 	}
 	defer file.Close()
-	return err
+	return store, err
 }
 
 func (one *FileStorager) Load(shorten *[]*Shorten) error {

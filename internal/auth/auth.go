@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/golang-jwt/jwt/v4"
 )
-
-var userid int
 
 // Claims — структура утверждений, которая включает стандартные утверждения
 // и одно пользовательское — UserID
@@ -17,25 +16,20 @@ type Claims struct {
 	UserID int
 }
 
-const TOKENEXP = time.Hour * 3
-const SECRETKEY = "supersecretkey"
-
 // BuildJWTString создаёт токен и возвращает его в виде строки.
 func BuildJWTString() (string, error) {
 	// создаём новый токен с алгоритмом подписи HS256 и утверждениями — Claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			// когда создан токен
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TOKENEXP)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(config.TOKENEXP))),
 		},
 		// собственное утверждение
-		UserID: userid,
+		UserID: 0,
 	})
 
-	//userid = userid + 1
-
 	// создаём строку токена
-	tokenString, err := token.SignedString([]byte(SECRETKEY))
+	tokenString, err := token.SignedString([]byte(config.SECRETKEY))
 	if err != nil {
 		return "", err
 	}
@@ -51,19 +45,18 @@ func GetUserID(tokenString string) (int, error) {
 			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 			}
-			return []byte(SECRETKEY), nil
+			return []byte(config.SECRETKEY), nil
 		})
 	if err != nil {
 		return -1, err
 	}
 
 	if !token.Valid {
-		fmt.Println("token is not valid")
+
 		str := "token is not valid"
 		err = errors.New(str)
 		return -1, err
 	}
 
-	fmt.Println("Token os valid")
 	return claims.UserID, nil
 }
