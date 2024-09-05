@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	. "github.com/GlebZigert/url_shortener.git/internal/errors"
+	er "github.com/GlebZigert/url_shortener.git/internal/errors"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -32,7 +32,7 @@ func BuildJWTString() (string, error) {
 	// создаём строку токена
 	tokenString, err := token.SignedString([]byte(config.SECRETKEY))
 	if err != nil {
-		return "", NewTimeError(err)
+		return "", er.NewTimeError(err)
 	}
 
 	// возвращаем строку токена
@@ -44,19 +44,19 @@ func GetUserID(tokenString string) (int, error) {
 	token, err := jwt.ParseWithClaims(tokenString, claims,
 		func(t *jwt.Token) (interface{}, error) {
 			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, NewTimeError(fmt.Errorf("unexpected signing method: %v", t.Header["alg"]))
+				return nil, er.NewTimeError(fmt.Errorf("unexpected signing method: %v", t.Header["alg"]))
 			}
 			return []byte(config.SECRETKEY), nil
 		})
 	if err != nil {
-		return -1, NewTimeError(err)
+		return -1, er.NewTimeError(err)
 	}
 
 	if !token.Valid {
 
 		str := "token is not valid"
 		err = errors.New(str)
-		return -1, NewTimeError(err)
+		return -1, er.NewTimeError(err)
 	}
 
 	return claims.UserID, nil
