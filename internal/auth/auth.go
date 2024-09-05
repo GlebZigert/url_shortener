@@ -17,6 +17,8 @@ type Claims struct {
 	UserID int
 }
 
+var ErrBuildJWTString error = errors.New("ошибка формирования JWT")
+
 // BuildJWTString создаёт токен и возвращает его в виде строки.
 func BuildJWTString() (string, error) {
 	// создаём новый токен с алгоритмом подписи HS256 и утверждениями — Claims
@@ -32,7 +34,7 @@ func BuildJWTString() (string, error) {
 	// создаём строку токена
 	tokenString, err := token.SignedString([]byte(config.SECRETKEY))
 	if err != nil {
-		return "", er.NewTimeError(err)
+		return "", er.NewTimeError(ErrBuildJWTString)
 	}
 
 	// возвращаем строку токена
