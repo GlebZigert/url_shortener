@@ -11,7 +11,7 @@ func (one *EmptyStorager) StorageWrite(short, origin string, UUID int) error {
 	return nil
 }
 
-func (one *EmptyStorager) Delete(str string) {
+func (one *EmptyStorager) Delete(listID []int) {
 
 }
 

@@ -52,7 +52,7 @@ func (one *FileStorager) Load(shorten *[]*Shorten) error {
 	return nil
 }
 
-func (one *FileStorager) Delete(str string) {
+func (one *FileStorager) Delete(listID []int) {
 
 }
 

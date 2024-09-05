@@ -16,7 +16,7 @@ type Storager interface {
 	Init() error
 	Load(*[]*Shorten) error
 	StorageWrite(short, origin string, UUID int) error
-	Delete(string)
+	Delete([]int)
 }
 
 var store Storager
