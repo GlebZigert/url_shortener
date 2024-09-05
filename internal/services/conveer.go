@@ -38,10 +38,10 @@ func Delete(shorts []string, uid int) {
 	for i, ch := range channels {
 		listID[i] = strconv.Itoa(<-ch)
 	}
-	var tags []string
+
 	fmt.Println("arg: ", strings.Join(listID, ","))
 	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id IN (?)", true,
-		strings.Join(tags, ","), listID)
+		strings.Join(listID, ","))
 	if err != nil {
 		logger.Log.Error(err.Error())
 	}
