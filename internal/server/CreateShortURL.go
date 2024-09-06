@@ -25,7 +25,7 @@ func CreateShortURL(w http.ResponseWriter, req bunrouter.Request) error {
 
 		body, err := io.ReadAll(req.Body)
 		if err != nil {
-			return
+			return err
 		}
 		url := string(body)
 		logger.Log.Info("auth: ", zap.String("url", url))
@@ -50,7 +50,7 @@ func CreateShortURL(w http.ResponseWriter, req bunrouter.Request) error {
 				w.WriteHeader(http.StatusConflict)
 			} else {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				return err
 			}
 		}
 
@@ -63,5 +63,5 @@ func CreateShortURL(w http.ResponseWriter, req bunrouter.Request) error {
 		w.Write([]byte(res))
 
 	}
-	return
+	return nil
 }

@@ -26,13 +26,7 @@ func Batcher(w http.ResponseWriter, req bunrouter.Request) error {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusBadRequest)
 
-		err, ok := req.Context().Value(config.UIDkey).(*error)
-		if ok {
-			err = errors.Join(err, errors.New("StatusBadRequest"))
-
-		}
-
-		return
+		return errors.New("StatusBadRequest")
 	}
 
 	var batches []Batch
@@ -42,12 +36,12 @@ func Batcher(w http.ResponseWriter, req bunrouter.Request) error {
 	_, err := buf.ReadFrom(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
 
 	if err := json.Unmarshal(buf.Bytes(), &batches); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
 	ll := len(batches)
 	batchback := make([]BatchBack, ll)
@@ -65,7 +59,7 @@ func Batcher(w http.ResponseWriter, req bunrouter.Request) error {
 	if err != nil {
 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -73,6 +67,6 @@ func Batcher(w http.ResponseWriter, req bunrouter.Request) error {
 
 	w.Write(resp)
 
-	return
+	return err
 
 }
