@@ -49,6 +49,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) error {
 		w.WriteHeader(http.StatusNoContent)
 
 		w.Write([]byte{})
+		return errors.New("StatusNoContent")
 	}
 
 	resp, err := json.Marshal(res)
