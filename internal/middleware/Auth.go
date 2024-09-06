@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func Auth(h func(http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) error {
+func Auth(h MyHandlerFunc) MyHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) (err error) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции

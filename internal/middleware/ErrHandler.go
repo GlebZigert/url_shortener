@@ -7,7 +7,17 @@ import (
 	"go.uber.org/zap"
 )
 
-func ErrHandler(f func(http.ResponseWriter, *http.Request) error) http.HandlerFunc {
+type MyHandlerFunc func(w http.ResponseWriter, r *http.Request) error
+
+// Implement the http.Handler interface.
+func (fn MyHandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	err := fn(w, r) // Call handler function.
+	if err == nil {
+		return
+	}
+}
+
+func ErrHandler(f MyHandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := f(w, r)

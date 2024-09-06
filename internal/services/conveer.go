@@ -1,8 +1,6 @@
 package services
 
 import (
-	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -10,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func Delete(shorts []string, uid int) {
+func Delete(shorts []string, uid int) (err error) {
 	channels := make([]chan int, len(shorts))
 	for i, short := range shorts {
 
@@ -34,18 +32,15 @@ func Delete(shorts []string, uid int) {
 		channels[i] = ch
 
 	}
-	listID := make([]string, len(shorts))
+	listID := make([]int, len(shorts))
 	for i, ch := range channels {
-		listID[i] = strconv.Itoa(<-ch)
+		listID[i] = <-ch
 	}
+	var tags []string
 
-	str := "UPDATE strazh SET deleted = true WHERE id IN (" + strings.Join(listID, ",") + ")"
-	fmt.Println("query: ", str)
-	//_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE id IN (1,2)")
-	_, err := db.Get().Exec(str)
-	if err != nil {
-		logger.Log.Error(err.Error())
-	}
+	_, err = db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id = ?", true,
+		strings.Join(tags, "|"), listID)
 
-	fmt.Println(listID)
+	return
+
 }
