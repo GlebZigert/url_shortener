@@ -48,7 +48,7 @@ func GetURL(w http.ResponseWriter, req *http.Request) (err error) {
 
 			w.Write([]byte(res))
 		} else {
-			logger.Log.Error(err.Error())
+
 			w.Header().Set("Location", "")
 			w.WriteHeader(http.StatusTemporaryRedirect)
 

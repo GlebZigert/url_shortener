@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -54,7 +53,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) error {
 
 	resp, err := json.Marshal(res)
 	if err != nil {
-		logger.Log.Error(err.Error())
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err
 	}

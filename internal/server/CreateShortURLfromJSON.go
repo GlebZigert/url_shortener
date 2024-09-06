@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -24,13 +23,12 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
 
 	_, err := buf.ReadFrom(req.Body)
 	if err != nil {
-		logger.Log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return err
 	}
 
 	if err = json.Unmarshal(buf.Bytes(), &msg); err != nil {
-		logger.Log.Error(err.Error())
+
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return err
 	}
@@ -49,7 +47,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
 		fl = true
 		header = http.StatusCreated
 	} else {
-		logger.Log.Error(err.Error())
+
 		if errors.As(err, &conflict) {
 			fl = true
 			header = http.StatusConflict
