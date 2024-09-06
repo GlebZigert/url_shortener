@@ -3,10 +3,12 @@ package services
 import (
 	"container/list"
 	"errors"
+
 	"math/rand"
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 

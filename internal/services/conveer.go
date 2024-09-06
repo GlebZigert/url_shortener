@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -33,14 +34,15 @@ func Delete(shorts []string, uid int) {
 		channels[i] = ch
 
 	}
-	listID := make([]int, len(shorts))
+	listID := make([]string, len(shorts))
 	for i, ch := range channels {
-		listID[i] = <-ch
+		listID[i] = strconv.Itoa(<-ch)
 	}
-	var tags []string
 
-	_, err := db.Get().Exec("UPDATE strazh SET deleted = ? WHERE id = ?", true,
-		strings.Join(tags, "|"), listID)
+	str := "UPDATE strazh SET deleted = true WHERE id IN (" + strings.Join(listID, ",") + ")"
+	fmt.Println("query: ", str)
+	//_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE id IN (1,2)")
+	_, err := db.Get().Exec(str)
 	if err != nil {
 		logger.Log.Error(err.Error())
 	}

@@ -2,6 +2,7 @@ package storager
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -47,4 +48,5 @@ func NewDBStorager() (*DBStorager, error) {
 
 func (one *DBStorager) Delete(listID []int) {
 
+	fmt.Println("DBStorager delete ", listID)
 }
