@@ -11,6 +11,7 @@ const (
 	UIDkey key = iota
 	JWTkey key = iota
 	NEWkey key = iota
+	ErrKey key = iota
 	// ...
 )
 

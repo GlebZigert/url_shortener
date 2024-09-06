@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
@@ -24,7 +23,7 @@ func GetURLs(w http.ResponseWriter, req bunrouter.Request) error {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return errors.New("")
+		return
 	}
 
 	user, ok := req.Context().Value(config.UIDkey).(int)
@@ -34,7 +33,7 @@ func GetURLs(w http.ResponseWriter, req bunrouter.Request) error {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return errors.New("")
+		return
 	}
 
 	res := []URLs{}
@@ -50,14 +49,14 @@ func GetURLs(w http.ResponseWriter, req bunrouter.Request) error {
 		w.WriteHeader(http.StatusNoContent)
 
 		w.Write([]byte{})
-		return errors.New("StatusNoContent")
+		return
 	}
 
 	resp, err := json.Marshal(res)
 	if err != nil {
 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
+		return
 	}
 
 	if req.Method == http.MethodGet {
@@ -68,5 +67,5 @@ func GetURLs(w http.ResponseWriter, req bunrouter.Request) error {
 		w.Write(resp)
 
 	}
-	return nil
+	return
 }

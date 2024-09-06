@@ -25,13 +25,13 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req bunrouter.Request) error 
 	_, err := buf.ReadFrom(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return err
+		return
 	}
 
 	if err = json.Unmarshal(buf.Bytes(), &msg); err != nil {
 
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return err
+		return
 	}
 
 	url := string(msg.URL)
@@ -54,7 +54,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req bunrouter.Request) error 
 			header = http.StatusConflict
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return err
+			return
 		}
 	}
 
@@ -69,11 +69,11 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req bunrouter.Request) error 
 		resp, err = json.Marshal(answer)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return err
+			return
 		}
 	}
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(header)
 	w.Write(resp)
-	return nil
+	return
 }
