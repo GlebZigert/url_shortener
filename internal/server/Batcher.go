@@ -20,11 +20,18 @@ type BatchBack struct {
 	ShortURL      string `json:"short_url"`
 }
 
-func Batcher(w http.ResponseWriter, req *http.Request) error {
+func Batcher(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusBadRequest)
-		return errors.New("req.Method != http.MethodPost")
+
+		err, ok := req.Context().Value(config.UIDkey).(*error)
+		if ok {
+			err = errors.Join(err, errors.New("StatusBadRequest"))
+
+		}
+
+		return
 	}
 
 	var batches []Batch
@@ -34,12 +41,12 @@ func Batcher(w http.ResponseWriter, req *http.Request) error {
 	_, err := buf.ReadFrom(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return err
+		return
 	}
 
 	if err := json.Unmarshal(buf.Bytes(), &batches); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return err
+		return
 	}
 	ll := len(batches)
 	batchback := make([]BatchBack, ll)
@@ -57,7 +64,7 @@ func Batcher(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
+		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -65,6 +72,6 @@ func Batcher(w http.ResponseWriter, req *http.Request) error {
 
 	w.Write(resp)
 
-	return nil
+	return
 
 }
