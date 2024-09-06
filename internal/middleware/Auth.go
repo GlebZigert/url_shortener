@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func AuthMiddleware(h func(http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) error {
+func Auth(h func(http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) error {
 	return func(w http.ResponseWriter, r *http.Request) (err error) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
@@ -23,7 +23,6 @@ func AuthMiddleware(h func(http.ResponseWriter, *http.Request) error) func(http.
 		userid, err := auth.GetUserID(authv)
 		ctx := r.Context()
 		if err != nil {
-			logger.Log.Error("auth err: ", zap.String("", err.Error()))
 
 			jwt, _ := auth.BuildJWTString()
 			userid, _ = auth.GetUserID(jwt)
