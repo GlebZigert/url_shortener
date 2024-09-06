@@ -8,13 +8,14 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
 
-func Ping(w http.ResponseWriter, req *http.Request) {
+func Ping(w http.ResponseWriter, req *http.Request) (err error) {
 
 	if req.Method == http.MethodGet {
 		ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)
 		defer cancel()
-		if err := db.Ping(ctx); err == nil {
+		if err = db.Ping(ctx); err == nil {
 			w.WriteHeader(http.StatusOK)
+
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
@@ -22,5 +23,5 @@ func Ping(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte{})
 
 	}
-
+	return err
 }

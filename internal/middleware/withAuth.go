@@ -10,8 +10,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func AuthMiddleware(h func(http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) error {
+	return func(w http.ResponseWriter, r *http.Request) (err error) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 		ow := w
@@ -33,6 +33,7 @@ func AuthMiddleware(h http.HandlerFunc) http.HandlerFunc {
 
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
 		r = r.WithContext(ctx)
-		h.ServeHTTP(ow, r)
+		h(ow, r)
+		return
 	}
 }

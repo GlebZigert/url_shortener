@@ -16,7 +16,7 @@ import (
 и возвращать в ответ объект {"result":"<ShortURL>"}.
 */
 
-func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
+func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
 
 	var msg URLmessage
 
@@ -26,13 +26,13 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		logger.Log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
 
 	if err = json.Unmarshal(buf.Bytes(), &msg); err != nil {
 		logger.Log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
 
 	url := string(msg.URL)
@@ -55,7 +55,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 			header = http.StatusConflict
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
 	}
 
@@ -70,11 +70,11 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 		resp, err = json.Marshal(answer)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
 	}
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(header)
 	w.Write(resp)
-
+	return nil
 }

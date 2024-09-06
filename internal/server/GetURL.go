@@ -25,7 +25,7 @@ Content-Type: text/plain
 
 */
 
-func GetURL(w http.ResponseWriter, req *http.Request) {
+func GetURL(w http.ResponseWriter, req *http.Request) (err error) {
 
 	var deleted *services.ErrDeleted
 
@@ -55,5 +55,5 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 			w.Write([]byte{})
 		}
 	}
-
+	return
 }

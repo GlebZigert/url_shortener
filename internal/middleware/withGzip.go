@@ -7,8 +7,8 @@ import (
 	"github.com/GlebZigert/url_shortener.git/pkg/compress"
 )
 
-func GzipMiddleware(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func GzipMiddleware(h func(w http.ResponseWriter, r *http.Request) error) func(w http.ResponseWriter, r *http.Request) error {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 		ow := w
@@ -33,7 +33,7 @@ func GzipMiddleware(h http.HandlerFunc) http.HandlerFunc {
 			cr, err := compress.NewCompressReader(r.Body)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				return
+				return err
 			}
 			// меняем тело запроса на новое
 			r.Body = cr
@@ -41,6 +41,6 @@ func GzipMiddleware(h http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// передаём управление хендлеру
-		h.ServeHTTP(ow, r)
+		return h(ow, r)
 	}
 }

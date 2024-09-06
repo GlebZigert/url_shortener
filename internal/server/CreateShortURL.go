@@ -18,13 +18,13 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
-func CreateShortURL(w http.ResponseWriter, req *http.Request) {
+func CreateShortURL(w http.ResponseWriter, req *http.Request) error {
 
 	if req.Method == http.MethodPost {
 
 		body, err := io.ReadAll(req.Body)
 		if err != nil {
-			return
+			return err
 		}
 		url := string(body)
 		logger.Log.Info("auth: ", zap.String("url", url))
@@ -50,7 +50,7 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 				w.WriteHeader(http.StatusConflict)
 			} else {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				return err
 			}
 		}
 
@@ -63,4 +63,5 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte(res))
 
 	}
+	return nil
 }

@@ -9,12 +9,12 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
-func Delete(w http.ResponseWriter, req *http.Request) {
+func Delete(w http.ResponseWriter, req *http.Request) (err error) {
 
 	var todel []string
 	var buf bytes.Buffer
 
-	_, err := buf.ReadFrom(req.Body)
+	_, err = buf.ReadFrom(req.Body)
 
 	if err != nil {
 
@@ -22,7 +22,7 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := json.Unmarshal(buf.Bytes(), &todel); err != nil {
+	if err = json.Unmarshal(buf.Bytes(), &todel); err != nil {
 
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -43,5 +43,5 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 
 	w.Write([]byte{})
-
+	return
 }

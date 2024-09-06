@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
@@ -9,7 +10,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
-func GetURLs(w http.ResponseWriter, req *http.Request) {
+func GetURLs(w http.ResponseWriter, req *http.Request) error {
 
 	type URLs struct {
 		ShortURL    string `json:"short_url"`
@@ -23,7 +24,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return
+		return errors.New("")
 	}
 
 	user, ok := req.Context().Value(config.UIDkey).(int)
@@ -33,7 +34,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return
+		return errors.New("")
 	}
 
 	res := []URLs{}
@@ -55,7 +56,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		logger.Log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 
 	if req.Method == http.MethodGet {
@@ -66,5 +67,5 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 		w.Write(resp)
 
 	}
-
+	return nil
 }
