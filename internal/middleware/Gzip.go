@@ -5,10 +5,11 @@ import (
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/pkg/compress"
+	"github.com/uptrace/bunrouter"
 )
 
-func Gzip(h MyHandlerFunc) MyHandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+func Gzip(h bunrouter.HandlerFunc) bunrouter.HandlerFunc {
+	return func(w http.ResponseWriter, r bunrouter.Request) (err error) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 		ow := w

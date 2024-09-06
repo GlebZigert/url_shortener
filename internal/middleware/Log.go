@@ -7,6 +7,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/uptrace/bunrouter"
 	"go.uber.org/zap"
 )
 
@@ -41,8 +42,8 @@ func (r *loggingResponseWriter) WriteHeader(statusCode int) {
 }
 
 // RequestLogger — middleware-логер для входящих HTTP-запросов.
-func Log(h MyHandlerFunc) MyHandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+func Log(h bunrouter.HandlerFunc) bunrouter.HandlerFunc {
+	return func(w http.ResponseWriter, r bunrouter.Request) (err error) {
 
 		t1 := time.Now()
 

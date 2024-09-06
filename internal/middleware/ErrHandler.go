@@ -4,25 +4,22 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/uptrace/bunrouter"
 	"go.uber.org/zap"
 )
 
-type MyHandlerFunc func(w http.ResponseWriter, r *http.Request) error
+func ErrHandler(next bunrouter.HandlerFunc) bunrouter.HandlerFunc {
+	return func(w http.ResponseWriter, req bunrouter.Request) error {
+		err := next(w, req)
 
-// Implement the http.Handler interface.
-func (fn MyHandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	err := fn(w, r) // Call handler function.
-	if err == nil {
-		return
-	}
-}
+		switch err := err.(type) {
+		case nil:
+			// no error
 
-func ErrHandler(f MyHandlerFunc) http.HandlerFunc {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		err := f(w, r)
-		if err != nil {
+		default:
 			logger.Log.Error("err: ", zap.String("", err.Error()))
 		}
+
+		return err
 	}
 }
