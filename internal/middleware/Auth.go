@@ -14,7 +14,6 @@ func Auth(h func(http.ResponseWriter, *http.Request) error) func(http.ResponseWr
 	return func(w http.ResponseWriter, r *http.Request) (err error) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
-		ow := w
 
 		// проверяем, что клиент умеет получать от сервера сжатые данные в формате gzip
 		authv := r.Header.Get("Authorization")
@@ -32,7 +31,7 @@ func Auth(h func(http.ResponseWriter, *http.Request) error) func(http.ResponseWr
 
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
 		r = r.WithContext(ctx)
-		h(ow, r)
+		h(w, r)
 		return
 	}
 }
