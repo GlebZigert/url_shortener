@@ -6,11 +6,12 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
 func Delete(w http.ResponseWriter, req *http.Request) (err error) {
-
+	logger.Log.Info("Delete")
 	var todel []string
 	var buf bytes.Buffer
 

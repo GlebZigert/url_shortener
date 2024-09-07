@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
 )
 
 func Ping(w http.ResponseWriter, req *http.Request) (err error) {
-
+	logger.Log.Info("Ping")
 	if req.Method == http.MethodGet {
 		ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)
 		defer cancel()
