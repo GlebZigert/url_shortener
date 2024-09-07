@@ -6,11 +6,12 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
 func GetURLs(w http.ResponseWriter, req *http.Request) error {
-
+	logger.Log.Info("GetURLs")
 	type URLs struct {
 		ShortURL    string `json:"short_url"`
 		OriginalURL string `json:"original_url"`

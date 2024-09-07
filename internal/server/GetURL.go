@@ -26,7 +26,7 @@ Content-Type: text/plain
 */
 
 func GetURL(w http.ResponseWriter, req *http.Request) (err error) {
-
+	logger.Log.Info("GetURL")
 	var deleted *services.ErrDeleted
 
 	if req.Method == http.MethodGet {

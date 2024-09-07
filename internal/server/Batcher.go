@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -21,7 +22,7 @@ type BatchBack struct {
 }
 
 func Batcher(w http.ResponseWriter, req *http.Request) error {
-
+	logger.Log.Info("Batcher")
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusBadRequest)
 		return errors.New("req.Method != http.MethodPost")
