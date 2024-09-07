@@ -15,7 +15,7 @@ func InitRouter() {
 	r.Post(`/`, middleware.ErrHandler(middleware.Auth(middleware.Log(middleware.Gzip(CreateShortURL)))))
 	r.Post(`/api/shorten`, middleware.ErrHandler(middleware.Log(CreateShortURLfromJSON)))
 	r.Post(`/api/shorten/batch`, middleware.ErrHandler(middleware.Log(Batcher)))
-	r.Post(`/api/user/urls`, middleware.ErrHandler(middleware.Auth(middleware.Log(GetURLs))))
+	r.Get(`/api/user/urls`, middleware.ErrHandler(middleware.Auth(middleware.Log(GetURLs))))
 	r.Get(`/ping`, middleware.ErrHandler(middleware.Log(Ping)))
 	r.Get(`/*`, middleware.ErrHandler(middleware.Log(GetURL)))
 	r.Delete(`/api/user/urls`, middleware.ErrHandler(middleware.Auth(middleware.Log(Delete))))
