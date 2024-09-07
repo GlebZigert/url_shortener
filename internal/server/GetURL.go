@@ -26,13 +26,13 @@ Content-Type: text/plain
 */
 
 func GetURL(w http.ResponseWriter, req *http.Request) (err error) {
-	logger.Log.Info("GetURL")
+	
 	var deleted *services.ErrDeleted
 
 	if req.Method == http.MethodGet {
 
 		str := strings.Replace(req.URL.String(), "/", "", 1)
-
+logger.Log.Info("GetURL ",zap.String("sh",str))
 		res, err := services.Origin(str)
 		if err == nil {
 			w.Header().Add("Location", res)
