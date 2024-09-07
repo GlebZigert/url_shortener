@@ -41,29 +41,31 @@ func deleteShort(short string, uid int) {
 		//если нащел этот шорт
 		//проверяю кто его создал
 		//если это тот же юзер который сейчас его удаляет - тогда надо удалять этотт шорт
-		if one.ShortURL == short && one.UUID == uid {
+		if one.ShortURL == short {
+			if one.UUID == uid {
 
-			//шорт считается удаленным если его akfu deleted выставлен в true
+				//шорт считается удаленным если его akfu deleted выставлен в true
 
-			//шорты хранятся в локальной хранилке и в бд
-			//флаг надо выставить и там и там
+				//шорты хранятся в локальной хранилке и в бд
+				//флаг надо выставить и там и там
 
-			//сначала выставляю флаг в бд
-			_, err = db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = ?", short)
+				//сначала выставляю флаг в бд
+				_, err = db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = ?", short)
 
-			//если запрос в бд был выполнен успешно
-			//выставляю флаг и в хранилке
-			if err == nil {
-				one.DeletedFlag = true
-				logger.Log.Info("удален",
-					zap.String("short:", short),
-					zap.Int("uid:", uid))
+				//если запрос в бд был выполнен успешно
+				//выставляю флаг и в хранилке
+				if err == nil {
+					one.DeletedFlag = true
+					logger.Log.Info("удален",
+						zap.String("short:", short),
+						zap.Int("uid:", uid))
+				}
+
+				//
+
+			} else {
+				err = errors.New(fmt.Sprintln("щорт другого пользователя", one.UUID, uid))
 			}
-
-			//
-
-		} else {
-			err = errors.New(fmt.Sprintln("щорт другого пользователя", one.UUID, uid))
 		}
 		if err != nil {
 			logger.Log.Error("err",
