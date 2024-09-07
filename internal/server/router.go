@@ -11,10 +11,7 @@ import (
 func InitRouter() {
 
 	r := chi.NewRouter()
-	r.Group(func(r chi.Router) {
-		r.Use(middleware.ErrHandler)
 
-	})
 
 	r.Post(`/`, middleware.ErrHandler(middleware.Auth(middleware.Log(middleware.Gzip(CreateShortURL)))))
 	r.Post(`/api/shorten`, middleware.ErrHandler(middleware.Log(CreateShortURLfromJSON)))
