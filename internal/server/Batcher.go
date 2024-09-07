@@ -8,6 +8,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
+	"github.com/uptrace/bunrouter"
 )
 
 type Batch struct {
@@ -20,11 +21,12 @@ type BatchBack struct {
 	ShortURL      string `json:"short_url"`
 }
 
-func Batcher(w http.ResponseWriter, req *http.Request) error {
+func Batcher(w http.ResponseWriter, req bunrouter.Request) error {
 
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusBadRequest)
-		return errors.New("req.Method != http.MethodPost")
+
+		return errors.New("StatusBadRequest")
 	}
 
 	var batches []Batch
@@ -65,6 +67,6 @@ func Batcher(w http.ResponseWriter, req *http.Request) error {
 
 	w.Write(resp)
 
-	return nil
+	return err
 
 }

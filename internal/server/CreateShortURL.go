@@ -8,6 +8,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
+	"github.com/uptrace/bunrouter"
 	"go.uber.org/zap"
 )
 
@@ -18,7 +19,7 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
-func CreateShortURL(w http.ResponseWriter, req *http.Request) error {
+func CreateShortURL(w http.ResponseWriter, req bunrouter.Request) error {
 
 	if req.Method == http.MethodPost {
 
@@ -44,7 +45,6 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) error {
 			fl = true
 			w.WriteHeader(http.StatusCreated)
 		} else {
-			logger.Log.Error(err.Error())
 			if errors.As(err, &conflict) {
 				fl = true
 				w.WriteHeader(http.StatusConflict)
