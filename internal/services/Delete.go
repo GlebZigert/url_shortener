@@ -1,7 +1,12 @@
 package services
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"go.uber.org/zap"
 )
 
 /*
@@ -25,11 +30,13 @@ import (
 
 */
 
-func delete_short(short string, uid int) {
-
+func deleteShort(short string, uid int) {
+	logger.Log.Info("deleteShort",
+		zap.String("short:", short),
+		zap.Int("uid:", uid))
 	//ищу шорт в локальной хранилке
 	for _, one := range shorten {
-
+		var err error
 		//если нащел этот шорт
 		//проверяю кто его создал
 		//если это тот же юзер который сейчас его удаляет - тогда надо удалять этотт шорт
@@ -41,28 +48,41 @@ func delete_short(short string, uid int) {
 			//флаг надо выставить и там и там
 
 			//сначала выставляю флаг в бд
-			_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = ?", short)
+			_, err = db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = ?", short)
 
 			//если запрос в бд был выполнен успешно
 			//выставляю флаг и в хранилке
 			if err == nil {
 				one.DeletedFlag = true
+				logger.Log.Info("удален",
+					zap.String("short:", short),
+					zap.Int("uid:", uid))
 			}
 
 			//
 
+		} else {
+			err = errors.New("щорт другого пользователя")
+		}
+		if err != nil {
+			logger.Log.Error("err",
+				zap.String("short:", short),
+				zap.String("err:", err.Error()))
 		}
 	}
 
 }
 
 func Delete(shorts []string, uid int) {
+	logger.Log.Info("service.Delete ",
+		zap.String("shorts:", strings.Join(shorts, "")),
+		zap.Int("uid:", uid))
 
 	//совершаю обход массива с шортами которые надо удалить
 	for _, short := range shorts {
 		//для каждого шорта в отдельной гоуртине запускаю функцию
 
-		go delete_short(short, uid)
+		go deleteShort(short, uid)
 
 	}
 
