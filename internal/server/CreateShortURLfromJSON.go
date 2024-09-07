@@ -8,7 +8,6 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"github.com/uptrace/bunrouter"
 )
 
 /*
@@ -16,7 +15,7 @@ import (
 и возвращать в ответ объект {"result":"<ShortURL>"}.
 */
 
-func CreateShortURLfromJSON(w http.ResponseWriter, req bunrouter.Request) error {
+func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
 
 	var msg URLmessage
 
@@ -75,5 +74,5 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req bunrouter.Request) error 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(header)
 	w.Write(resp)
-	return err
+	return nil
 }

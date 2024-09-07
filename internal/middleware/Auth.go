@@ -7,12 +7,11 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
-	"github.com/uptrace/bunrouter"
 	"go.uber.org/zap"
 )
 
-func Auth(h bunrouter.HandlerFunc) bunrouter.HandlerFunc {
-	return func(w http.ResponseWriter, r bunrouter.Request) (err error) {
+func Auth(h MyHandlerFunc) MyHandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) (err error) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 

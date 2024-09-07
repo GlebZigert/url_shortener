@@ -12,7 +12,6 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/uptrace/bunrouter"
 )
 
 func TestHandler(t *testing.T) {
@@ -36,7 +35,7 @@ func TestHandler(t *testing.T) {
 	services.Init()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			request := bunrouter.NewRequest(httptest.NewRequest(http.MethodPost, "/", nil))
+			request := httptest.NewRequest(http.MethodPost, "/", nil)
 			w := httptest.NewRecorder()
 			server.CreateShortURL(w, request)
 			res := w.Result()

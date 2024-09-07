@@ -7,7 +7,6 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"github.com/uptrace/bunrouter"
 	"go.uber.org/zap"
 )
 
@@ -26,7 +25,7 @@ Content-Type: text/plain
 
 */
 
-func GetURL(w http.ResponseWriter, req bunrouter.Request) (err error) {
+func GetURL(w http.ResponseWriter, req *http.Request) (err error) {
 
 	var deleted *services.ErrDeleted
 

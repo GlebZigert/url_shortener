@@ -7,10 +7,9 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"github.com/uptrace/bunrouter"
 )
 
-func Delete(w http.ResponseWriter, req bunrouter.Request) (err error) {
+func Delete(w http.ResponseWriter, req *http.Request) (err error) {
 
 	var todel []string
 	var buf bytes.Buffer

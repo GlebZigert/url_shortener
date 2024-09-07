@@ -3,10 +3,10 @@ module github.com/GlebZigert/url_shortener.git
 go 1.21
 
 require (
+	github.com/go-chi/chi v1.5.5
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/stretchr/testify v1.9.0
-	github.com/uptrace/bunrouter v1.0.21
 	go.uber.org/zap v1.27.0
 )
 

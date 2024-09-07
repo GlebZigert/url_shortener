@@ -7,10 +7,9 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"github.com/uptrace/bunrouter"
 )
 
-func GetURLs(w http.ResponseWriter, req bunrouter.Request) error {
+func GetURLs(w http.ResponseWriter, req *http.Request) error {
 
 	type URLs struct {
 		ShortURL    string `json:"short_url"`
@@ -24,7 +23,7 @@ func GetURLs(w http.ResponseWriter, req bunrouter.Request) error {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return errors.New("StatusUnauthorized")
+		return errors.New("")
 	}
 
 	user, ok := req.Context().Value(config.UIDkey).(int)
@@ -34,7 +33,7 @@ func GetURLs(w http.ResponseWriter, req bunrouter.Request) error {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return errors.New("StatusUnauthorized")
+		return errors.New("")
 	}
 
 	res := []URLs{}
