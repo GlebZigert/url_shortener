@@ -50,7 +50,7 @@ func deleteShort(short string, uid int) {
 				//флаг надо выставить и там и там
 
 				//сначала выставляю флаг в бд
-				_, err = db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = ?", short)
+				_, err = db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
 
 				//если запрос в бд был выполнен успешно
 				//выставляю флаг и в хранилке
