@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -62,7 +63,7 @@ func deleteShort(short string, uid int) {
 			//
 
 		} else {
-			err = errors.New("щорт другого пользователя")
+			err = errors.New(fmt.Sprintln("щорт другого пользователя", one.UUID, uid))
 		}
 		if err != nil {
 			logger.Log.Error("err",

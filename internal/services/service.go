@@ -8,10 +8,13 @@ import (
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"go.uber.org/zap"
 
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
+// это массив для хранения сокращенных url
 var shorten []*storager.Shorten
 
 var (
@@ -58,6 +61,9 @@ func Init() {
 }
 
 func Short(oririn string, uuid int) (string, error) {
+	logger.Log.Info("service.Short",
+		zap.String("oririn:", oririn),
+		zap.Int("uuid:", uuid))
 
 	//v, ok := mapa[oririn]
 	for _, sh := range shorten {
@@ -78,7 +84,10 @@ func Short(oririn string, uuid int) (string, error) {
 	shorten = append(shorten, &sh)
 
 	storager.StorageWrite(sh)
-
+	logger.Log.Info("service.Short",
+		zap.String("oririn:", oririn),
+		zap.String("short:", short),
+		zap.Int("uuid:", uuid))
 	return short, nil
 }
 
