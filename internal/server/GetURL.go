@@ -28,7 +28,7 @@ Content-Type: text/plain
 
 func GetURL(w http.ResponseWriter, req *http.Request) {
 	var err error
-	defer packerr.AddErrToReqContext(req, err)
+	defer packerr.AddErrToReqContext(req, &err)
 
 	var deleted *services.ErrDeleted
 

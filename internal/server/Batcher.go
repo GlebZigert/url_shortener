@@ -25,7 +25,7 @@ type BatchBack struct {
 func Batcher(w http.ResponseWriter, req *http.Request) {
 
 	var err error
-	defer packerr.AddErrToReqContext(req, err)
+	defer packerr.AddErrToReqContext(req, &err)
 
 	logger.Log.Info("Batcher")
 	if req.Method != http.MethodPost {

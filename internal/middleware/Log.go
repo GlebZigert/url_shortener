@@ -45,7 +45,7 @@ func (r *loggingResponseWriter) WriteHeader(statusCode int) {
 func Log(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		defer packerr.AddErrToReqContext(r, err)
+		defer packerr.AddErrToReqContext(r, &err)
 		t1 := time.Now()
 
 		responseData := &responseData{

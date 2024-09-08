@@ -12,7 +12,7 @@ import (
 
 func Ping(w http.ResponseWriter, req *http.Request) {
 	var err error
-	defer packerr.AddErrToReqContext(req, err)
+	defer packerr.AddErrToReqContext(req, &err)
 	logger.Log.Info("Ping")
 
 	ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)

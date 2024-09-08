@@ -19,7 +19,7 @@ import (
 
 func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	var err error
-	defer packerr.AddErrToReqContext(req, err)
+	defer packerr.AddErrToReqContext(req, &err)
 	logger.Log.Info("CreateShortURLfromJSON")
 	var msg URLmessage
 

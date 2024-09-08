@@ -8,11 +8,15 @@ import (
 )
 
 // Метод для добавления ошибки в контекст реквеста
-func AddErrToReqContext(r *http.Request, err error) {
+func AddErrToReqContext(r *http.Request, err *error) {
+	if err == nil {
+		return
+	}
+
 	ctxerr, ok := r.Context().Value(config.Errkey).(*error)
 	if ok {
 
-		*ctxerr = errors.Join(*ctxerr, err)
+		*ctxerr = errors.Join(*ctxerr, *err)
 	}
 }
 

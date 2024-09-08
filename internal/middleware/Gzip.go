@@ -11,7 +11,7 @@ import (
 func Gzip(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		defer packerr.AddErrToReqContext(r, err)
+		defer packerr.AddErrToReqContext(r, &err)
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 		ow := w

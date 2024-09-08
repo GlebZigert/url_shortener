@@ -13,7 +13,7 @@ import (
 
 func Delete(w http.ResponseWriter, req *http.Request) {
 	var err error
-	defer packerr.AddErrToReqContext(req, err)
+	defer packerr.AddErrToReqContext(req, &err)
 	logger.Log.Info("Delete")
 	var todel []string
 	body, err := io.ReadAll(req.Body)

@@ -12,7 +12,7 @@ import (
 
 func GetURLs(w http.ResponseWriter, req *http.Request) {
 	var err error
-	defer packerr.AddErrToReqContext(req, err)
+	defer packerr.AddErrToReqContext(req, &err)
 	logger.Log.Info("GetURLs")
 	type URLs struct {
 		ShortURL    string `json:"short_url"`
