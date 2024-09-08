@@ -1,8 +1,8 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
@@ -13,17 +13,12 @@ import (
 func Delete(w http.ResponseWriter, req *http.Request) (err error) {
 	logger.Log.Info("Delete")
 	var todel []string
-	var buf bytes.Buffer
-
-	_, err = buf.ReadFrom(req.Body)
-
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
-
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
 
-	if err = json.Unmarshal(buf.Bytes(), &todel); err != nil {
+	if err = json.Unmarshal(body, &todel); err != nil {
 
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

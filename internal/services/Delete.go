@@ -64,10 +64,12 @@ func deleteShort(short string, uid int) {
 				//
 
 			} else {
-				err = errors.New(fmt.Sprintln("щорт другого пользователя", one.UUID, uid))
+				err = errors.New(fmt.Sprintln("шорт другого пользователя", one.UUID, uid))
 			}
 		}
+		//если есть ошибки - их надо поднять вверх до обработчика в мидле errHandler
 		if err != nil {
+
 			logger.Log.Error("err",
 				zap.String("short:", short),
 				zap.String("err:", err.Error()))

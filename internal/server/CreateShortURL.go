@@ -19,49 +19,47 @@ import (
 	и сокращённым URL как text/plain.
 */
 func CreateShortURL(w http.ResponseWriter, req *http.Request) error {
+	logger.Log.Info("CreateShortURL")
 
-	if req.Method == http.MethodPost {
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		return err
+	}
+	url := string(body)
+	logger.Log.Info("auth: ", zap.String("url", url))
 
-		body, err := io.ReadAll(req.Body)
-		if err != nil {
-			return err
-		}
-		url := string(body)
-		logger.Log.Info("auth: ", zap.String("url", url))
+	res := config.BaseURL + "/"
+	var short string
+	user, ok := req.Context().Value(config.UIDkey).(int)
+	if ok {
 
-		res := config.BaseURL + "/"
-		var short string
-		user, ok := req.Context().Value(config.UIDkey).(int)
-		if ok {
-
-			short, err = services.Short(url, user)
-
-		}
-
-		fl := false
-		var conflict *services.ErrConflict409
-		if err == nil {
-			fl = true
-			w.WriteHeader(http.StatusCreated)
-		} else {
-			logger.Log.Error(err.Error())
-			if errors.As(err, &conflict) {
-				fl = true
-				w.WriteHeader(http.StatusConflict)
-			} else {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return err
-			}
-		}
-
-		if fl {
-
-			res += short
-
-		}
-
-		w.Write([]byte(res))
+		short, err = services.Short(url, user)
 
 	}
+
+	fl := false
+	var conflict *services.ErrConflict409
+	if err == nil {
+		fl = true
+		w.WriteHeader(http.StatusCreated)
+	} else {
+		logger.Log.Error(err.Error())
+		if errors.As(err, &conflict) {
+			fl = true
+			w.WriteHeader(http.StatusConflict)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return err
+		}
+	}
+
+	if fl {
+
+		res += short
+
+	}
+
+	w.Write([]byte(res))
+
 	return nil
 }

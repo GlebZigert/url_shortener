@@ -11,18 +11,17 @@ import (
 
 func Ping(w http.ResponseWriter, req *http.Request) (err error) {
 	logger.Log.Info("Ping")
-	if req.Method == http.MethodGet {
-		ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)
-		defer cancel()
-		if err = db.Ping(ctx); err == nil {
-			w.WriteHeader(http.StatusOK)
 
-		} else {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
+	ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)
+	defer cancel()
+	if err = db.Ping(ctx); err == nil {
+		w.WriteHeader(http.StatusOK)
 
-		w.Write([]byte{})
-
+	} else {
+		w.WriteHeader(http.StatusInternalServerError)
 	}
+
+	w.Write([]byte{})
+
 	return err
 }

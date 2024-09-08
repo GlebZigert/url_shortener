@@ -1,12 +1,13 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -16,18 +17,14 @@ import (
 */
 
 func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
-
+	logger.Log.Info("CreateShortURLfromJSON")
 	var msg URLmessage
 
-	var buf bytes.Buffer
-
-	_, err := buf.ReadFrom(req.Body)
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
 		return err
 	}
-
-	if err = json.Unmarshal(buf.Bytes(), &msg); err != nil {
+	if err = json.Unmarshal(body, &msg); err != nil {
 
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return err

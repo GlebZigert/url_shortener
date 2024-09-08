@@ -1,9 +1,9 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
@@ -30,15 +30,12 @@ func Batcher(w http.ResponseWriter, req *http.Request) error {
 
 	var batches []Batch
 
-	var buf bytes.Buffer
-
-	_, err := buf.ReadFrom(req.Body)
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
 		return err
 	}
 
-	if err := json.Unmarshal(buf.Bytes(), &batches); err != nil {
+	if err := json.Unmarshal(body, &batches); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return err
 	}
