@@ -80,6 +80,6 @@ func Log(h http.HandlerFunc) http.HandlerFunc {
 			zap.String("status", strconv.Itoa(responseData.status)),
 			zap.String("body", responseData.body),
 		)
-		return
+
 	})
 }

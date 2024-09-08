@@ -26,5 +26,4 @@ func Ping(w http.ResponseWriter, req *http.Request) {
 
 	w.Write([]byte{})
 
-	return // err
 }
