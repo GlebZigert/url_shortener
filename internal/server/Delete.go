@@ -42,5 +42,5 @@ func Delete(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 
 	w.Write([]byte{})
-	return
+
 }

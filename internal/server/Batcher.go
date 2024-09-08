@@ -68,6 +68,4 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 
 	w.Write(resp)
 
-	return //nil
-
 }
