@@ -4,11 +4,14 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/pkg/compress"
 )
 
-func Gzip(h MyHandlerFunc) MyHandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+func Gzip(h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		defer packerr.AddErrToReqContext(r, err)
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 		ow := w
@@ -33,7 +36,7 @@ func Gzip(h MyHandlerFunc) MyHandlerFunc {
 			cr, err := compress.NewCompressReader(r.Body)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				return err
+				return //err
 			}
 			// меняем тело запроса на новое
 			r.Body = cr
@@ -41,6 +44,6 @@ func Gzip(h MyHandlerFunc) MyHandlerFunc {
 		}
 
 		// передаём управление хендлеру
-		return h(ow, r)
-	}
+		h.ServeHTTP(ow, r)
+	})
 }

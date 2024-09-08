@@ -7,11 +7,14 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"go.uber.org/zap"
 )
 
-func Auth(h MyHandlerFunc) MyHandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) (err error) {
+func Auth(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		defer packerr.AddErrToReqContext(r, err)
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 
@@ -32,6 +35,6 @@ func Auth(h MyHandlerFunc) MyHandlerFunc {
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
 		r = r.WithContext(ctx)
 		h(w, r)
-		return
+
 	}
 }

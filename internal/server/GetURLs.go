@@ -2,15 +2,17 @@ package server
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
-func GetURLs(w http.ResponseWriter, req *http.Request) error {
+func GetURLs(w http.ResponseWriter, req *http.Request) {
+	var err error
+	defer packerr.AddErrToReqContext(req, err)
 	logger.Log.Info("GetURLs")
 	type URLs struct {
 		ShortURL    string `json:"short_url"`
@@ -24,7 +26,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) error {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return errors.New("")
+		return //errors.New("")
 	}
 
 	user, ok := req.Context().Value(config.UIDkey).(int)
@@ -34,7 +36,7 @@ func GetURLs(w http.ResponseWriter, req *http.Request) error {
 		w.WriteHeader(http.StatusUnauthorized)
 
 		w.Write([]byte{})
-		return errors.New("")
+		return //errors.New("")
 	}
 
 	res := []URLs{}
@@ -50,14 +52,14 @@ func GetURLs(w http.ResponseWriter, req *http.Request) error {
 		w.WriteHeader(http.StatusNoContent)
 
 		w.Write([]byte{})
-		return errors.New("StatusNoContent")
+		return //errors.New("StatusNoContent")
 	}
 
 	resp, err := json.Marshal(res)
 	if err != nil {
 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
+		return //err
 	}
 
 	if req.Method == http.MethodGet {
@@ -68,5 +70,5 @@ func GetURLs(w http.ResponseWriter, req *http.Request) error {
 		w.Write(resp)
 
 	}
-	return nil
+	return //nil
 }

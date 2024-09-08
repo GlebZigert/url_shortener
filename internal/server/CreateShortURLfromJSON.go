@@ -8,6 +8,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -16,18 +17,20 @@ import (
 и возвращать в ответ объект {"result":"<ShortURL>"}.
 */
 
-func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
+func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
+	var err error
+	defer packerr.AddErrToReqContext(req, err)
 	logger.Log.Info("CreateShortURLfromJSON")
 	var msg URLmessage
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		return err
+		return //err
 	}
 	if err = json.Unmarshal(body, &msg); err != nil {
 
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return err
+		return //err
 	}
 
 	url := string(msg.URL)
@@ -50,7 +53,7 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
 			header = http.StatusConflict
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return err
+			return //err
 		}
 	}
 
@@ -65,11 +68,11 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) error {
 		resp, err = json.Marshal(answer)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return err
+			return //err
 		}
 	}
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(header)
 	w.Write(resp)
-	return nil
+	return // nil
 }

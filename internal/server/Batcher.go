@@ -8,6 +8,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
@@ -21,23 +22,27 @@ type BatchBack struct {
 	ShortURL      string `json:"short_url"`
 }
 
-func Batcher(w http.ResponseWriter, req *http.Request) error {
+func Batcher(w http.ResponseWriter, req *http.Request) {
+
+	var err error
+	defer packerr.AddErrToReqContext(req, err)
+
 	logger.Log.Info("Batcher")
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusBadRequest)
-		return errors.New("req.Method != http.MethodPost")
+		return // errors.New("req.Method != http.MethodPost")
 	}
 
 	var batches []Batch
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		return err
+		return //err
 	}
 
 	if err := json.Unmarshal(body, &batches); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return err
+		return // err
 	}
 	ll := len(batches)
 	batchback := make([]BatchBack, ll)
@@ -55,7 +60,7 @@ func Batcher(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
+		return //err
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -63,6 +68,6 @@ func Batcher(w http.ResponseWriter, req *http.Request) error {
 
 	w.Write(resp)
 
-	return nil
+	return //nil
 
 }

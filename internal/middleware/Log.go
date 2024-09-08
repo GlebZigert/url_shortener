@@ -7,6 +7,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"go.uber.org/zap"
 )
 
@@ -41,9 +42,10 @@ func (r *loggingResponseWriter) WriteHeader(statusCode int) {
 }
 
 // RequestLogger — middleware-логер для входящих HTTP-запросов.
-func Log(h MyHandlerFunc) MyHandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
-
+func Log(h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		defer packerr.AddErrToReqContext(r, err)
 		t1 := time.Now()
 
 		responseData := &responseData{
@@ -67,7 +69,7 @@ func Log(h MyHandlerFunc) MyHandlerFunc {
 
 			lw.Header().Add("Authorization", string(jwt))
 		}
-		h(&lw, r)
+		h.ServeHTTP(&lw, r)
 
 		logger.Log.Info("got incoming HTTP request",
 			zap.String("method", r.Method),
@@ -78,6 +80,6 @@ func Log(h MyHandlerFunc) MyHandlerFunc {
 			zap.String("status", strconv.Itoa(responseData.status)),
 			zap.String("body", responseData.body),
 		)
-		return nil
-	}
+		return
+	})
 }

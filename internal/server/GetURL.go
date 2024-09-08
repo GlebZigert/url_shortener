@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 	"go.uber.org/zap"
 )
@@ -25,7 +26,9 @@ Content-Type: text/plain
 
 */
 
-func GetURL(w http.ResponseWriter, req *http.Request) (err error) {
+func GetURL(w http.ResponseWriter, req *http.Request) {
+	var err error
+	defer packerr.AddErrToReqContext(req, err)
 
 	var deleted *services.ErrDeleted
 
