@@ -1,5 +1,11 @@
 package services
 
+import (
+	"strings"
+
+	"github.com/GlebZigert/url_shortener.git/internal/db"
+)
+
 func Delete(shorts []string, uid int) error {
 
 	// сигнальный канал для завершения горутин
@@ -17,9 +23,10 @@ func Delete(shorts []string, uid int) error {
 	addResultCh := fanIn(doneCh, channels...)
 
 	//получаю слайс айди тех шортов, которые прошли проверку на удаление
-	resCh := multiply(doneCh, addResultCh)
+	res := multiply(doneCh, addResultCh)
 
-	return final(resCh)
+	_, err := db.Get().Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(res, ","))
+	return err
 
 }
 

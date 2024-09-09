@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -102,29 +101,26 @@ func fanIn(doneCh chan struct{}, resultChs ...chan int) chan int {
 
 // multiply принимает на вход сигнальный канал для прекращения работы и канал с входными данными для работы
 
-func multiply(doneCh chan struct{}, inputCh chan int) chan int {
+func multiply(doneCh chan struct{}, inputCh chan int) []string {
 	// канал с результатом
 
-	multiplyRes := make(chan int)
-	defer close(multiplyRes)
-	go func() {
-		// берем из канала inputCh значения, которые надо сложить в слайс
-		for data := range inputCh {
-			// изменяем данные
+	var res []string
+	// берем из канала inputCh значения, которые надо сложить в слайс
+	for data := range inputCh {
+		// изменяем данные
 
-			select {
-			// если канал doneCh закрылся, выходим из горутины
-			case <-doneCh:
-				return
+		res = append(res, strconv.Itoa(data))
 
-			case multiplyRes <- data:
+		select {
+		// если канал doneCh закрылся, выходим из горутины
+		case <-doneCh:
+			return res
 
-			}
 		}
-	}()
+	}
 
 	// возвращаем канал для результатов вычислений
-	return multiplyRes
+	return res
 }
 
 func deleteShortWorker(doneCh chan struct{}, inputCh chan string, uid int) chan int {
@@ -201,18 +197,5 @@ func deleteShort(short string, uid int) (id int, err error) {
 
 	}
 	return
-
-}
-
-func final(Ch chan int) error {
-
-	var res []string
-	for data := range Ch {
-		res = append(res, strconv.Itoa(data))
-
-	}
-
-	_, err := db.Get().Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(res, ","))
-	return err
 
 }
