@@ -178,6 +178,7 @@ func deleteShort(short string, uid int) (id int, err error) {
 					logger.Log.Info("удален",
 						zap.String("short:", short),
 						zap.Int("uid:", uid))
+					return id, err
 				}
 
 				//
@@ -193,7 +194,7 @@ func deleteShort(short string, uid int) (id int, err error) {
 				zap.String("short:", short),
 				zap.String("err:", err.Error()))
 		}
-		return id, err
+
 	}
 	return
 
