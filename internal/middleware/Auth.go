@@ -31,15 +31,8 @@ func Auth(h http.Handler) http.Handler {
 			ctx = context.WithValue(ctx, config.JWTkey, string(jwt))
 			ctx = context.WithValue(ctx, config.NEWkey, bool(true))
 
-			//	w.Header().Add("Authorization", string(jwt))
+			w.Header().Add("Authorization", string(jwt))
 
-			cookie := http.Cookie{
-				Name:     "Authorization",
-				Value:    string(jwt),
-				Path:     "/",
-				HttpOnly: true,
-			}
-			http.SetCookie(w, &cookie)
 		}
 
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
