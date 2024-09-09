@@ -109,12 +109,13 @@ func multiply(doneCh chan struct{}, inputCh chan int) []string {
 	for data := range inputCh {
 		// изменяем данные
 
-		res = append(res, strconv.Itoa(data))
-
 		select {
 		// если канал doneCh закрылся, выходим из горутины
 		case <-doneCh:
 			return res
+
+		default:
+			res = append(res, strconv.Itoa(data))
 
 		}
 	}
@@ -130,15 +131,17 @@ func deleteShortWorker(doneCh chan struct{}, inputCh chan string, uid int) chan 
 		defer close(addRes)
 
 		for data := range inputCh {
-			id, err := deleteShort(data, uid)
-
-			if err == nil {
-				addRes <- id
-			}
 
 			select {
 			case <-doneCh:
 				return
+
+			default:
+				id, err := deleteShort(data, uid)
+
+				if err == nil {
+					addRes <- id
+				}
 			}
 
 		}
