@@ -24,6 +24,8 @@ var (
 
 	FileStoragePath string
 
+	NumWorkers int
+
 	DatabaseDSN string
 
 	TOKENEXP int
@@ -42,6 +44,7 @@ func ParseFlags() {
 
 	flag.StringVar(&SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
 	flag.IntVar(&TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
+	flag.IntVar(&NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
 
 	flag.Parse()
 

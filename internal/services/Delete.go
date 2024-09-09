@@ -1,14 +1,35 @@
 package services
 
 import (
-	"errors"
-	"fmt"
 	"strings"
 
+	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
-	"go.uber.org/zap"
 )
+
+func Delete(shorts []string, uid int) error {
+
+	// сигнальный канал для завершения горутин
+	doneCh := make(chan struct{})
+	// закрываем его при завершении программы
+	defer close(doneCh)
+
+	// кладу в генератор слайс с шортами
+	inputCh := generator(doneCh, shorts)
+
+	// получаем слайс каналов из нескольких рабочих deleteShort
+	channels := fanOut(doneCh, inputCh, config.NumWorkers, uid)
+
+	// а теперь объединяем эти каналы в один
+	addResultCh := fanIn(doneCh, channels...)
+
+	//получаю слайс айди тех шортов, которые прошли проверку на удаление
+	res := multiply(doneCh, addResultCh)
+
+	_, err := db.Get().Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(res, ","))
+	return err
+
+}
 
 /*
 Функция Delete принимает на входе массив шортов для удаления short
@@ -21,6 +42,7 @@ import (
 если его создал тот же пользователь который сейчас хочет его удалить
 
 
+
 послылаю в бд команду выставить для этого шорта флаг deleted в true
 если эта команда записи в бд выполняется успешно
 
@@ -29,7 +51,7 @@ import (
 
 Эту процедуру для нескольких шортов можно  выполнить параллельно
 
-*/
+
 
 func deleteShort(short string, uid int) {
 	logger.Log.Info("deleteShort",
@@ -92,3 +114,6 @@ func Delete(shorts []string, uid int) {
 	}
 
 }
+
+
+*/
