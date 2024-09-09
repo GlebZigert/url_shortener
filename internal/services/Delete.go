@@ -3,7 +3,6 @@ package services
 import (
 	"strings"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
 
@@ -18,7 +17,7 @@ func Delete(shorts []string, uid int) error {
 	inputCh := generator(doneCh, shorts)
 
 	// получаем слайс каналов из нескольких рабочих deleteShort
-	channels := fanOut(doneCh, inputCh, config.NumWorkers, uid)
+	channels := fanOut(doneCh, inputCh, len(shorts), uid)
 
 	// а теперь объединяем эти каналы в один
 	addResultCh := fanIn(doneCh, channels...)
