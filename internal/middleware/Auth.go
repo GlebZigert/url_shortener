@@ -36,6 +36,7 @@ func Auth(h http.Handler) http.Handler {
 			cookie := http.Cookie{
 				Name:     "Authorization",
 				Value:    string(jwt),
+				Path:     "/",
 				HttpOnly: true,
 				Secure:   true,
 			}
