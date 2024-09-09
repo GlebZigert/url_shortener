@@ -20,6 +20,7 @@ func InitRouter() {
 		r.Get(`/ping`, middleware.Log(Ping))
 		r.Get(`/*`, middleware.Log(GetURL))
 		r.Delete(`/api/user/urls`, middleware.Auth(middleware.Log(Delete)))
+
 	})
 
 	http.ListenAndServe(config.RunAddr, r)
