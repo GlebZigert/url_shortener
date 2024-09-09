@@ -11,8 +11,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func Auth(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func Auth(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer packerr.AddErrToReqContext(r, &err)
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
@@ -36,7 +36,7 @@ func Auth(h http.HandlerFunc) http.HandlerFunc {
 
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
 		r = r.WithContext(ctx)
-		h(w, r)
+		h.ServeHTTP(w, r)
 
-	}
+	})
 }
