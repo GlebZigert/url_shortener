@@ -62,13 +62,15 @@ func Log(h http.HandlerFunc) http.HandlerFunc {
 		if ok {
 			logger.Log.Info("user id: ", zap.Int("", id))
 		}
+
 		//
+		/*
+			jwt, ok := r.Context().Value(config.JWTkey).(string)
+			if ok {
 
-		jwt, ok := r.Context().Value(config.JWTkey).(string)
-		if ok {
-
-			lw.Header().Add("Authorization", string(jwt))
-		}
+				lw.Header().Add("Authorization", string(jwt))
+			}
+		*/
 		h.ServeHTTP(&lw, r)
 
 		logger.Log.Info("got incoming HTTP request",

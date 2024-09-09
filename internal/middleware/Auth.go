@@ -30,6 +30,8 @@ func Auth(h http.HandlerFunc) http.HandlerFunc {
 			userid, _ = auth.GetUserID(jwt)
 			ctx = context.WithValue(ctx, config.JWTkey, string(jwt))
 			ctx = context.WithValue(ctx, config.NEWkey, bool(true))
+
+			w.Header().Add("Authorization", string(jwt))
 		}
 
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
