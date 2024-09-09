@@ -5,16 +5,47 @@ import (
 	"os"
 )
 
-var RunAddr string
+type key int
 
-var BaseURL string
+const (
+	UIDkey key = iota
+	JWTkey key = iota
+	NEWkey key = iota
+	Errkey key = iota
+	// ...
+)
+
+var (
+	RunAddr string
+
+	BaseURL string
+
+	FlagLogLevel string
+
+	FileStoragePath string
+
+	NumWorkers int
+
+	DatabaseDSN string
+
+	TOKENEXP int
+
+	SECRETKEY string
+)
+
+const Conflict409 = "попытка сократить уже имеющийся в базе URL"
 
 func ParseFlags() {
-	// регистрируем переменную flagRunAddr
-	// как аргумент -a со значением :8080 по умолчанию
 	flag.StringVar(&RunAddr, "a", "localhost:8080", "address and port to run server")
 	flag.StringVar(&BaseURL, "b", "http://localhost:8080", "base address for short URL")
-	// парсим переданные серверу аргументы в зарегистрированные переменные
+	flag.StringVar(&FlagLogLevel, "l", "info", "log level")
+	flag.StringVar(&FileStoragePath, "f", "" /*"./short-url-db.json"*/, "file storage path")
+	flag.StringVar(&DatabaseDSN, "d", "", "database dsn")
+
+	flag.StringVar(&SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
+	flag.IntVar(&TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
+	flag.IntVar(&NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
+
 	flag.Parse()
 
 	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
@@ -23,5 +54,13 @@ func ParseFlags() {
 
 	if envBaseURL := os.Getenv("BASE_URL"); envBaseURL != "" {
 		BaseURL = envBaseURL
+	}
+
+	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
+		FlagLogLevel = envLogLevel
+	}
+
+	if envFileStoragePath := os.Getenv("FILE_STORAGE_PATH"); envFileStoragePath != "" {
+		FileStoragePath = envFileStoragePath
 	}
 }

@@ -1,13 +1,43 @@
 package services
 
 import (
+	"container/list"
 	"errors"
-	"fmt"
+
 	"math/rand"
 	"time"
+
+	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"go.uber.org/zap"
+
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
-var mapa map[string]string
+// это массив для хранения сокращенных url
+var shorten []*storager.Shorten
+
+var (
+	id int
+)
+
+var shortuser map[string]*list.List
+
+type ErrConflict409 struct {
+	s string
+}
+
+type ErrDeleted struct {
+	s string
+}
+
+func (e *ErrDeleted) Error() string {
+	return e.s
+}
+
+func (e *ErrConflict409) Error() string {
+	return e.s
+}
 
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -21,39 +51,65 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func Map() map[string]string {
+func Init() {
 
-	if mapa == nil {
-		fmt.Println("обьявляю мапу")
-		mapa = make(map[string]string)
-	}
+	shortuser = make(map[string]*list.List)
+	shorten = []*storager.Shorten{}
 
-	return mapa
+	_ = storager.Load(&shorten)
+
 }
 
-func Short(url string) string {
+func Short(oririn string, uuid int) (string, error) {
+	logger.Log.Info("service.Short",
+		zap.String("oririn:", oririn),
+		zap.Int("uuid:", uuid))
 
-	v, ok := Map()[url]
-	if ok {
-		fmt.Println(url, " уже есть в мапе: ", v)
-		return v
-	}
+	//v, ok := mapa[oririn]
+	for _, sh := range shorten {
+		if sh.OriginalURL == oririn {
 
-	shortURL := generateRandomString(8)
-
-	Map()[url] = shortURL
-	fmt.Println("Для ", url, " сгенерирован шорт: ", shortURL)
-	return shortURL
-}
-
-func Origin(shortURL string) (string, error) {
-
-	for k, v := range Map() {
-		if v == shortURL {
-			fmt.Println("Для шорта", shortURL, " найден url: ", k)
-			return k, nil
+			return sh.ShortURL, &ErrConflict409{config.Conflict409}
 		}
 	}
-	fmt.Println("Нет такого шорта как", shortURL)
+
+	short := generateRandomString(8)
+	//AddUserToShort(int(uuid), short)
+	id := 0
+	if len(shorten) > 0 {
+		id = shorten[len(shorten)-1].ID + 1
+	}
+
+	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
+	shorten = append(shorten, &sh)
+
+	storager.StorageWrite(sh)
+	logger.Log.Info("service.Short",
+		zap.String("oririn:", oririn),
+		zap.String("short:", short),
+		zap.Int("uuid:", uuid))
+	return short, nil
+}
+
+func Origin(short string) (string, error) {
+
+	for _, sh := range shorten {
+		if sh.ShortURL == short {
+
+			if sh.DeletedFlag {
+				str := "шорт " + short + " удален"
+				return sh.OriginalURL, &ErrDeleted{str}
+			}
+
+			return sh.OriginalURL, nil
+		}
+	}
+
 	return "", errors.New("отстуствует")
+
+}
+
+func GetAll() *[]*storager.Shorten {
+
+	return &shorten
 }
