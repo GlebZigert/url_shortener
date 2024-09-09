@@ -38,7 +38,6 @@ func Auth(h http.Handler) http.Handler {
 				Value:    string(jwt),
 				Path:     "/",
 				HttpOnly: true,
-				Secure:   true,
 			}
 			http.SetCookie(w, &cookie)
 		}
