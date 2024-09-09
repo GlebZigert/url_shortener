@@ -12,15 +12,26 @@ func InitRouter() {
 
 	r := chi.NewRouter()
 	r.Group(func(r chi.Router) {
-		r.Use(middleware.ErrHandler)
-		r.Post(`/`, middleware.Auth(middleware.Log(middleware.Gzip(CreateShortURL))))
-		r.Post(`/api/shorten`, middleware.Log(CreateShortURLfromJSON))
-		r.Post(`/api/shorten/batch`, middleware.Log(Batcher))
-		r.Get(`/api/user/urls`, middleware.Auth(middleware.Log(GetURLs)))
-		r.Get(`/ping`, middleware.Log(Ping))
-		r.Get(`/*`, middleware.Log(GetURL))
-		r.Delete(`/api/user/urls`, middleware.Auth(middleware.Log(Delete)))
-	})
 
+		r.Use(middleware.ErrHandler)
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.Log)
+
+			r.Group(func(r chi.Router) {
+				r.Use(middleware.Auth)
+				r.Post(`/`, middleware.Gzip(CreateShortURL))
+				r.Get(`/api/user/urls`, GetURLs)
+				r.Delete(`/api/user/urls`, Delete)
+			})
+
+			r.Post(`/api/shorten`, CreateShortURLfromJSON)
+			r.Post(`/api/shorten/batch`, Batcher)
+
+			r.Get(`/ping`, Ping)
+			r.Get(`/*`, GetURL)
+		})
+
+	})
 	http.ListenAndServe(config.RunAddr, r)
 }
