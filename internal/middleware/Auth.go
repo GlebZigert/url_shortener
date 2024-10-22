@@ -22,13 +22,13 @@ func Auth(h http.Handler) http.Handler {
 		authv, err := r.Cookie("Authorization") // Header.Get("Authorization")
 
 		var userid int
-		var ctx context.Context
+		ctx := r.Context()
 
 		if authv != nil {
 			logger.Log.Info("auth: ", zap.String("", authv.Value))
 
 			userid, err = auth.GetUserID(authv.Value)
-			ctx = r.Context()
+			//ctx = r.Context()
 		}
 
 		if err != nil || authv == nil {
@@ -45,6 +45,7 @@ func Auth(h http.Handler) http.Handler {
 				HttpOnly: true,
 			}
 			http.SetCookie(w, &cookie)
+
 		}
 
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
