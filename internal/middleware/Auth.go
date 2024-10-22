@@ -20,9 +20,9 @@ func Auth(h http.Handler) http.Handler {
 
 		// проверяем, что клиент умеет получать от сервера сжатые данные в формате gzip
 		authv, err := r.Cookie("Authorization") // Header.Get("Authorization")
-		logger.Log.Info("auth: ", zap.String("", authv))
+		logger.Log.Info("auth: ", zap.String("", authv.Value))
 
-		userid, err := auth.GetUserID(authv)
+		userid, err := auth.GetUserID(authv.Value)
 		ctx := r.Context()
 		if err != nil {
 
