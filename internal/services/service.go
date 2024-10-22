@@ -9,13 +9,39 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
-	"go.uber.org/zap"
 
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
 // это массив для хранения сокращенных url
 var shorten []*storager.Shorten
+
+type Service struct {
+	logger logger.Logger
+	store  storager.Storager
+
+	shortuser map[string]*list.List
+	shorten   []*storager.Shorten
+}
+
+/*
+
+func Init() {
+
+	shortuser = make(map[string]*list.List)
+	shorten = []*storager.Shorten{}
+
+	_ = storager.Load(&shorten)
+
+}
+*/
+
+func NewService(logger logger.Logger, store storager.Storager) *Service {
+	srv := Service{logger, store, make(map[string]*list.List), []*storager.Shorten{}}
+
+	return &srv
+
+}
 
 var (
 	id int
@@ -51,19 +77,13 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func Init() {
+func (s *Service) Short(oririn string, uuid int) (string, error) {
 
-	shortuser = make(map[string]*list.List)
-	shorten = []*storager.Shorten{}
+	s.logger.Info("try to login: ", map[string]interface{}{
 
-	_ = storager.Load(&shorten)
-
-}
-
-func Short(oririn string, uuid int) (string, error) {
-	logger.Log.Info("service.Short",
-		zap.String("oririn:", oririn),
-		zap.Int("uuid:", uuid))
+		"oririn": oririn,
+		"uuid":   uuid,
+	})
 
 	//v, ok := mapa[oririn]
 	for _, sh := range shorten {
@@ -83,15 +103,19 @@ func Short(oririn string, uuid int) (string, error) {
 	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
 	shorten = append(shorten, &sh)
 
-	storager.StorageWrite(sh)
-	logger.Log.Info("service.Short",
-		zap.String("oririn:", oririn),
-		zap.String("short:", short),
-		zap.Int("uuid:", uuid))
+	s.store.StorageWrite(short, oririn, uuid)
+
+	s.logger.Info("try to login: ", map[string]interface{}{
+
+		"oririn": oririn,
+		"short":  short,
+		"uuid":   uuid,
+	})
+
 	return short, nil
 }
 
-func Origin(short string) (string, error) {
+func (s *Service) Origin(short string) (string, error) {
 
 	for _, sh := range shorten {
 		if sh.ShortURL == short {
@@ -109,7 +133,7 @@ func Origin(short string) (string, error) {
 
 }
 
-func GetAll() *[]*storager.Shorten {
+func (s *Service) GetAll() *[]*storager.Shorten {
 
 	return &shorten
 }

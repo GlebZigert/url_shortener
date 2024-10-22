@@ -1,28 +1,38 @@
 package app
 
 import (
+	"context"
+
+	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/server"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
-	"go.uber.org/zap"
 )
 
-func Run() error {
+func Run() (err error) {
 
-	config.ParseFlags()
+	cfg := config.NewConfig()
+	ctx := context.Background()
 
-	if err := logger.Initialize(config.FlagLogLevel); err != nil {
-		return err
+	db.Init(cfg.DatabaseDSN)
+	store := storager.New(cfg)
+
+	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
+
+	service := services.NewService(logger, store)
+
+	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
+	mdl := middleware.NewMiddlewares(auc, logger)
+	server, err := server.NewServer(cfg, mdl, logger, service)
+
+	if err != nil {
+		return
 	}
-	db.Init()
-	storager.Init()
-	services.Init()
-	logger.Log.Info("Running server", zap.String("address", config.RunAddr))
+	err = server.Start()
 
-	server.InitRouter()
-
-	return nil
+	return
 }

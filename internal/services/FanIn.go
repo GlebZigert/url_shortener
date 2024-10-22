@@ -7,8 +7,6 @@ import (
 	"sync"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
-	"go.uber.org/zap"
 )
 
 // generator возвращает канал с данными
@@ -38,7 +36,7 @@ func generator(doneCh chan struct{}, input []string) chan string {
 }
 
 // fanOut принимает канал данных, порождает несколько горутин
-func fanOut(doneCh chan struct{}, inputCh chan string, numWorkers int, uid int) []chan int {
+func (s *Service) fanOut(doneCh chan struct{}, inputCh chan string, numWorkers int, uid int) []chan int {
 	// количество горутин add
 
 	// каналы, в которые отправляются результаты
@@ -46,7 +44,7 @@ func fanOut(doneCh chan struct{}, inputCh chan string, numWorkers int, uid int) 
 
 	for i := 0; i < numWorkers; i++ {
 		// получаем канал из горутины deleteShort
-		addResultCh := deleteShortWorker(doneCh, inputCh, uid)
+		addResultCh := s.deleteShortWorker(doneCh, inputCh, uid)
 		// отправляем его в слайс каналов
 		channels[i] = addResultCh
 	}
@@ -56,7 +54,7 @@ func fanOut(doneCh chan struct{}, inputCh chan string, numWorkers int, uid int) 
 }
 
 // fanIn объединяет несколько каналов resultChs в один.
-func fanIn(doneCh chan struct{}, resultChs ...chan int) chan int {
+func (s *Service) fanIn(doneCh chan struct{}, resultChs ...chan int) chan int {
 	// конечный выходной канал в который отправляем данные из всех каналов из слайса, назовём его результирующим
 	finalCh := make(chan int)
 
@@ -124,7 +122,7 @@ func multiply(doneCh chan struct{}, inputCh chan int) []string {
 	return res
 }
 
-func deleteShortWorker(doneCh chan struct{}, inputCh chan string, uid int) chan int {
+func (s *Service) deleteShortWorker(doneCh chan struct{}, inputCh chan string, uid int) chan int {
 	addRes := make(chan int)
 
 	go func() {
@@ -137,7 +135,7 @@ func deleteShortWorker(doneCh chan struct{}, inputCh chan string, uid int) chan 
 				return
 
 			default:
-				id, err := deleteShort(data, uid)
+				id, err := s.deleteShort(data, uid)
 
 				if err == nil {
 					addRes <- id
@@ -150,10 +148,14 @@ func deleteShortWorker(doneCh chan struct{}, inputCh chan string, uid int) chan 
 }
 
 // выполняет проверку шорта по пользователю
-func deleteShort(short string, uid int) (id int, err error) {
-	logger.Log.Info("deleteShort",
-		zap.String("short:", short),
-		zap.Int("uid:", uid))
+func (s *Service) deleteShort(short string, uid int) (id int, err error) {
+
+	s.logger.Info("deleteShort: ", map[string]interface{}{
+
+		"short": short,
+		"uid":   uid,
+	})
+
 	//ищу шорт в локальной хранилке
 
 	for _, one := range shorten {
@@ -178,9 +180,13 @@ func deleteShort(short string, uid int) (id int, err error) {
 				if err == nil {
 					id = one.ID
 					one.DeletedFlag = true
-					logger.Log.Info("удален",
-						zap.String("short:", short),
-						zap.Int("uid:", uid))
+
+					s.logger.Info("удален: ", map[string]interface{}{
+
+						"short": short,
+						"uid":   uid,
+					})
+
 					return id, err
 				}
 
@@ -193,9 +199,12 @@ func deleteShort(short string, uid int) (id int, err error) {
 		//если есть ошибки - их надо поднять вверх до обработчика в мидле errHandler
 		if err != nil {
 
-			logger.Log.Error("err",
-				zap.String("short:", short),
-				zap.String("err:", err.Error()))
+			s.logger.Error("try to login: ", map[string]interface{}{
+
+				"short": short,
+				"err":   err.Error(),
+			})
+
 		}
 
 	}

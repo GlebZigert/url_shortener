@@ -11,11 +11,13 @@ import (
 var id int
 
 type FileStorager struct {
+	cfg *config.Config
 }
 
-func NewFileStorager() (*FileStorager, error) {
-	store := &FileStorager{}
-	file, err := os.OpenFile(config.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
+func NewFileStorager(cfg *config.Config) (*FileStorager, error) {
+
+	store := &FileStorager{cfg}
+	file, err := os.OpenFile(cfg.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return store, err
 	}
@@ -25,7 +27,7 @@ func NewFileStorager() (*FileStorager, error) {
 
 func (one *FileStorager) Load(shorten *[]*Shorten) error {
 
-	file, err := os.OpenFile(config.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
+	file, err := os.OpenFile(one.cfg.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
@@ -58,7 +60,7 @@ func (one *FileStorager) Delete(listID []int) {
 
 func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 
-	file, err := os.OpenFile(config.FileStoragePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	file, err := os.OpenFile(one.cfg.FileStoragePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return err
 	}

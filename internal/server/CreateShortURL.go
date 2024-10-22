@@ -6,10 +6,8 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"go.uber.org/zap"
 )
 
 /*
@@ -19,25 +17,29 @@ import (
 	и возвращает ответ с кодом 201
 	и сокращённым URL как text/plain.
 */
-func CreateShortURL(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) CreateShortURL(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)
 
-	logger.Log.Info("CreateShortURL")
+	//logger.Log.Info("CreateShortURL")
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		return
 	}
 	url := string(body)
-	logger.Log.Info("auth: ", zap.String("url", url))
 
-	res := config.BaseURL + "/"
+	srv.logger.Info("auth: ", map[string]interface{}{
+
+		"url": url,
+	})
+
+	res := srv.cfg.BaseURL + "/"
 	var short string
 	user, ok := req.Context().Value(config.UIDkey).(int)
 	if ok {
 
-		short, err = services.Short(url, user)
+		short, err = srv.service.Short(url, user)
 
 	}
 
@@ -47,7 +49,7 @@ func CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		fl = true
 		w.WriteHeader(http.StatusCreated)
 	} else {
-		logger.Log.Error(err.Error())
+
 		if errors.As(err, &conflict) {
 			fl = true
 			w.WriteHeader(http.StatusConflict)

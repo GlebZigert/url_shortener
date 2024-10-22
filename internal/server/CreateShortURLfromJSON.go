@@ -6,8 +6,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
@@ -17,10 +15,10 @@ import (
 и возвращать в ответ объект {"result":"<ShortURL>"}.
 */
 
-func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)
-	logger.Log.Info("CreateShortURLfromJSON")
+	//logger.Log.Info("CreateShortURLfromJSON")
 	var msg URLmessage
 
 	body, err := io.ReadAll(req.Body)
@@ -35,10 +33,10 @@ func CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 
 	url := string(msg.URL)
 
-	res := config.BaseURL + "/"
+	res := srv.cfg.BaseURL + "/"
 	var resp []byte
 
-	short, err := services.Short(url, -1)
+	short, err := srv.service.Short(url, -1)
 
 	fl := false
 	var header int

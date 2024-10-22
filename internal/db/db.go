@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -23,10 +22,10 @@ func Get() *sql.DB {
 	return db
 }
 
-func Init() error {
+func Init(DatabaseDSN string) error {
 
 	var err error
-	db, err = sql.Open("pgx", config.DatabaseDSN)
+	db, err = sql.Open("pgx", DatabaseDSN)
 
 	if err != nil {
 		return err

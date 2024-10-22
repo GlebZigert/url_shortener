@@ -5,15 +5,13 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
-	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
-func GetURLs(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)
-	logger.Log.Info("GetURLs")
+	//	logger.Log.Info("GetURLs")
 	type URLs struct {
 		ShortURL    string `json:"short_url"`
 		OriginalURL string `json:"original_url"`
@@ -40,9 +38,9 @@ func GetURLs(w http.ResponseWriter, req *http.Request) {
 	}
 
 	res := []URLs{}
-	for _, sh := range *services.GetAll() {
+	for _, sh := range *srv.service.GetAll() {
 		if sh.UUID == int(user) {
-			res = append(res, URLs{config.BaseURL + "/" + sh.ShortURL, sh.OriginalURL})
+			res = append(res, URLs{srv.cfg.BaseURL + "/" + sh.ShortURL, sh.OriginalURL})
 		}
 	}
 

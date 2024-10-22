@@ -6,8 +6,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
@@ -22,12 +20,12 @@ type BatchBack struct {
 	ShortURL      string `json:"short_url"`
 }
 
-func Batcher(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)
 
-	logger.Log.Info("Batcher")
+	//logger.Info("Batcher")
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusBadRequest)
 		return // errors.New("req.Method != http.MethodPost")
@@ -49,9 +47,9 @@ func Batcher(w http.ResponseWriter, req *http.Request) {
 	var conflict *services.ErrConflict409
 	for i, b := range batches {
 
-		ress, err := services.Short(b.OriginalURL, -1)
+		ress, err := srv.service.Short(b.OriginalURL, -1)
 		if err == nil || errors.As(err, &conflict) {
-			res := config.BaseURL + "/" + ress
+			res := srv.cfg.BaseURL + "/" + ress
 			batchback[i] = BatchBack{b.CorrelationID, res}
 		}
 	}

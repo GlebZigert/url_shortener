@@ -5,10 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"go.uber.org/zap"
 )
 
 /*
@@ -26,15 +24,20 @@ Content-Type: text/plain
 
 */
 
-func GetURL(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) GetURL(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)
 
 	var deleted *services.ErrDeleted
 
 	str := strings.Replace(req.URL.String(), "/", "", 1)
-	logger.Log.Info("GetURL", zap.String("short", str))
-	res, err := services.Origin(str)
+
+	srv.logger.Info("GetURL: ", map[string]interface{}{
+
+		"short": str,
+	})
+
+	res, err := srv.service.Origin(str)
 	if err == nil {
 		w.Header().Add("Location", res)
 		w.WriteHeader(http.StatusTemporaryRedirect)
@@ -45,7 +48,11 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 	}
 	if errors.As(err, &deleted) {
 
-		logger.Log.Info("запрос удаленного шорта: ", zap.String("", err.Error()))
+		srv.logger.Info("запрос удаленного шорта: ", map[string]interface{}{
+
+			"": err.Error(),
+		})
+
 		//w.Header().Add("Location", res)
 		w.WriteHeader(http.StatusGone)
 

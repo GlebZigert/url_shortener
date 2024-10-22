@@ -1,8 +1,6 @@
 package storager
 
-import (
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
-)
+import "github.com/GlebZigert/url_shortener.git/internal/config"
 
 type Shorten struct {
 	ID          int    `db:"id"`
@@ -18,32 +16,21 @@ type Storager interface {
 	Delete([]int)
 }
 
-var store Storager
-
-func Load(shorten *[]*Shorten) error {
-	return store.Load(shorten)
-}
-
-func StorageWrite(sh Shorten) error {
-	return store.StorageWrite(sh.ShortURL, sh.OriginalURL, sh.UUID)
-}
-
-func Init() {
+func New(cfg *config.Config) (store Storager) {
 	var err error
+
 	store, err = NewDBStorager()
 	if err == nil {
-		logger.Log.Info("DB Storager")
+
 		return
 	}
-	logger.Log.Error(err.Error())
-	store, err = NewFileStorager()
+
+	store, err = NewFileStorager(cfg)
 	if err == nil {
 
-		logger.Log.Info("File Storager")
 		return
 	}
-	logger.Log.Error(err.Error())
-	logger.Log.Info("No Storager")
-
 	store = &EmptyStorager{}
+
+	return
 }

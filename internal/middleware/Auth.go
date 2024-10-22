@@ -4,14 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
-	"go.uber.org/zap"
 )
 
-func Auth(h http.Handler) http.Handler {
+func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer packerr.AddErrToReqContext(r, &err)
@@ -25,15 +22,17 @@ func Auth(h http.Handler) http.Handler {
 		ctx := r.Context()
 
 		if authv != nil {
-			logger.Log.Info("auth: ", zap.String("", authv.Value))
+			mdl.logger.Info("auth: ", map[string]interface{}{
+				"auth": authv,
+			})
 
-			userid, err = auth.GetUserID(authv.Value)
+			userid, err = mdl.auch.GetUserID(authv.Value)
 			//ctx = r.Context()
 		}
 
 		if err != nil || authv == nil {
-			jwt, _ := auth.BuildJWTString()
-			userid, _ = auth.GetUserID(jwt)
+			jwt, _ := mdl.auch.BuildJWTString(userid)
+			userid, _ = mdl.auch.GetUserID(jwt)
 			ctx = context.WithValue(ctx, config.JWTkey, string(jwt))
 			ctx = context.WithValue(ctx, config.NEWkey, bool(true))
 
