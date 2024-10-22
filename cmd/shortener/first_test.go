@@ -1,12 +1,17 @@
 package main
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/GlebZigert/url_shortener.git/internal/auth"
+	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/server"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
@@ -30,9 +35,21 @@ func TestHandler(t *testing.T) {
 			},
 		},
 	}
-	db.Init()
-	storager.Init()
-	services.Init()
+	cfg := config.NewConfig()
+	ctx := context.Background()
+
+	db.Init(cfg.DatabaseDSN)
+	store := storager.New(cfg)
+
+	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
+
+	service := services.NewService(logger, store)
+
+	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
+	mdl := middleware.NewMiddlewares(auc, logger)
+
+	server, _ := server.NewServer(cfg, mdl, logger, service)
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			request := httptest.NewRequest(http.MethodPost, "/", nil)
