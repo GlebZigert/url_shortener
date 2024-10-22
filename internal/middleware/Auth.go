@@ -19,20 +19,29 @@ func Auth(h http.Handler) http.Handler {
 		// который будем передавать следующей функции
 
 		// проверяем, что клиент умеет получать от сервера сжатые данные в формате gzip
-		authv := r.Header.Get("Authorization")
+		authv, err := r.Cookie("Authorization") // Header.Get("Authorization")
 		logger.Log.Info("auth: ", zap.String("", authv))
 
 		userid, err := auth.GetUserID(authv)
 		ctx := r.Context()
 		if err != nil {
 
+		}
+
+		if err != nil {
 			jwt, _ := auth.BuildJWTString()
 			userid, _ = auth.GetUserID(jwt)
 			ctx = context.WithValue(ctx, config.JWTkey, string(jwt))
 			ctx = context.WithValue(ctx, config.NEWkey, bool(true))
 
-			w.Header().Add("Authorization", string(jwt))
-
+			//	w.Header().Add("Authorization", string(jwt))
+			cookie := http.Cookie{
+				Name:     "Authorization",
+				Value:    string(jwt),
+				Path:     "/",
+				HttpOnly: true,
+			}
+			http.SetCookie(w, &cookie)
 		}
 
 		ctx = context.WithValue(ctx, config.UIDkey, int(userid))

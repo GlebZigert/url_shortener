@@ -40,20 +40,22 @@ func GetURL(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusTemporaryRedirect)
 
 		w.Write([]byte(res))
+		return
 
-	} else if errors.As(err, &deleted) {
+	}
+	if errors.As(err, &deleted) {
 
 		logger.Log.Info("запрос удаленного шорта: ", zap.String("", err.Error()))
 		//w.Header().Add("Location", res)
 		w.WriteHeader(http.StatusGone)
 
 		w.Write([]byte(res))
-	} else {
-
-		w.Header().Set("Location", "")
-		w.WriteHeader(http.StatusTemporaryRedirect)
-
-		w.Write([]byte{})
+		return
 	}
+
+	w.Header().Set("Location", "")
+	w.WriteHeader(http.StatusTemporaryRedirect)
+
+	w.Write([]byte{})
 
 }
