@@ -33,7 +33,7 @@ func (srv *Server) CreateShortURLfromJSON(w http.ResponseWriter, req *http.Reque
 
 	url := string(msg.URL)
 
-	res := srv.cfg.BaseURL + "/"
+	res := srv.cfg.GetBaseURL() + "/"
 	var resp []byte
 
 	short, err := srv.service.Short(url, -1)

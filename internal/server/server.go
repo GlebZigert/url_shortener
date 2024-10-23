@@ -1,30 +1,60 @@
 package server
 
 import (
-	"errors"
 	"net/http"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
-	"github.com/GlebZigert/url_shortener.git/internal/services"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 	"github.com/go-chi/chi"
 )
 
-type Server struct {
-	cfg     *config.Config
-	mdl     *middleware.Middleware
-	logger  logger.Logger
-	service *services.Service
+type srvConfig interface {
+	GetRunAddr() string
+	GetBaseURL() string
+	GetFlagLogLevel() string
+	GetFileStoragePath() string
+	GetNumWorkers() int
+	GetDatabaseDSN() string
+	GetTOKENEXP() int
+	GetSECRETKEY() string
 }
 
-var errNoAuthMiddleware = errors.New("в миддлеварах не определен auth")
+type srvMiddleware interface {
+	Auth(h http.Handler) http.Handler
+	ErrHandler(f http.Handler) http.Handler
+	Log(h http.Handler) http.Handler
+}
 
-func NewServer(cfg *config.Config, mdl *middleware.Middleware, logger logger.Logger, service *services.Service) (*Server, error) {
-	auch := mdl.GetAuch()
-	if auch == nil {
-		return nil, errNoAuthMiddleware
-	}
+type srvLogger interface {
+	Info(msg string, fields map[string]interface{})
+	Error(msg string, fields map[string]interface{})
+}
+
+type srvService interface {
+	Short(oririn string, uuid int) (string, error)
+	Delete(shorts []string, uid int) error
+	Origin(short string) (string, error)
+	GetAll() *[]*storager.Shorten
+}
+
+type Server struct {
+	cfg     srvConfig
+	mdl     srvMiddleware
+	logger  srvLogger
+	service srvService
+}
+
+//var errNoAuthMiddleware = errors.New("в миддлеварах не определен auth")
+
+func NewServer(cfg srvConfig, mdl srvMiddleware, logger srvLogger, service srvService) (*Server, error) {
+
+	/*
+		auch := mdl.GetAuch()
+		if auch == nil {
+			return nil, errNoAuthMiddleware
+		}
+	*/
+
 	return &Server{cfg, mdl, logger, service}, nil
 }
 
@@ -50,6 +80,6 @@ func (srv *Server) Start() (err error) {
 
 	})
 
-	err = http.ListenAndServe(srv.cfg.RunAddr, r)
+	err = http.ListenAndServe(srv.cfg.GetRunAddr(), r)
 	return
 }

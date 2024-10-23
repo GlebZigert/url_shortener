@@ -34,7 +34,7 @@ func (srv *Server) CreateShortURL(w http.ResponseWriter, req *http.Request) {
 		"url": url,
 	})
 
-	res := srv.cfg.BaseURL + "/"
+	res := srv.cfg.GetBaseURL() + "/"
 	var short string
 	user, ok := req.Context().Value(config.UIDkey).(int)
 	if ok {

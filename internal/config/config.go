@@ -33,6 +33,38 @@ type Config struct {
 	SECRETKEY string
 }
 
+func (cfg *Config) GetRunAddr() string {
+	return cfg.RunAddr
+}
+
+func (cfg *Config) GetBaseURL() string {
+	return cfg.BaseURL
+}
+
+func (cfg *Config) GetFlagLogLevel() string {
+	return cfg.FlagLogLevel
+}
+
+func (cfg *Config) GetFileStoragePath() string {
+	return cfg.FileStoragePath
+}
+
+func (cfg *Config) GetNumWorkers() int {
+	return cfg.NumWorkers
+}
+
+func (cfg *Config) GetDatabaseDSN() string {
+	return cfg.DatabaseDSN
+}
+
+func (cfg *Config) GetTOKENEXP() int {
+	return cfg.TOKENEXP
+}
+
+func (cfg *Config) GetSECRETKEY() string {
+	return cfg.SECRETKEY
+}
+
 func NewConfig() *Config {
 	cfg := Config{}
 	cfg.ParseFlags()

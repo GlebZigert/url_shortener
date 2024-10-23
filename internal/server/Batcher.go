@@ -49,7 +49,7 @@ func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 
 		ress, err := srv.service.Short(b.OriginalURL, -1)
 		if err == nil || errors.As(err, &conflict) {
-			res := srv.cfg.BaseURL + "/" + ress
+			res := srv.cfg.GetBaseURL() + "/" + ress
 			batchback[i] = BatchBack{b.CorrelationID, res}
 		}
 	}

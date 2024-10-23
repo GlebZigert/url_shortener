@@ -40,7 +40,7 @@ func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 	res := []URLs{}
 	for _, sh := range *srv.service.GetAll() {
 		if sh.UUID == int(user) {
-			res = append(res, URLs{srv.cfg.BaseURL + "/" + sh.ShortURL, sh.OriginalURL})
+			res = append(res, URLs{srv.cfg.GetBaseURL() + "/" + sh.ShortURL, sh.OriginalURL})
 		}
 	}
 
