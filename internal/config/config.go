@@ -73,32 +73,32 @@ func NewConfig() *Config {
 
 const Conflict409 = "попытка сократить уже имеющийся в базе URL"
 
-func (c *Config) ParseFlags() {
-	flag.StringVar(&c.RunAddr, "a", "localhost:8080", "address and port to run server")
-	flag.StringVar(&c.BaseURL, "b", "http://localhost:8080", "base address for short URL")
-	flag.StringVar(&c.FlagLogLevel, "l", "info", "log level")
-	flag.StringVar(&c.FileStoragePath, "f", "" /*"./short-url-db.json"*/, "file storage path")
-	flag.StringVar(&c.DatabaseDSN, "d", "", "database dsn")
+func (cfg *Config) ParseFlags() {
+	flag.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")
+	flag.StringVar(&cfg.BaseURL, "b", "http://localhost:8080", "base address for short URL")
+	flag.StringVar(&cfg.FlagLogLevel, "l", "info", "log level")
+	flag.StringVar(&cfg.FileStoragePath, "f", "" /*"./short-url-db.json"*/, "file storage path")
+	flag.StringVar(&cfg.DatabaseDSN, "d", "", "database dsn")
 
-	flag.StringVar(&c.SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
-	flag.IntVar(&c.TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
-	flag.IntVar(&c.NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
+	flag.StringVar(&cfg.SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
+	flag.IntVar(&cfg.TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
+	flag.IntVar(&cfg.NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
 
 	flag.Parse()
 
 	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
-		c.RunAddr = envRunAddr
+		cfg.RunAddr = envRunAddr
 	}
 
 	if envBaseURL := os.Getenv("BASE_URL"); envBaseURL != "" {
-		c.BaseURL = envBaseURL
+		cfg.BaseURL = envBaseURL
 	}
 
 	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
-		c.FlagLogLevel = envLogLevel
+		cfg.FlagLogLevel = envLogLevel
 	}
 
 	if envFileStoragePath := os.Getenv("FILE_STORAGE_PATH"); envFileStoragePath != "" {
-		c.FileStoragePath = envFileStoragePath
+		cfg.FileStoragePath = envFileStoragePath
 	}
 }
