@@ -87,7 +87,7 @@ func generateRandomString(length int) string {
 
 func (s *Service) Short(oririn string, uuid int) (string, error) {
 
-	s.logger.Info("try to login: ", map[string]interface{}{
+	s.logger.Info("Short: ", map[string]interface{}{
 
 		"oririn": oririn,
 		"uuid":   uuid,
@@ -113,7 +113,7 @@ func (s *Service) Short(oririn string, uuid int) (string, error) {
 
 	s.store.StorageWrite(short, oririn, uuid)
 
-	s.logger.Info("try to login: ", map[string]interface{}{
+	s.logger.Info("Сделан шорт: ", map[string]interface{}{
 
 		"oririn": oririn,
 		"short":  short,

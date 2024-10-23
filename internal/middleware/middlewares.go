@@ -1,8 +1,11 @@
 package middleware
 
+import "context"
+
 type mdlAuth interface {
 	BuildJWTString(id int) (string, error)
 	GetUserID(tokenString string) (int, error)
+	CheckUID(ctx context.Context) (user int, ok bool)
 }
 
 type mdlLogger interface {
@@ -11,7 +14,7 @@ type mdlLogger interface {
 }
 
 type Middleware struct {
-	auch   mdlAuth
+	mdlAuth
 	logger mdlLogger
 }
 

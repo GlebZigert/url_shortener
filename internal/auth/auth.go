@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
@@ -12,6 +13,7 @@ import (
 type AuthController struct {
 	sekretKey string
 	tokenExp  int
+	UIDkey    int
 }
 
 var ErrAccessDenied = errors.New("access denied")
@@ -23,8 +25,8 @@ type Claims struct {
 	UID int
 }
 
-func NewAuth(sekretKey string, tokenExp int) *AuthController {
-	return &AuthController{sekretKey, tokenExp}
+func NewAuth(sekretKey string, tokenExp int, key int) *AuthController {
+	return &AuthController{sekretKey, tokenExp, key}
 }
 
 var ErrBuildJWTString error = errors.New("ошибка формирования JWT")
@@ -73,4 +75,10 @@ func (auc *AuthController) GetUserID(tokenString string) (int, error) {
 	}
 
 	return claims.UID, nil
+}
+
+func (auc *AuthController) CheckUID(ctx context.Context) (user int, ok bool) {
+
+	user, ok = ctx.Value(auc.UIDkey).(int)
+	return
 }

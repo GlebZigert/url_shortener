@@ -71,8 +71,6 @@ func NewConfig() *Config {
 	return &cfg
 }
 
-const Conflict409 = "попытка сократить уже имеющийся в базе URL"
-
 func (cfg *Config) ParseFlags() {
 	flag.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")
 	flag.StringVar(&cfg.BaseURL, "b", "http://localhost:8080", "base address for short URL")

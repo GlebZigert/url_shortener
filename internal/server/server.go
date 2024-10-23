@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
@@ -23,6 +24,7 @@ type srvMiddleware interface {
 	Auth(h http.Handler) http.Handler
 	ErrHandler(f http.Handler) http.Handler
 	Log(h http.Handler) http.Handler
+	CheckUID(ctx context.Context) (user int, ok bool)
 }
 
 type srvLogger interface {
