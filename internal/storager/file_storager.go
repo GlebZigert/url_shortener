@@ -4,20 +4,22 @@ import (
 	"bufio"
 	"encoding/json"
 	"os"
-
-	"github.com/GlebZigert/url_shortener.git/internal/config"
 )
 
 var id int
 
-type FileStorager struct {
-	cfg *config.Config
+type filestoreConfig interface {
+	GetFileStoragePath() string
 }
 
-func NewFileStorager(cfg *config.Config) (*FileStorager, error) {
+type FileStorager struct {
+	cfg filestoreConfig
+}
+
+func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
 
 	store := &FileStorager{cfg}
-	file, err := os.OpenFile(cfg.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
+	file, err := os.OpenFile(cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return store, err
 	}
@@ -27,7 +29,7 @@ func NewFileStorager(cfg *config.Config) (*FileStorager, error) {
 
 func (one *FileStorager) Load(shorten *[]*Shorten) error {
 
-	file, err := os.OpenFile(one.cfg.FileStoragePath, os.O_RDONLY|os.O_CREATE, 0666)
+	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
@@ -60,7 +62,7 @@ func (one *FileStorager) Delete(listID []int) {
 
 func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 
-	file, err := os.OpenFile(one.cfg.FileStoragePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return err
 	}

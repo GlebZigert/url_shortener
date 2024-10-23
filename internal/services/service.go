@@ -7,18 +7,26 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/logger"
-
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
 // это массив для хранения сокращенных url
 var shorten []*storager.Shorten
 
+type Storager interface {
+	Load(*[]*storager.Shorten) error
+	StorageWrite(short, origin string, UUID int) error
+	Delete([]int)
+}
+
+type Logger interface {
+	Info(msg string, fields map[string]interface{})
+	Error(msg string, fields map[string]interface{})
+}
+
 type Service struct {
-	logger logger.Logger
-	store  storager.Storager
+	logger Logger
+	store  Storager
 
 	shortuser map[string]*list.List
 	shorten   []*storager.Shorten
@@ -36,7 +44,7 @@ func Init() {
 }
 */
 
-func NewService(logger logger.Logger, store storager.Storager) *Service {
+func NewService(logger Logger, store Storager) *Service {
 	srv := Service{logger, store, make(map[string]*list.List), []*storager.Shorten{}}
 
 	return &srv
@@ -89,7 +97,7 @@ func (s *Service) Short(oririn string, uuid int) (string, error) {
 	for _, sh := range shorten {
 		if sh.OriginalURL == oririn {
 
-			return sh.ShortURL, &ErrConflict409{config.Conflict409}
+			return sh.ShortURL, &ErrConflict409{"попытка сократить уже имеющийся в базе URL"}
 		}
 	}
 

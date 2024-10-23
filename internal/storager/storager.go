@@ -1,6 +1,8 @@
 package storager
 
-import "github.com/GlebZigert/url_shortener.git/internal/config"
+type storeConfig interface {
+	GetFileStoragePath() string
+}
 
 type Shorten struct {
 	ID          int    `db:"id"`
@@ -16,7 +18,7 @@ type Storager interface {
 	Delete([]int)
 }
 
-func New(cfg *config.Config) (store Storager) {
+func New(cfg storeConfig) (store Storager) {
 	var err error
 
 	store, err = NewDBStorager()

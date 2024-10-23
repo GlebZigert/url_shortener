@@ -1,21 +1,20 @@
 package middleware
 
-import "github.com/GlebZigert/url_shortener.git/internal/logger"
-
-type IAuth interface {
+type mdlAuth interface {
 	BuildJWTString(id int) (string, error)
 	GetUserID(tokenString string) (int, error)
 }
 
+type mdlLogger interface {
+	Info(msg string, fields map[string]interface{})
+	Error(msg string, fields map[string]interface{})
+}
+
 type Middleware struct {
-	auch   IAuth
-	logger logger.Logger
+	auch   mdlAuth
+	logger mdlLogger
 }
 
-func (mdl *Middleware) GetAuch() IAuth {
-	return mdl.auch
-}
-
-func NewMiddlewares(auth IAuth, logger logger.Logger) *Middleware {
+func NewMiddlewares(auth mdlAuth, logger mdlLogger) *Middleware {
 	return &Middleware{auth, logger}
 }
