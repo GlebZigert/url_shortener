@@ -11,9 +11,10 @@ func TestParseFlagsCorrect(t *testing.T) {
 		args []string
 		conf Config
 	}{
-		{[]string{},
+
+		{[]string{"-a", "localhost:8888"},
 			Config{
-				RunAddr:         "localhost:8080",
+				RunAddr:         "localhost:8888",
 				BaseURL:         "http://localhost:8080",
 				FlagLogLevel:    "info",
 				FileStoragePath: "",
@@ -22,13 +23,12 @@ func TestParseFlagsCorrect(t *testing.T) {
 				TOKENEXP:        3,
 				NumWorkers:      3,
 			}},
-
 		// ... many more test entries here
 	}
 
 	for _, tt := range tests {
 		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
-			config := NewConfig("", tt.args)
+			config := NewConfig("prog", tt.args)
 
 			if !reflect.DeepEqual(*config, tt.conf) {
 				t.Errorf("conf got %+v, want %+v", *config, tt.conf)

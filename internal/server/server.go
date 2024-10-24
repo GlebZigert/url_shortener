@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
@@ -81,7 +82,8 @@ func (srv *Server) Start() (err error) {
 		r.Get(`/*`, srv.GetURL)
 
 	})
-
+	fmt.Println(srv.cfg.GetRunAddr())
 	err = http.ListenAndServe(srv.cfg.GetRunAddr(), r)
+
 	return
 }

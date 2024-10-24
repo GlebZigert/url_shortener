@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"os"
 )
 
@@ -70,6 +71,7 @@ var ptr *Config
 func NewConfig(progname string, args []string) *Config {
 
 	if ptr == nil {
+		fmt.Println("ptr==nil")
 		cfg := Config{}
 		cfg.ParseFlags(progname, args)
 		ptr = &cfg
@@ -80,18 +82,18 @@ func NewConfig(progname string, args []string) *Config {
 
 func (cfg *Config) ParseFlags(progname string, args []string) {
 	flags := flag.NewFlagSet(progname, flag.ContinueOnError)
-	flag.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")
-	flag.StringVar(&cfg.BaseURL, "b", "http://localhost:8080", "base address for short URL")
-	flag.StringVar(&cfg.FlagLogLevel, "l", "info", "log level")
-	flag.StringVar(&cfg.FileStoragePath, "f", "" /*"./short-url-db.json"*/, "file storage path")
-	flag.StringVar(&cfg.DatabaseDSN, "d", "", "database dsn")
+	flags.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")
+	flags.StringVar(&cfg.BaseURL, "b", "http://localhost:8080", "base address for short URL")
+	flags.StringVar(&cfg.FlagLogLevel, "l", "info", "log level")
+	flags.StringVar(&cfg.FileStoragePath, "f", "" /*"./short-url-db.json"*/, "file storage path")
+	flags.StringVar(&cfg.DatabaseDSN, "d", "", "database dsn")
 
-	flag.StringVar(&cfg.SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
-	flag.IntVar(&cfg.TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
-	flag.IntVar(&cfg.NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
+	flags.StringVar(&cfg.SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
+	flags.IntVar(&cfg.TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
+	flags.IntVar(&cfg.NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
 
 	flags.Parse(args)
-
+	fmt.Println(cfg.GetRunAddr())
 	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
 		cfg.RunAddr = envRunAddr
 	}

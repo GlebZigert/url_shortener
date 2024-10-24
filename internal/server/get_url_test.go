@@ -67,7 +67,7 @@ func TestGetURL(t *testing.T) {
 			},
 		},
 	}
-	cfg := config.NewConfig("", []string{})
+	cfg := config.NewConfig("prog", []string{})
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)
