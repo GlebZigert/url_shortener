@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
-	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
 /*
@@ -22,18 +21,21 @@ GET /EwHXdJfB HTTP/1.1
 Host: localhost:8080
 Content-Type: text/plain
 
+На любой некорректный запрос сервер должен возвращать ответ с кодом 400.
 */
 
 func (srv *Server) GetURL(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)
 
-	var deleted *services.ErrDeleted
+	var deleted *packerr.ErrDeleted
 
-	str := strings.Replace(req.URL.String(), "/", "", 1)
+	src := req.URL.String()
+
+	str := strings.Replace(src, "/", "", 1)
 
 	srv.logger.Info("GetURL: ", map[string]interface{}{
-
+		"src":   src,
 		"short": str,
 	})
 

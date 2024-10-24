@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
@@ -57,22 +58,6 @@ var (
 
 var shortuser map[string]*list.List
 
-type ErrConflict409 struct {
-	s string
-}
-
-type ErrDeleted struct {
-	s string
-}
-
-func (e *ErrDeleted) Error() string {
-	return e.s
-}
-
-func (e *ErrConflict409) Error() string {
-	return e.s
-}
-
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	seed := rand.NewSource(time.Now().UnixNano())
@@ -97,7 +82,7 @@ func (s *Service) Short(oririn string, uuid int) (string, error) {
 	for _, sh := range shorten {
 		if sh.OriginalURL == oririn {
 
-			return sh.ShortURL, &ErrConflict409{"попытка сократить уже имеющийся в базе URL"}
+			return sh.ShortURL, &packerr.ErrConflict409{"попытка сократить уже имеющийся в базе URL"}
 		}
 	}
 
@@ -130,7 +115,7 @@ func (s *Service) Origin(short string) (string, error) {
 
 			if sh.DeletedFlag {
 				str := "шорт " + short + " удален"
-				return sh.OriginalURL, &ErrDeleted{str}
+				return sh.OriginalURL, &packerr.ErrDeleted{str}
 			}
 
 			return sh.OriginalURL, nil

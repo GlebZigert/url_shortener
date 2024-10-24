@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-type key int
+//type key int
 
 const (
-	UIDkey key = iota
-	JWTkey key = iota
-	NEWkey key = iota
-	Errkey key = iota
+	UIDkey int = iota
+	JWTkey int = iota
+	NEWkey int = iota
+	Errkey int = iota
 	// ...
 )
 
@@ -65,10 +65,17 @@ func (cfg *Config) GetSECRETKEY() string {
 	return cfg.SECRETKEY
 }
 
+var ptr *Config
+
 func NewConfig() *Config {
-	cfg := Config{}
-	cfg.ParseFlags()
-	return &cfg
+
+	if ptr == nil {
+		cfg := Config{}
+		cfg.ParseFlags()
+		ptr = &cfg
+	}
+
+	return ptr
 }
 
 func (cfg *Config) ParseFlags() {

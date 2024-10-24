@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
-	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
 type Batch struct {
@@ -44,7 +43,7 @@ func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 	}
 	ll := len(batches)
 	batchback := make([]BatchBack, ll)
-	var conflict *services.ErrConflict409
+	var conflict packerr.ErrConflict409
 	for i, b := range batches {
 
 		ress, err := srv.service.Short(b.OriginalURL, -1)

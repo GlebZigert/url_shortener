@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
-	"github.com/GlebZigert/url_shortener.git/internal/services"
 )
 
 /*
@@ -37,6 +36,7 @@ func (srv *Server) CreateShortURL(w http.ResponseWriter, req *http.Request) {
 
 	user, ok := srv.mdl.CheckUID(req.Context())
 	if !ok {
+		srv.logger.Error("Нет данных о пользователе: ", map[string]interface{}{})
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -44,7 +44,7 @@ func (srv *Server) CreateShortURL(w http.ResponseWriter, req *http.Request) {
 	short, err = srv.service.Short(url, user)
 
 	fl := false
-	var conflict *services.ErrConflict409
+	var conflict *packerr.ErrConflict409
 	if err == nil {
 		fl = true
 		w.WriteHeader(http.StatusCreated)
