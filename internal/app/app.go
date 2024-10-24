@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"os"
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
@@ -15,7 +16,7 @@ import (
 
 func Run() (err error) {
 
-	cfg := config.NewConfig()
+	cfg := config.NewConfig(os.Args[0], os.Args[1:])
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)

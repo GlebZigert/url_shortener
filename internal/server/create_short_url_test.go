@@ -75,7 +75,7 @@ func TestCreateShortURL(t *testing.T) {
 			},
 		},
 	}
-	cfg := config.NewConfig()
+	cfg := config.NewConfig("", []string{})
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)

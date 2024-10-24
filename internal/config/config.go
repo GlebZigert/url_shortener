@@ -67,18 +67,19 @@ func (cfg *Config) GetSECRETKEY() string {
 
 var ptr *Config
 
-func NewConfig() *Config {
+func NewConfig(progname string, args []string) *Config {
 
 	if ptr == nil {
 		cfg := Config{}
-		cfg.ParseFlags()
+		cfg.ParseFlags(progname, args)
 		ptr = &cfg
 	}
 
 	return ptr
 }
 
-func (cfg *Config) ParseFlags() {
+func (cfg *Config) ParseFlags(progname string, args []string) {
+	flags := flag.NewFlagSet(progname, flag.ContinueOnError)
 	flag.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")
 	flag.StringVar(&cfg.BaseURL, "b", "http://localhost:8080", "base address for short URL")
 	flag.StringVar(&cfg.FlagLogLevel, "l", "info", "log level")
@@ -89,7 +90,7 @@ func (cfg *Config) ParseFlags() {
 	flag.IntVar(&cfg.TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
 	flag.IntVar(&cfg.NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
 
-	flag.Parse()
+	flags.Parse(args)
 
 	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
 		cfg.RunAddr = envRunAddr
