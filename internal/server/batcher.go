@@ -43,7 +43,7 @@ func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 	}
 	ll := len(batches)
 	batchback := make([]BatchBack, ll)
-	var conflict packerr.ErrConflict409
+	var conflict *packerr.ErrConflict409
 	for i, b := range batches {
 
 		ress, err := srv.service.Short(b.OriginalURL, -1)

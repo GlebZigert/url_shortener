@@ -39,7 +39,7 @@ func (srv *Server) CreateShortURLfromJSON(w http.ResponseWriter, req *http.Reque
 
 	fl := false
 	var header int
-	var conflict packerr.ErrConflict409
+	var conflict *packerr.ErrConflict409
 	if err == nil {
 		fl = true
 		header = http.StatusCreated

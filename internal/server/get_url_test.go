@@ -2,10 +2,11 @@ package server
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
@@ -13,13 +14,15 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
-	"github.com/GlebZigert/url_shortener.git/internal/services"
-	"github.com/GlebZigert/url_shortener.git/internal/storager"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
+	"github.com/GlebZigert/url_shortener.git/mocks"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateShortURL(t *testing.T) {
+func TestGetURL(t *testing.T) {
+
 	type want struct {
 		code        int
 		contentType string
@@ -31,7 +34,7 @@ func TestCreateShortURL(t *testing.T) {
 		user   int
 		body   io.Reader
 	}
-	origin_first := "asefsfsdf"
+	//	origin_first := "aaa"
 	tests := []struct {
 		name     string
 		request  request
@@ -39,39 +42,28 @@ func TestCreateShortURL(t *testing.T) {
 		want     want
 	}{
 		{
-			name: "500 запрос без данных о пользователе",
+			name: "307 шорт для которого есть ориджин",
 			request: request{
 				http.MethodGet,
-				"/",
+				"/aaa",
 				-1, // в контексте ревеста не будет данных о пользователе
-				strings.NewReader(origin_first),
+				nil,
 			},
 			want: want{
-				code: http.StatusInternalServerError,
+				code: http.StatusTemporaryRedirect,
 			},
 		},
+
 		{
-			name: "201 запрос с новым ориджином",
+			name: "шорт который удален ",
 			request: request{
 				http.MethodGet,
-				"/",
+				"/deleted",
 				0,
-				strings.NewReader(origin_first),
+				nil,
 			},
 			want: want{
-				code: http.StatusCreated,
-			},
-		},
-		{
-			name: "409 запрос с повторным ориджином",
-			request: request{
-				http.MethodGet,
-				"/",
-				0,
-				strings.NewReader(origin_first),
-			},
-			want: want{
-				code: http.StatusConflict,
+				code: http.StatusGone,
 			},
 		},
 	}
@@ -79,11 +71,21 @@ func TestCreateShortURL(t *testing.T) {
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)
-	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
-	service := services.NewService(logger, store)
+	ctrl := gomock.NewController(t)
+	service := mocks.NewMocksrvService(ctrl)
+	service.EXPECT().Origin(gomock.Any()).DoAndReturn(func(str string) (string, error) {
+		fmt.Println("mock origin ", str)
+		if str == "aaa" {
+			return "bbb", nil
+		}
+		if str == "deleted" {
+			return "", &packerr.ErrDeleted{}
+		}
+		return "", errors.New("отстуствует")
+	}).AnyTimes()
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP, config.UIDkey)
 	mdl := middleware.NewMiddlewares(auc, logger)
@@ -92,6 +94,7 @@ func TestCreateShortURL(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+
 			t.Log("req: ", test.request.method, " ", test.request.url)
 
 			r := httptest.NewRequest(test.request.method, test.request.url, test.request.body)
@@ -107,7 +110,7 @@ func TestCreateShortURL(t *testing.T) {
 
 			r = r.WithContext(ctx)
 
-			srv.CreateShortURL(w, r)
+			srv.GetURL(w, r)
 
 			if err != nil {
 				t.Log("err: ", err.Error())
