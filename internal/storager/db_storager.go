@@ -7,6 +7,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
 
+// хранение в базе
 type DBStorager struct {
 }
 

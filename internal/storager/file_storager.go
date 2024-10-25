@@ -12,10 +12,12 @@ type filestoreConfig interface {
 	GetFileStoragePath() string
 }
 
+// хранение в файле
 type FileStorager struct {
 	cfg filestoreConfig
 }
 
+// конструктор
 func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
 
 	store := &FileStorager{cfg}
@@ -27,6 +29,7 @@ func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
 	return store, err
 }
 
+// загрузить из файла
 func (one *FileStorager) Load(shorten *[]*Shorten) error {
 
 	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
@@ -56,10 +59,12 @@ func (one *FileStorager) Load(shorten *[]*Shorten) error {
 	return nil
 }
 
+// удалить
 func (one *FileStorager) Delete(listID []int) {
 
 }
 
+// записать в файл
 func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 
 	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)

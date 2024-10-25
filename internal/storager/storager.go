@@ -4,6 +4,7 @@ type storeConfig interface {
 	GetFileStoragePath() string
 }
 
+// данные о шорте
 type Shorten struct {
 	ID          int    `db:"id"`
 	UUID        int    `db:"user_id"`
@@ -12,12 +13,14 @@ type Shorten struct {
 	DeletedFlag bool   `db:"is_deleted"`
 }
 
+// операции с хранилищем
 type Storager interface {
 	Load(*[]*Shorten) error
 	StorageWrite(short, origin string, UUID int) error
 	Delete([]int)
 }
 
+// конструктор
 func New(cfg storeConfig) (store Storager) {
 	var err error
 

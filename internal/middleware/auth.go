@@ -8,6 +8,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
+// мидл для атворизации
 func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
