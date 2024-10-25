@@ -32,7 +32,7 @@ func TestCreateShortURL(t *testing.T) {
 		user   int
 		body   io.Reader
 	}
-	origin_first := "asefsfsdf"
+	originFirst := "asefsfsdf"
 	tests := []struct {
 		name     string
 		request  request
@@ -45,7 +45,7 @@ func TestCreateShortURL(t *testing.T) {
 				http.MethodGet,
 				"/",
 				-1, // в контексте ревеста не будет данных о пользователе
-				strings.NewReader(origin_first),
+				strings.NewReader(originFirst),
 			},
 			want: want{
 				code: http.StatusInternalServerError,
@@ -57,7 +57,7 @@ func TestCreateShortURL(t *testing.T) {
 				http.MethodGet,
 				"/",
 				0,
-				strings.NewReader(origin_first),
+				strings.NewReader(originFirst),
 			},
 			want: want{
 				code: http.StatusCreated,
@@ -69,7 +69,7 @@ func TestCreateShortURL(t *testing.T) {
 				http.MethodGet,
 				"/",
 				0,
-				strings.NewReader(origin_first),
+				strings.NewReader(originFirst),
 			},
 			want: want{
 				code: http.StatusConflict,

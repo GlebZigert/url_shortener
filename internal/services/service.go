@@ -76,7 +76,7 @@ func (s *Service) Short(oririn string, uuid int) (string, error) {
 	for _, sh := range shorten {
 		if sh.OriginalURL == oririn {
 
-			return sh.ShortURL, &packerr.ErrConflict409{"попытка сократить уже имеющийся в базе URL"}
+			return sh.ShortURL, &packerr.ErrConflict409{S: "попытка сократить уже имеющийся в базе URL"}
 		}
 	}
 
@@ -110,7 +110,7 @@ func (s *Service) Origin(short string) (string, error) {
 
 			if sh.DeletedFlag {
 				str := "шорт " + short + " удален"
-				return sh.OriginalURL, &packerr.ErrDeleted{str}
+				return sh.OriginalURL, &packerr.ErrDeleted{S: str}
 			}
 
 			return sh.OriginalURL, nil

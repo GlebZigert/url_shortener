@@ -1,10 +1,8 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
@@ -34,9 +32,6 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 		if err != nil || authv == nil {
 			jwt, _ := mdl.BuildJWTString(userid)
 			userid, _ = mdl.GetUserID(jwt)
-
-			ctx = context.WithValue(ctx, config.NEWkey, bool(true))
-
 			ctx = mdl.SetNewFlag(ctx, true)
 
 			//	w.Header().Add("Authorization", string(jwt))
