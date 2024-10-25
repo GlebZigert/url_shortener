@@ -1,13 +1,62 @@
 package services
 
 import (
+	"container/list"
 	"errors"
-	"fmt"
+
 	"math/rand"
 	"time"
+
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
-var mapa map[string]string
+// это массив для хранения сокращенных url
+var shorten []*storager.Shorten
+
+type Storager interface {
+	Load(*[]*storager.Shorten) error
+	StorageWrite(short, origin string, UUID int) error
+	Delete([]int)
+}
+
+type Logger interface {
+	Info(msg string, fields map[string]interface{})
+	Error(msg string, fields map[string]interface{})
+}
+
+type Service struct {
+	logger Logger
+	store  Storager
+
+	shortuser map[string]*list.List
+	shorten   []*storager.Shorten
+}
+
+/*
+
+func Init() {
+
+	shortuser = make(map[string]*list.List)
+	shorten = []*storager.Shorten{}
+
+	_ = storager.Load(&shorten)
+
+}
+*/
+
+func NewService(logger Logger, store Storager) *Service {
+	srv := Service{logger, store, make(map[string]*list.List), []*storager.Shorten{}}
+
+	return &srv
+
+}
+
+var (
+	id int
+)
+
+var shortuser map[string]*list.List
 
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -21,39 +70,63 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func Map() map[string]string {
+func (s *Service) Short(oririn string, uuid int) (string, error) {
 
-	if mapa == nil {
-		fmt.Println("обьявляю мапу")
-		mapa = make(map[string]string)
-	}
+	s.logger.Info("Short: ", map[string]interface{}{
 
-	return mapa
-}
+		"oririn": oririn,
+		"uuid":   uuid,
+	})
 
-func Short(url string) string {
+	//v, ok := mapa[oririn]
+	for _, sh := range shorten {
+		if sh.OriginalURL == oririn {
 
-	v, ok := Map()[url]
-	if ok {
-		fmt.Println(url, " уже есть в мапе: ", v)
-		return v
-	}
-
-	shortURL := generateRandomString(8)
-
-	Map()[url] = shortURL
-	fmt.Println("Для ", url, " сгенерирован шорт: ", shortURL)
-	return shortURL
-}
-
-func Origin(shortURL string) (string, error) {
-
-	for k, v := range Map() {
-		if v == shortURL {
-			fmt.Println("Для шорта", shortURL, " найден url: ", k)
-			return k, nil
+			return sh.ShortURL, &packerr.ErrConflict409{"попытка сократить уже имеющийся в базе URL"}
 		}
 	}
-	fmt.Println("Нет такого шорта как", shortURL)
+
+	short := generateRandomString(8)
+	//AddUserToShort(int(uuid), short)
+	id := 0
+	if len(shorten) > 0 {
+		id = shorten[len(shorten)-1].ID + 1
+	}
+
+	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
+	shorten = append(shorten, &sh)
+
+	s.store.StorageWrite(short, oririn, uuid)
+
+	s.logger.Info("Сделан шорт: ", map[string]interface{}{
+
+		"oririn": oririn,
+		"short":  short,
+		"uuid":   uuid,
+	})
+
+	return short, nil
+}
+
+func (s *Service) Origin(short string) (string, error) {
+
+	for _, sh := range shorten {
+		if sh.ShortURL == short {
+
+			if sh.DeletedFlag {
+				str := "шорт " + short + " удален"
+				return sh.OriginalURL, &packerr.ErrDeleted{str}
+			}
+
+			return sh.OriginalURL, nil
+		}
+	}
+
 	return "", errors.New("отстуствует")
+
+}
+
+func (s *Service) GetAll() *[]*storager.Shorten {
+
+	return &shorten
 }
