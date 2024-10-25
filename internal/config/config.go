@@ -10,10 +10,9 @@ type key int
 
 // ключи в контекст
 const (
-	UIDkey key = iota
-	JWTkey key = iota
-	NEWkey key = iota
-	Errkey key = iota
+	UIDkey int = iota
+	NEWkey int = iota
+	Errkey int = iota
 	// ...
 )
 

@@ -34,7 +34,7 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 		if err != nil || authv == nil {
 			jwt, _ := mdl.BuildJWTString(userid)
 			userid, _ = mdl.GetUserID(jwt)
-			ctx = context.WithValue(ctx, config.JWTkey, string(jwt))
+
 			ctx = context.WithValue(ctx, config.NEWkey, bool(true))
 
 			//	w.Header().Add("Authorization", string(jwt))
@@ -48,7 +48,9 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 
 		}
 
-		ctx = context.WithValue(ctx, config.UIDkey, int(userid))
+		//	ctx = context.WithValue(ctx, config.UIDkey, int(userid))
+		ctx = mdl.SetUID(ctx, userid)
+
 		r = r.WithContext(ctx)
 		h.ServeHTTP(w, r)
 

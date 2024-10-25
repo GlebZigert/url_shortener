@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
@@ -58,7 +57,7 @@ func (mdl *Middleware) Log(h http.Handler) http.Handler {
 			responseData:   responseData,
 		}
 
-		id, ok := r.Context().Value(config.UIDkey).(int)
+		id, ok := mdl.CheckUID(r.Context())
 		if ok {
 			mdl.logger.Info("auth: ", map[string]interface{}{
 				"id": id,
@@ -66,14 +65,6 @@ func (mdl *Middleware) Log(h http.Handler) http.Handler {
 
 		}
 
-		//
-		/*
-			jwt, ok := r.Context().Value(config.JWTkey).(string)
-			if ok {
-
-				lw.Header().Add("Authorization", string(jwt))
-			}
-		*/
 		h.ServeHTTP(&lw, r)
 
 		mdl.logger.Info("got incoming HTTP request: ", map[string]interface{}{

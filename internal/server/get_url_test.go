@@ -87,7 +87,7 @@ func TestGetURL(t *testing.T) {
 		return "", errors.New("отстуствует")
 	}).AnyTimes()
 
-	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP, config.UIDkey)
+	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
 	mdl := middleware.NewMiddlewares(auc, logger)
 
 	srv, _ := NewServer(cfg, mdl, logger, service)
@@ -105,7 +105,7 @@ func TestGetURL(t *testing.T) {
 			ctx := context.WithValue(r.Context(), config.Errkey, &err)
 
 			if test.request.user >= 0 {
-				ctx = context.WithValue(ctx, config.UIDkey, test.request.user)
+				ctx = auc.SetUID(ctx, test.request.user)
 			}
 
 			r = r.WithContext(ctx)

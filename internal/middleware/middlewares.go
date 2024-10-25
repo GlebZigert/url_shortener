@@ -6,6 +6,7 @@ type mdlAuth interface {
 	BuildJWTString(id int) (string, error)
 	GetUserID(tokenString string) (int, error)
 	CheckUID(ctx context.Context) (user int, ok bool)
+	SetUID(ctx context.Context, user int) context.Context
 }
 
 type mdlLogger interface {
