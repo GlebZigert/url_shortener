@@ -6,13 +6,14 @@ import (
 	"os"
 )
 
-// type key int
+type key int
+
 // ключи в контекст
 const (
-	UIDkey int = iota
-	JWTkey int = iota
-	NEWkey int = iota
-	Errkey int = iota
+	UIDkey key = iota
+	JWTkey key = iota
+	NEWkey key = iota
+	Errkey key = iota
 	// ...
 )
 
