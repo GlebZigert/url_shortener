@@ -14,6 +14,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
+// Запуск
 func Run() (err error) {
 
 	cfg := config.NewConfig(os.Args[0], os.Args[1:])
