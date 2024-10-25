@@ -31,8 +31,3 @@ func TestCompress(t *testing.T) {
 
 	require.Equal(t, data, out)
 }
-
-func Example() {
-
-	Compress([]byte("example"))
-}
