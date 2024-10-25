@@ -12,6 +12,7 @@ import (
 
 type key int
 
+// ключи
 const (
 	UIDkey key = iota
 	NEWkey key = iota
