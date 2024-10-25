@@ -8,6 +8,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
+// ендпойнт запрос нескольких шортов
 func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)

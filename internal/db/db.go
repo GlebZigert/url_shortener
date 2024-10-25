@@ -18,10 +18,12 @@ deleted		BOOLEAN
 
 var db *sql.DB
 
+// доступ к бд
 func Get() *sql.DB {
 	return db
 }
 
+// запуск бд
 func Init(DatabaseDSN string) error {
 
 	var err error
@@ -39,12 +41,14 @@ func Init(DatabaseDSN string) error {
 	return err
 }
 
+// пинг дб
 func Ping(ctx context.Context) error {
 
 	err := db.PingContext(ctx)
 	return err
 }
 
+// вставка в  бд
 func Insert(ctx context.Context, short, origin string, UUID int) error {
 
 	_, err := db.ExecContext(ctx, "insert into strazh (uid,origin, short) values ($1, $2, $3)", UUID, origin, short)
@@ -55,6 +59,7 @@ func Insert(ctx context.Context, short, origin string, UUID int) error {
 	return nil
 }
 
+// удалить из бд
 func Del(ctx context.Context, short string) error {
 
 	_, err := db.ExecContext(ctx, "UPDATE strazh SET deleted = true WHERE short = $1;", short)

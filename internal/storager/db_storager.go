@@ -10,6 +10,7 @@ import (
 type DBStorager struct {
 }
 
+// загрузить из базы
 func (one *DBStorager) Load(shorten *[]*Shorten) error {
 
 	rows, err := db.Get().Query("SELECT * FROM strazh")
@@ -30,12 +31,14 @@ func (one *DBStorager) Load(shorten *[]*Shorten) error {
 	return nil
 }
 
+// записать в базу
 func (one *DBStorager) StorageWrite(short, origin string, UUID int) error {
 
 	return db.Insert(context.Background(), short, origin, UUID)
 
 }
 
+// конструктор
 func NewDBStorager() (*DBStorager, error) {
 
 	store := &DBStorager{}
@@ -45,6 +48,7 @@ func NewDBStorager() (*DBStorager, error) {
 
 }
 
+// удалить из базы
 func (one *DBStorager) Delete(listID []int) {
 
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
+// удаляет шорт
 func (srv *Server) Delete(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)

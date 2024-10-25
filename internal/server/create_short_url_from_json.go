@@ -14,6 +14,7 @@ import (
 и возвращать в ответ объект {"result":"<ShortURL>"}.
 */
 
+// сокращает url входные в формает json
 func (srv *Server) CreateShortURLfromJSON(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)

@@ -8,6 +8,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/pkg/compress"
 )
 
+// мидл для распаковки
 func Gzip(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error

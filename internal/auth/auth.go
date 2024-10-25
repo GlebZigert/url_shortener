@@ -10,13 +10,14 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// auth
+// Струтура с методами для аутентификации и авторизации
 type AuthController struct {
 	sekretKey string
 	tokenExp  int
 	UIDkey    int
 }
 
+// ошибка если доступ запрещен
 var ErrAccessDenied = errors.New("access denied")
 
 // Claims — структура утверждений, которая включает стандартные утверждения
@@ -26,10 +27,12 @@ type Claims struct {
 	UID int
 }
 
+// Конструктор
 func NewAuth(sekretKey string, tokenExp int, key int) *AuthController {
 	return &AuthController{sekretKey, tokenExp, key}
 }
 
+// ошибка при формировании токена
 var ErrBuildJWTString error = errors.New("ошибка формирования JWT")
 
 // BuildJWTString создаёт токен и возвращает его в виде строки.
@@ -55,6 +58,7 @@ func (auc *AuthController) BuildJWTString(id int) (string, error) {
 	return tokenString, nil
 }
 
+// Получить uid из токена
 func (auc *AuthController) GetUserID(tokenString string) (int, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims,
@@ -78,6 +82,7 @@ func (auc *AuthController) GetUserID(tokenString string) (int, error) {
 	return claims.UID, nil
 }
 
+// достать uid из контекста реквеста - применяется в ендпойнтах
 func (auc *AuthController) CheckUID(ctx context.Context) (user int, ok bool) {
 
 	user, ok = ctx.Value(auc.UIDkey).(int)

@@ -40,6 +40,7 @@ type srvService interface {
 	GetAll() *[]*storager.Shorten
 }
 
+// сервер
 type Server struct {
 	cfg     srvConfig
 	mdl     srvMiddleware
@@ -47,8 +48,8 @@ type Server struct {
 	service srvService
 }
 
-//var errNoAuthMiddleware = errors.New("в миддлеварах не определен auth")
-
+// var errNoAuthMiddleware = errors.New("в миддлеварах не определен auth")
+// конструктор сервера
 func NewServer(cfg srvConfig, mdl srvMiddleware, logger srvLogger, service srvService) (*Server, error) {
 
 	/*
@@ -61,6 +62,7 @@ func NewServer(cfg srvConfig, mdl srvMiddleware, logger srvLogger, service srvSe
 	return &Server{cfg, mdl, logger, service}, nil
 }
 
+// запуск сервера
 func (srv *Server) Start() (err error) {
 
 	r := chi.NewRouter()

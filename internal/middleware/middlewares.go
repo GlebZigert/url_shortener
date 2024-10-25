@@ -13,11 +13,13 @@ type mdlLogger interface {
 	Error(msg string, fields map[string]interface{})
 }
 
+// струткура с методами-мидлами
 type Middleware struct {
 	mdlAuth
 	logger mdlLogger
 }
 
+// ее конструктор
 func NewMiddlewares(auth mdlAuth, logger mdlLogger) *Middleware {
 	return &Middleware{auth, logger}
 }

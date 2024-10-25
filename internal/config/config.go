@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-//type key int
-
+// type key int
+// ключи в контекст
 const (
 	UIDkey int = iota
 	JWTkey int = iota
@@ -16,6 +16,7 @@ const (
 	// ...
 )
 
+// конфиг
 type Config struct {
 	RunAddr string
 
@@ -34,40 +35,49 @@ type Config struct {
 	SECRETKEY string
 }
 
+// взять адрес
 func (cfg *Config) GetRunAddr() string {
 	return cfg.RunAddr
 }
 
+// взять префикс
 func (cfg *Config) GetBaseURL() string {
 	return cfg.BaseURL
 }
 
+// взять уровень логирования
 func (cfg *Config) GetFlagLogLevel() string {
 	return cfg.FlagLogLevel
 }
 
+// взять путь к файловому хранилищу
 func (cfg *Config) GetFileStoragePath() string {
 	return cfg.FileStoragePath
 }
 
+// взять количество горутин
 func (cfg *Config) GetNumWorkers() int {
 	return cfg.NumWorkers
 }
 
+// взять настройки базы
 func (cfg *Config) GetDatabaseDSN() string {
 	return cfg.DatabaseDSN
 }
 
+// взять время жизни токена
 func (cfg *Config) GetTOKENEXP() int {
 	return cfg.TOKENEXP
 }
 
+// взять ключ
 func (cfg *Config) GetSECRETKEY() string {
 	return cfg.SECRETKEY
 }
 
 var ptr *Config
 
+// конструктор
 func NewConfig(progname string, args []string) *Config {
 
 	if ptr == nil {
@@ -80,6 +90,7 @@ func NewConfig(progname string, args []string) *Config {
 	return ptr
 }
 
+// парсить
 func (cfg *Config) ParseFlags(progname string, args []string) {
 	flags := flag.NewFlagSet(progname, flag.ContinueOnError)
 	flags.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")

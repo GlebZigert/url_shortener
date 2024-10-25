@@ -7,13 +7,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 )
 
-type MyHandlerFunc func(w http.ResponseWriter, r *http.Request)
-
-// Implement the http.Handler interface.
-func (fn MyHandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fn(w, r) // Call handler function.
-}
-
+// мидл для обработки ошибок
 func (mdl *Middleware) ErrHandler(f http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

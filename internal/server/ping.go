@@ -9,6 +9,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
+// ендпойнт пинг базы
 func (srv *Server) Ping(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)

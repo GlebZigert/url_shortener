@@ -14,17 +14,20 @@ import (
 // это массив для хранения сокращенных url
 var shorten []*storager.Shorten
 
+// хранилище
 type Storager interface {
 	Load(*[]*storager.Shorten) error
 	StorageWrite(short, origin string, UUID int) error
 	Delete([]int)
 }
 
+// логгер
 type Logger interface {
 	Info(msg string, fields map[string]interface{})
 	Error(msg string, fields map[string]interface{})
 }
 
+// сервис
 type Service struct {
 	logger Logger
 	store  Storager
@@ -33,18 +36,7 @@ type Service struct {
 	shorten   []*storager.Shorten
 }
 
-/*
-
-func Init() {
-
-	shortuser = make(map[string]*list.List)
-	shorten = []*storager.Shorten{}
-
-	_ = storager.Load(&shorten)
-
-}
-*/
-
+// конструткор
 func NewService(logger Logger, store Storager) *Service {
 	srv := Service{logger, store, make(map[string]*list.List), []*storager.Shorten{}}
 
@@ -58,6 +50,7 @@ var (
 
 var shortuser map[string]*list.List
 
+// генератор шорта
 func generateRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	seed := rand.NewSource(time.Now().UnixNano())
@@ -70,6 +63,7 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
+// сделать горт на ориджин
 func (s *Service) Short(oririn string, uuid int) (string, error) {
 
 	s.logger.Info("Short: ", map[string]interface{}{
@@ -108,6 +102,7 @@ func (s *Service) Short(oririn string, uuid int) (string, error) {
 	return short, nil
 }
 
+// получить ориджин по шорту
 func (s *Service) Origin(short string) (string, error) {
 
 	for _, sh := range shorten {
@@ -126,6 +121,7 @@ func (s *Service) Origin(short string) (string, error) {
 
 }
 
+// получить все шорты
 func (s *Service) GetAll() *[]*storager.Shorten {
 
 	return &shorten

@@ -23,7 +23,6 @@ Content-Type: text/plain
 
 На любой некорректный запрос сервер должен возвращать ответ с кодом 400.
 */
-
 func (srv *Server) GetURL(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)

@@ -1,5 +1,6 @@
 package logger
 
+// интерфейс логгера
 type Logger interface {
 	//	Debug(msg string, fields map[string]interface{})
 	Info(msg string, fields map[string]interface{})

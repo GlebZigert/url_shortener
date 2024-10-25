@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+// запаковать
 func Compress(data []byte) ([]byte, error) {
 	var b bytes.Buffer
 	w, err := flate.NewWriter(&b, flate.BestCompression)
@@ -30,6 +31,7 @@ func Compress(data []byte) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
+// распаковать
 func Decompress(data []byte) ([]byte, error) {
 	r := flate.NewReader(bytes.NewReader(data))
 	defer r.Close()
@@ -51,6 +53,7 @@ type compressWriter struct {
 	zw *gzip.Writer
 }
 
+// конструктор
 func NewCompressWriter(w http.ResponseWriter) *compressWriter {
 	return &compressWriter{
 		w:  w,
@@ -58,14 +61,17 @@ func NewCompressWriter(w http.ResponseWriter) *compressWriter {
 	}
 }
 
+// заголовок
 func (c *compressWriter) Header() http.Header {
 	return c.w.Header()
 }
 
+// записать
 func (c *compressWriter) Write(p []byte) (int, error) {
 	return c.zw.Write(p)
 }
 
+// записать заголовок
 func (c *compressWriter) WriteHeader(statusCode int) {
 	if statusCode < 300 {
 		c.w.Header().Set("Content-Encoding", "gzip")
@@ -85,6 +91,7 @@ type compressReader struct {
 	zr *gzip.Reader
 }
 
+// конструктор
 func NewCompressReader(r io.ReadCloser) (*compressReader, error) {
 	zr, err := gzip.NewReader(r)
 	if err != nil {
@@ -97,10 +104,12 @@ func NewCompressReader(r io.ReadCloser) (*compressReader, error) {
 	}, nil
 }
 
+// прочитать
 func (c compressReader) Read(p []byte) (n int, err error) {
 	return c.zr.Read(p)
 }
 
+// закрыть
 func (c *compressReader) Close() error {
 	if err := c.r.Close(); err != nil {
 		return err

@@ -9,16 +9,19 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
+// для запроса шорта
 type Batch struct {
 	CorrelationID string `json:"correlation_id"`
 	OriginalURL   string `json:"original_url"`
 }
 
+// ответ на запрос шорта
 type BatchBack struct {
 	CorrelationID string `json:"correlation_id"`
 	ShortURL      string `json:"short_url"`
 }
 
+// ендпойнт запроса  множества URL для сокращения
 func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 
 	var err error
