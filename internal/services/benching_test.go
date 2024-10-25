@@ -13,7 +13,7 @@ import (
 
 func BenchmarkSimplest(b *testing.B) {
 
-	cfg := config.NewConfig()
+	cfg := config.NewConfig("prog", []string{})
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)
