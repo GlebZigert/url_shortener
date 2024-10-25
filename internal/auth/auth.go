@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+// auth
 type AuthController struct {
 	sekretKey string
 	tokenExp  int
