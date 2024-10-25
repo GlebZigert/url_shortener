@@ -7,6 +7,8 @@ type mdlAuth interface {
 	GetUserID(tokenString string) (int, error)
 	CheckUID(ctx context.Context) (user int, ok bool)
 	SetUID(ctx context.Context, user int) context.Context
+	CheckNewFlag(ctx context.Context) (fl bool, ok bool)
+	SetNewFlag(ctx context.Context, fl bool) context.Context
 }
 
 type mdlLogger interface {

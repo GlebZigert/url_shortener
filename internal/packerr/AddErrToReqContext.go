@@ -1,11 +1,14 @@
 package packerr
 
 import (
+	"context"
 	"errors"
 	"net/http"
-
-	"github.com/GlebZigert/url_shortener.git/internal/config"
 )
+
+type key int
+
+var Errkey key
 
 // Метод для добавления ошибки в контекст реквеста
 func AddErrToReqContext(r *http.Request, err *error) {
@@ -13,10 +16,13 @@ func AddErrToReqContext(r *http.Request, err *error) {
 		return
 	}
 
-	ctxerr, ok := r.Context().Value(config.Errkey).(*error)
+	ctxerr, ok := r.Context().Value(Errkey).(*error)
 	if ok {
 
 		*ctxerr = errors.Join(*ctxerr, *err)
+	} else {
+		ctx := context.WithValue(r.Context(), Errkey, &err)
+		r = r.WithContext(ctx)
 	}
 }
 

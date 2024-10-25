@@ -37,6 +37,8 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 
 			ctx = context.WithValue(ctx, config.NEWkey, bool(true))
 
+			ctx = mdl.SetNewFlag(ctx, true)
+
 			//	w.Header().Add("Authorization", string(jwt))
 			cookie := http.Cookie{
 				Name:     "Authorization",
@@ -48,7 +50,6 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 
 		}
 
-		//	ctx = context.WithValue(ctx, config.UIDkey, int(userid))
 		ctx = mdl.SetUID(ctx, userid)
 
 		r = r.WithContext(ctx)

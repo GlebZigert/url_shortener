@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
@@ -18,7 +17,7 @@ func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 		OriginalURL string `json:"original_url"`
 	}
 
-	vv, ok := req.Context().Value(config.NEWkey).(bool)
+	vv, ok := srv.mdl.CheckNewFlag(req.Context())
 
 	if ok && vv {
 

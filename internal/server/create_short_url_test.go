@@ -13,6 +13,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 	"github.com/stretchr/testify/assert"
@@ -99,7 +100,7 @@ func TestCreateShortURL(t *testing.T) {
 
 			var err error
 			//помещаем в контекст реквеста указатель на ошибку
-			ctx := context.WithValue(r.Context(), config.Errkey, &err)
+			packerr.AddErrToReqContext(r, &err)
 
 			if test.request.user >= 0 {
 				ctx = auc.SetUID(ctx, test.request.user)

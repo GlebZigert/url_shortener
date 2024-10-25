@@ -10,9 +10,13 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type UIDkey_t int
+type key int
 
-var UIDkey UIDkey_t
+const (
+	UIDkey key = iota
+	NEWkey key = iota
+	// ...
+)
 
 // Струтура с методами для аутентификации и авторизации
 type AuthController struct {
@@ -96,4 +100,17 @@ func (auc *AuthController) CheckUID(ctx context.Context) (user int, ok bool) {
 func (auc *AuthController) SetUID(ctx context.Context, user int) context.Context {
 
 	return context.WithValue(ctx, UIDkey, user)
+}
+
+// достать uid из контекста реквеста - применяется в ендпойнтах
+func (auc *AuthController) CheckNewFlag(ctx context.Context) (fl bool, ok bool) {
+
+	fl, ok = ctx.Value(NEWkey).(bool)
+	return
+}
+
+// достать uid из контекста реквеста - применяется в ендпойнтах
+func (auc *AuthController) SetNewFlag(ctx context.Context, fl bool) context.Context {
+
+	return context.WithValue(ctx, NEWkey, fl)
 }

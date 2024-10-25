@@ -102,7 +102,7 @@ func TestGetURL(t *testing.T) {
 
 			var err error
 			//помещаем в контекст реквеста указатель на ошибку
-			ctx := context.WithValue(r.Context(), config.Errkey, &err)
+			packerr.AddErrToReqContext(r, &err)
 
 			if test.request.user >= 0 {
 				ctx = auc.SetUID(ctx, test.request.user)
