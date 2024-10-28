@@ -9,7 +9,7 @@ import (
 )
 
 // мидл для распаковки
-func Gzip(h http.HandlerFunc) http.HandlerFunc {
+func (mdl *Middleware) Gzip(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer packerr.AddErrToReqContext(r, &err)

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 	"github.com/go-chi/chi"
 )
@@ -30,6 +29,7 @@ type srvMiddleware interface {
 	SetUID(ctx context.Context, user int) context.Context
 	CheckNewFlag(ctx context.Context) (fl bool, ok bool)
 	SetNewFlag(ctx context.Context, fl bool) context.Context
+	Gzip(h http.HandlerFunc) http.HandlerFunc
 }
 
 type srvLogger interface {
@@ -76,7 +76,7 @@ func (srv *Server) Start() (err error) {
 
 		r.Group(func(r chi.Router) {
 			r.Use(srv.mdl.Auth)
-			r.Post(`/`, middleware.Gzip(srv.CreateShortURL))
+			r.Post(`/`, srv.mdl.Gzip(srv.CreateShortURL))
 			r.Get(`/api/user/urls`, srv.GetURLs)
 			r.Delete(`/api/user/urls`, srv.Delete)
 		})
