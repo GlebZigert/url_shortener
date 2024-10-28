@@ -134,33 +134,33 @@ func TestService(t *testing.T) {
 	}
 	//Delete
 
-	type request_to_delete struct {
+	type requestToDelete struct {
 		value string
 		user  int
 	}
 
-	type want_to_delete struct {
+	type wantToDelete struct {
 		err error
 	}
 
-	tests_to_delete := []struct {
+	testsToDelete := []struct {
 		name    string
-		request request_to_delete
-		want    want_to_delete
+		request requestToDelete
+		want    wantToDelete
 	}{
 		{
 			name: "TesDelete",
-			request: request_to_delete{
+			request: requestToDelete{
 				value: "fffffff",
 				user:  0,
 			},
-			want: want_to_delete{
+			want: wantToDelete{
 				err: nil,
 			},
 		},
 	}
 
-	for _, test := range tests_to_delete {
+	for _, test := range testsToDelete {
 		t.Run(test.name, func(t *testing.T) {
 			//t.Log("req: ", test.request.method, " ", test.request.url)
 			short, err := service.Short(test.request.value, test.request.user)
