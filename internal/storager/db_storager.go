@@ -1,0 +1,56 @@
+package storager
+
+import (
+	"context"
+	"time"
+
+	"github.com/GlebZigert/url_shortener.git/internal/db"
+)
+
+// хранение в базе
+type DBStorager struct {
+}
+
+// загрузить из базы
+func (one *DBStorager) Load(shorten *[]*Shorten) error {
+
+	rows, err := db.Get().Query("SELECT * FROM strazh")
+
+	if err != nil {
+		return err
+	}
+
+	for rows.Next() {
+		var u Shorten
+		err = rows.Scan(&u.ID, &u.UUID, &u.ShortURL, &u.OriginalURL, &u.DeletedFlag)
+		if err != nil {
+			return err
+		}
+		*shorten = append(*shorten, &u)
+	}
+
+	return nil
+}
+
+// записать в базу
+func (one *DBStorager) StorageWrite(short, origin string, UUID int) error {
+
+	return db.Insert(context.Background(), short, origin, UUID)
+
+}
+
+// конструктор
+func NewDBStorager() (*DBStorager, error) {
+
+	store := &DBStorager{}
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	return store, db.Ping(ctx)
+
+}
+
+// удалить из базы
+func (one *DBStorager) Delete(short string) error {
+	_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
+	return err
+}
