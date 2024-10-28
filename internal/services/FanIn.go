@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
-
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
 
 // generator возвращает канал с данными
@@ -173,11 +171,10 @@ func (s *Service) deleteShort(short string, uid int) (id int, err error) {
 				//флаг надо выставить и там и там
 
 				//сначала выставляю флаг в бд
-				_, err = db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
 
 				//если запрос в бд был выполнен успешно
 				//выставляю флаг и в хранилке
-				if err == nil {
+				if s.store.Delete(short) == nil {
 					id = one.ID
 					one.DeletedFlag = true
 

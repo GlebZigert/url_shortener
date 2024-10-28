@@ -18,7 +18,7 @@ var shorten []*storager.Shorten
 type Storager interface {
 	Load(*[]*storager.Shorten) error
 	StorageWrite(short, origin string, UUID int) error
-	Delete([]int)
+	Delete(string) error
 }
 
 // логгер
@@ -63,7 +63,7 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-// сделать горт на ориджин
+// сделать шорт на ориджин
 func (s *Service) Short(oririn string, uuid int) (string, error) {
 
 	s.logger.Info("Short: ", map[string]interface{}{

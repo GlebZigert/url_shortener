@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
@@ -28,8 +29,10 @@ func TestPing(t *testing.T) {
 	type request struct {
 		method string
 		url    string
+		user   int
+		body   io.Reader
 	}
-
+	originFirst := "asefsfsdf"
 	tests := []struct {
 		name     string
 		request  request
@@ -40,10 +43,36 @@ func TestPing(t *testing.T) {
 			name: "500 запрос без данных о пользователе",
 			request: request{
 				http.MethodGet,
-				"/Ping",
+				"/",
+				-1, // в контексте ревеста не будет данных о пользователе
+				strings.NewReader(originFirst),
 			},
 			want: want{
 				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "201 запрос с новым ориджином",
+			request: request{
+				http.MethodGet,
+				"/",
+				0,
+				strings.NewReader(originFirst),
+			},
+			want: want{
+				code: http.StatusCreated,
+			},
+		},
+		{
+			name: "409 запрос с повторным ориджином",
+			request: request{
+				http.MethodGet,
+				"/",
+				0,
+				strings.NewReader(originFirst),
+			},
+			want: want{
+				code: http.StatusConflict,
 			},
 		},
 	}
@@ -66,16 +95,20 @@ func TestPing(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Log("req: ", test.request.method, " ", test.request.url)
 
-			r := httptest.NewRequest(test.request.method, test.request.url, nil)
+			r := httptest.NewRequest(test.request.method, test.request.url, test.request.body)
 			w := httptest.NewRecorder()
 
 			var err error
 			//помещаем в контекст реквеста указатель на ошибку
 			packerr.AddErrToReqContext(r, &err)
 
+			if test.request.user >= 0 {
+				ctx = auc.SetUID(ctx, test.request.user)
+			}
+
 			r = r.WithContext(ctx)
 
-			srv.Ping(w, r)
+			srv.CreateShortURL(w, r)
 
 			if err != nil {
 				t.Log("err: ", err.Error())
@@ -91,7 +124,6 @@ func TestPing(t *testing.T) {
 			t.Log("res: ", res.StatusCode, " ", string(body))
 
 			assert.Equal(t, test.want.code, res.StatusCode)
-
 			defer res.Body.Close()
 			_, err = io.ReadAll(res.Body)
 			require.NoError(t, err)

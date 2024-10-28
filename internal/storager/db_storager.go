@@ -50,6 +50,7 @@ func NewDBStorager() (*DBStorager, error) {
 }
 
 // удалить из базы
-func (one *DBStorager) Delete(listID []int) {
-
+func (one *DBStorager) Delete(short string) error {
+	_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
+	return err
 }

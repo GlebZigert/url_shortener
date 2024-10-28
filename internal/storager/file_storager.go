@@ -60,8 +60,8 @@ func (one *FileStorager) Load(shorten *[]*Shorten) error {
 }
 
 // удалить
-func (one *FileStorager) Delete(listID []int) {
-
+func (one *FileStorager) Delete(short string) error {
+	return nil
 }
 
 // записать в файл

@@ -15,8 +15,8 @@ func (one *EmptyStorager) StorageWrite(short, origin string, UUID int) error {
 }
 
 // удалить из базы
-func (one *EmptyStorager) Delete(listID []int) {
-
+func (one *EmptyStorager) Delete(short string) error {
+	return nil
 }
 
 // конструктор
