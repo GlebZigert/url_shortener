@@ -26,15 +26,18 @@ func Example() {
 	originFirst := "originFirst"
 	uid1 := 1
 
-	//создаем шорт
+	//Метод Short на входе принимает оригинальный url и id пользователя
+	// создает и возвращает сокращенный url либо ошибку
+
 	short, err := service.Short(originFirst, uid1)
 
 	if err != nil {
-		fmt.Println("что-то пошло не так")
+		fmt.Println("ошибка при генерации сокращенного url")
 		return
 	}
-	fmt.Println("Метод Short прринимает на входе оригинальный URL: ", originFirst)
-	fmt.Println("Создает и возвращает сокращенный url: ", short)
+
+	//Метод Origin на входе принимает сокращенный url
+	// возвращает оригинальный url либо ошибку
 
 	origin, err := service.Origin(short)
 	fmt.Println("Метод Origin принимает сокращенный URL возвращает оригинальный URL: ", origin)
