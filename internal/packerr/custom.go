@@ -5,6 +5,8 @@ type ErrConflict409 struct {
 	S string
 }
 
+var Conflict ErrConflict409
+
 // ошибка когда просим шорт но он удален
 type ErrDeleted struct {
 	S string

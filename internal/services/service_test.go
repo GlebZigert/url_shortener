@@ -48,7 +48,7 @@ func TestService(t *testing.T) {
 				0,
 			},
 			want: want{
-				&packerr.ErrConflict409{S: "попытка сократить уже имеющийся в базе URL"},
+				&packerr.Conflict,
 				"",
 			},
 		},
@@ -74,7 +74,7 @@ func TestService(t *testing.T) {
 			_, errr := service.Short(test.request.value, test.request.user)
 
 			if test.want.err != nil {
-				assert.ErrorType(t, errr, test.want.err)
+				assert.Equal(t, errr, test.want.err)
 			} else {
 				assert.NilError(t, errr)
 			}
@@ -118,7 +118,8 @@ func TestService(t *testing.T) {
 			result, errr := service.Origin(test.request.value)
 
 			if test.want.err != nil {
-				assert.ErrorType(t, errr, test.want.err)
+
+				assert.Equal(t, err, test.want.err)
 			} else {
 				assert.NilError(t, errr)
 			}
@@ -179,8 +180,11 @@ func TestService(t *testing.T) {
 			service.Delete([]string{short}, test.request.user)
 
 			origin, err = service.Origin(short)
+			str := "шорт " + short + " удален"
 
-			assert.ErrorType(t, err, &packerr.ErrDeleted{})
+			customErr := err.(*packerr.ErrDeleted)
+
+			assert.Equal(t, str, customErr.S)
 
 		})
 	}
