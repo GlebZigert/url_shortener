@@ -5,7 +5,8 @@ type ErrConflict409 struct {
 	S string
 }
 
-var Conflict ErrConflict409
+// обьявил ошибку
+var Conflict ErrConflict409 = ErrConflict409{S: "попытка сократить уже имеющийся в базе URL"}
 
 // ошибка когда просим шорт но он удален
 type ErrDeleted struct {
