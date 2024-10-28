@@ -36,3 +36,7 @@ go1.20.7 test ./... -coverprofile=coverage.out -coverpkg=./...
 go1.20.7 test internal/server/*.go -v
 go1.20.7 build cmd/shortener/main.go 
 
+go1.22.0 test ./... -coverprofile=cover.out -coverpkg=./...
+go1.22.0 tool cover -html cover.out
+go tool cover -func cover.out
+
