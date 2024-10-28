@@ -179,7 +179,7 @@ func TestService(t *testing.T) {
 
 			service.Delete([]string{short}, test.request.user)
 
-			origin, err = service.Origin(short)
+			_, err = service.Origin(short)
 			str := "шорт " + short + " удален"
 
 			customErr := err.(*packerr.ErrDeleted)
