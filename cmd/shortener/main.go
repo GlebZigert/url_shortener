@@ -1,4 +1,4 @@
-// Package area provides functions for calculating the area of various shapessssss.
+// Package area provides functions for calculating the area of various shapes.
 package main
 
 // @Title BucketStorage API
