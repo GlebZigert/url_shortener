@@ -9,6 +9,7 @@ func mulfunc(i int) (int, error) {
 	return i * 2, nil
 }
 
+// errCheckFunc is func for tests
 func errCheckFunc() {
 	// формулируем ожидания: анализатор должен находить ошибку,
 	// описанную в комментарии want
@@ -19,6 +20,7 @@ func errCheckFunc() {
 	defer mulfunc(5)
 }
 
+// FF is func for tests
 func FF() {
 	os.Remove(`myfile.txt`)
 	os.OpenFile("notes.txt", os.O_RDWR|os.O_CREATE, 0755)

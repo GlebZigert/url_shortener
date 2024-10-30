@@ -4,6 +4,7 @@ func mulfunc(i int) (int, error) {
 	return i * 2, nil
 }
 
+// TestFunc for tests
 func TestFunc() {
 	var i int
 	myfunc := func() error {

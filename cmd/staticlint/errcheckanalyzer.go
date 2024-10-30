@@ -8,12 +8,14 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+// ErrCheckAnalyzer variable
 var ErrCheckAnalyzer = &analysis.Analyzer{
 	Name: "errcheck",
 	Doc:  "check for unchecked errors",
 	Run:  run,
 }
 
+// Pass struct for
 type Pass struct {
 	// отобразим здесь только важные поля
 	Fset         *token.FileSet // информация о позиции токенов
