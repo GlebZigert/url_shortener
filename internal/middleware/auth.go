@@ -20,7 +20,7 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 		var userid int
 		ctx := r.Context()
 
-		if authv != nil {
+		if err == nil {
 			mdl.logger.Info("auth: ", map[string]interface{}{
 				"auth": authv,
 			})
@@ -29,9 +29,27 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 			//ctx = r.Context()
 		}
 
-		if err != nil || authv == nil {
-			jwt, _ := mdl.BuildJWTString(userid)
-			userid, _ = mdl.GetUserID(jwt)
+		if err != nil {
+			jwt, err := mdl.BuildJWTString(userid)
+			if err != nil {
+
+				mdl.logger.Error("BuildJWTString: ", map[string]interface{}{
+					"err": err.Error(),
+				})
+
+				http.Error(w, "", http.StatusInternalServerError)
+				return
+			}
+
+			userid, err = mdl.GetUserID(jwt)
+			if err != nil {
+				mdl.logger.Error("GetUserID: ", map[string]interface{}{
+					"err": err.Error(),
+				})
+				http.Error(w, "", http.StatusInternalServerError)
+				return
+			}
+
 			ctx = mdl.SetNewFlag(ctx, true)
 
 			//	w.Header().Add("Authorization", string(jwt))

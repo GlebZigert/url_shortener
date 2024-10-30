@@ -53,7 +53,10 @@ func TestService(t *testing.T) {
 			},
 		},
 	}
-	cfg := config.NewConfig("prog", []string{})
+	cfg, err := config.NewConfig("prog", []string{})
+	if err != nil {
+		t.Errorf("error parse config")
+	}
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)

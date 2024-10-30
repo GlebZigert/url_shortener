@@ -13,7 +13,10 @@ import (
 func Example() {
 
 	//Инициируем компоненты сервиса
-	cfg := config.NewConfig("prog", []string{})
+	cfg, err := config.NewConfig("prog", []string{})
+	if err != nil {
+		fmt.Errorf("error parse config")
+	}
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)

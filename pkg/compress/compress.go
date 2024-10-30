@@ -35,7 +35,12 @@ func Compress(data []byte) ([]byte, error) {
 // Decompress func for decompress
 func Decompress(data []byte) ([]byte, error) {
 	r := flate.NewReader(bytes.NewReader(data))
-	defer r.Close()
+	defer func(r io.ReadCloser) {
+		err := r.Close()
+		if err != nil {
+			fmt.Println("decompress r close error: ", err.Error())
+		}
+	}(r)
 
 	var b bytes.Buffer
 	_, err := b.ReadFrom(r)
@@ -94,6 +99,7 @@ type compressReader struct {
 
 // NewCompressReader func is constructor
 func NewCompressReader(r io.ReadCloser) (*compressReader, error) {
+
 	zr, err := gzip.NewReader(r)
 	if err != nil {
 		return nil, err

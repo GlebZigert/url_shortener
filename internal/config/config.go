@@ -77,20 +77,23 @@ func (cfg *Config) GetSECRETKEY() string {
 var ptr *Config
 
 // NewConfig is constructor for Config
-func NewConfig(progname string, args []string) *Config {
+func NewConfig(progname string, args []string) (*Config, error) {
 
 	if ptr == nil {
-		fmt.Println("ptr==nil")
 		cfg := Config{}
-		cfg.ParseFlags(progname, args)
+		err := cfg.ParseFlags(progname, args)
+		if err != nil {
+			return nil, err
+		}
+
 		ptr = &cfg
 	}
 
-	return ptr
+	return ptr, nil
 }
 
 // ParseFlags to parse Config fields form flags and envs
-func (cfg *Config) ParseFlags(progname string, args []string) {
+func (cfg *Config) ParseFlags(progname string, args []string) (err error) {
 	flags := flag.NewFlagSet(progname, flag.ContinueOnError)
 	flags.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")
 	flags.StringVar(&cfg.BaseURL, "b", "http://localhost:8080", "base address for short URL")
@@ -102,7 +105,10 @@ func (cfg *Config) ParseFlags(progname string, args []string) {
 	flags.IntVar(&cfg.TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
 	flags.IntVar(&cfg.NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
 
-	flags.Parse(args)
+	err = flags.Parse(args)
+	if err != nil {
+		return
+	}
 	fmt.Println(cfg.GetRunAddr())
 	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
 		cfg.RunAddr = envRunAddr
@@ -119,4 +125,6 @@ func (cfg *Config) ParseFlags(progname string, args []string) {
 	if envFileStoragePath := os.Getenv("FILE_STORAGE_PATH"); envFileStoragePath != "" {
 		cfg.FileStoragePath = envFileStoragePath
 	}
+
+	return
 }

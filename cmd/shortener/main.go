@@ -21,6 +21,9 @@ package main
 // @Tag.description "Группа для работы с данными внутри bucket-ов"
 
 import (
+	"errors"
+	"log"
+	"net/http"
 	_ "net/http/pprof"
 
 	"github.com/GlebZigert/url_shortener.git/internal/app"
@@ -28,5 +31,10 @@ import (
 
 func main() {
 
-	app.Run()
+	err := app.Run()
+
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Fatalf("HTTP server error: %v", err)
+	}
+
 }

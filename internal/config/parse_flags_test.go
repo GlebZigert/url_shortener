@@ -28,7 +28,11 @@ func TestParseFlagsCorrect(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
-			config := NewConfig("prog", tt.args)
+			config, err := NewConfig("prog", tt.args)
+
+			if err != nil {
+				t.Errorf("error parse config")
+			}
 
 			if !reflect.DeepEqual(*config, tt.conf) {
 				t.Errorf("conf got %+v, want %+v", *config, tt.conf)

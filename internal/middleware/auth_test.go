@@ -79,7 +79,13 @@ func TestAuth(t *testing.T) {
 			},
 		},
 	}
-	cfg := config.NewConfig("prog", []string{})
+
+	cfg, err := config.NewConfig("prog", []string{})
+
+	if err != nil {
+		t.Errorf("error parse config")
+	}
+
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)
@@ -89,7 +95,9 @@ func TestAuth(t *testing.T) {
 
 	//service := services.NewService(logger, store)
 
+	//заменить на мок
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
+
 	mdl := NewMiddlewares(auc, logger)
 
 	//srv, _ := NewServer(cfg, mdl, logger, service)
@@ -145,8 +153,13 @@ func TestAuth(t *testing.T) {
 			}
 			//	authv, err := res.Cookies("Authorization")
 
-			if err != nil || auth == "" {
-				t.Error("!!!")
+			if err != nil {
+				t.Error("!!! ", err.Error())
+			}
+
+			if auth == "" {
+				assert.Equal(t, http.StatusInternalServerError, res.Status)
+
 			}
 
 			//t.Log("res: ", res.StatusCode, " ", string(body))

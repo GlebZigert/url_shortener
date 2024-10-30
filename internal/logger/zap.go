@@ -14,8 +14,11 @@ type ZapLogger struct {
 
 // NewZapLogger func is constructor
 func NewZapLogger(loggerType string, ctx context.Context) *ZapLogger {
-	logger, _ := zap.NewProduction()
+	logger, err := zap.NewProduction()
 
+	if err != nil {
+		return nil
+	}
 	return &ZapLogger{logger: logger, ctx: ctx}
 }
 

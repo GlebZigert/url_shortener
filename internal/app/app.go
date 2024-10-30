@@ -17,7 +17,10 @@ import (
 // Запуск
 func Run() (err error) {
 
-	cfg := config.NewConfig(os.Args[0], os.Args[1:])
+	cfg, err := config.NewConfig(os.Args[0], os.Args[1:])
+	if err != nil {
+		return
+	}
 	ctx := context.Background()
 
 	db.Init(cfg.DatabaseDSN)
