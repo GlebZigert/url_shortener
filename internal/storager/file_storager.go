@@ -25,10 +25,7 @@ func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
 	if err != nil {
 		return store, err
 	}
-	err = file.Close()
-	if err != nil {
-		return store, err
-	}
+	defer file.Close()
 	return store, err
 }
 
@@ -39,10 +36,8 @@ func (one *FileStorager) Load(shorten *[]*Shorten) error {
 	if err != nil {
 		return err
 	}
-	err = file.Close()
-	if err != nil {
-		return err
-	}
+	defer file.Close()
+
 	reader := bufio.NewReader(file)
 
 	var data []byte
@@ -77,10 +72,8 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 		return err
 	}
 
-	err = file.Close()
-	if err != nil {
-		return err
-	}
+	defer file.Close()
+
 	writer := bufio.NewWriter(file)
 
 	shorten := Shorten{id, UUID, short, origin, false}

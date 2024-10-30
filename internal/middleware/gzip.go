@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
@@ -27,8 +26,7 @@ func (mdl *Middleware) Gzip(h http.HandlerFunc) http.HandlerFunc {
 			// меняем оригинальный http.ResponseWriter на новый
 			ow = cw
 			// не забываем отправить клиенту все сжатые данные после завершения middleware
-
-			err = errors.Join(err, cw.Close())
+			defer cw.Close()
 		}
 
 		// проверяем, что клиент отправил серверу сжатые данные в формате gzip
@@ -43,7 +41,7 @@ func (mdl *Middleware) Gzip(h http.HandlerFunc) http.HandlerFunc {
 			}
 			// меняем тело запроса на новое
 			r.Body = cr
-			err = errors.Join(err, cr.Close())
+			defer cr.Close()
 		}
 
 		// передаём управление хендлеру
