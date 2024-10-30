@@ -1,3 +1,4 @@
+// Package config is a package for config
 package config
 
 import (
@@ -5,8 +6,6 @@ import (
 	"fmt"
 	"os"
 )
-
-type key int
 
 // ключи в контекст
 const (
@@ -16,7 +15,7 @@ const (
 	// ...
 )
 
-// конфиг
+// Config struct is a struct for config
 type Config struct {
 	RunAddr string
 
@@ -35,49 +34,49 @@ type Config struct {
 	SECRETKEY string
 }
 
-// взять адрес
+// GetRunAddr to get RunAddr value
 func (cfg *Config) GetRunAddr() string {
 	return cfg.RunAddr
 }
 
-// взять префикс
+// GetBaseURL to get BaseURL value
 func (cfg *Config) GetBaseURL() string {
 	return cfg.BaseURL
 }
 
-// взять уровень логирования
+// GetFlagLogLevel to get log level value
 func (cfg *Config) GetFlagLogLevel() string {
 	return cfg.FlagLogLevel
 }
 
-// взять путь к файловому хранилищу
+// GetFileStoragePath to get file storage path value
 func (cfg *Config) GetFileStoragePath() string {
 	return cfg.FileStoragePath
 }
 
-// взять количество горутин
+// GetNumWorkers to get vorkers number value
 func (cfg *Config) GetNumWorkers() int {
 	return cfg.NumWorkers
 }
 
-// взять настройки базы
+// GetDatabaseDSN to get database dsn value
 func (cfg *Config) GetDatabaseDSN() string {
 	return cfg.DatabaseDSN
 }
 
-// взять время жизни токена
+// GetTOKENEXP to get tocken exp value
 func (cfg *Config) GetTOKENEXP() int {
 	return cfg.TOKENEXP
 }
 
-// взять ключ
+// GetSECRETKEY to get sekret key value
 func (cfg *Config) GetSECRETKEY() string {
 	return cfg.SECRETKEY
 }
 
 var ptr *Config
 
-// конструктор
+// NewConfig is constructor for Config
 func NewConfig(progname string, args []string) *Config {
 
 	if ptr == nil {
@@ -90,7 +89,7 @@ func NewConfig(progname string, args []string) *Config {
 	return ptr
 }
 
-// парсить
+// ParseFlags to parse Config fields form flags and envs
 func (cfg *Config) ParseFlags(progname string, args []string) {
 	flags := flag.NewFlagSet(progname, flag.ContinueOnError)
 	flags.StringVar(&cfg.RunAddr, "a", "localhost:8080", "address and port to run server")
