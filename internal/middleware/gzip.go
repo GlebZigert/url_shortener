@@ -26,7 +26,7 @@ func (mdl *Middleware) Gzip(h http.HandlerFunc) http.HandlerFunc {
 			// меняем оригинальный http.ResponseWriter на новый
 			ow = cw
 			// не забываем отправить клиенту все сжатые данные после завершения middleware
-			defer packerr.AddCloseErrErrToReqContext(r, cw.Close())
+			defer cw.Close()
 		}
 
 		// проверяем, что клиент отправил серверу сжатые данные в формате gzip
@@ -41,7 +41,7 @@ func (mdl *Middleware) Gzip(h http.HandlerFunc) http.HandlerFunc {
 			}
 			// меняем тело запроса на новое
 			r.Body = cr
-			defer packerr.AddCloseErrErrToReqContext(r, cr.Close())
+			defer cr.Close()
 		}
 
 		// передаём управление хендлеру
