@@ -1,6 +1,7 @@
+// Package logger is a package for logging
 package logger
 
-// интерфейс логгера
+// Logger interface
 type Logger interface {
 	//	Debug(msg string, fields map[string]interface{})
 	Info(msg string, fields map[string]interface{})

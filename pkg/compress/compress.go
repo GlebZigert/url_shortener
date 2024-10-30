@@ -1,3 +1,4 @@
+// Package compress for compress
 package compress
 
 import (
@@ -9,7 +10,7 @@ import (
 	"net/http"
 )
 
-// запаковать
+// Compress func for compress
 func Compress(data []byte) ([]byte, error) {
 	var b bytes.Buffer
 	w, err := flate.NewWriter(&b, flate.BestCompression)
@@ -31,7 +32,7 @@ func Compress(data []byte) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-// распаковать
+// Decompress func for decompress
 func Decompress(data []byte) ([]byte, error) {
 	r := flate.NewReader(bytes.NewReader(data))
 	defer r.Close()
@@ -53,7 +54,7 @@ type compressWriter struct {
 	zw *gzip.Writer
 }
 
-// конструктор
+// NewCompressWriter func is constructor
 func NewCompressWriter(w http.ResponseWriter) *compressWriter {
 	return &compressWriter{
 		w:  w,
@@ -91,7 +92,7 @@ type compressReader struct {
 	zr *gzip.Reader
 }
 
-// конструктор
+// NewCompressReader func is constructor
 func NewCompressReader(r io.ReadCloser) (*compressReader, error) {
 	zr, err := gzip.NewReader(r)
 	if err != nil {
