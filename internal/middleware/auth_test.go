@@ -11,7 +11,6 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -83,12 +82,11 @@ func TestAuth(t *testing.T) {
 	cfg, err := config.NewConfig("prog", []string{})
 
 	if err != nil {
-		t.Errorf("error parse config")
+		t.Errorf(err.Error())
 	}
 
 	ctx := context.Background()
 
-	db.Init(cfg.DatabaseDSN)
 	//store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
@@ -120,8 +118,12 @@ func TestAuth(t *testing.T) {
 			r = r.WithContext(ctx)
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				fmt.Println("testHandler")
-				_, err = w.Write([]byte("[]"))
+
+				_, err := w.Write([]byte("[]"))
+				if err != nil {
+					fmt.Print("error ", err.Error())
+				}
+
 			})
 
 			if test.request.auth {

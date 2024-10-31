@@ -23,7 +23,10 @@ func Run() (err error) {
 	}
 	ctx := context.Background()
 
-	db.Init(cfg.DatabaseDSN)
+	err = db.Init(cfg.DatabaseDSN)
+	if err != nil {
+		return
+	}
 	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
