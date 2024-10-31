@@ -19,7 +19,7 @@ var shorten []*storager.Shorten
 type Storager interface {
 	Load(*[]*storager.Shorten) error
 	StorageWrite(short, origin string, UUID int) error
-	Delete(string) error
+	Delete(interface{}) error
 }
 
 // логгер

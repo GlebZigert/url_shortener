@@ -2,9 +2,11 @@ package storager
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
 type dbstoreConfig interface {
@@ -61,7 +63,19 @@ func NewDBStorager(cfg dbstoreConfig) (*DBStorager, error) {
 }
 
 // удалить из базы
-func (one *DBStorager) Delete(short string) error {
-	_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
-	return err
+func (one *DBStorager) Delete(short interface{}) error {
+
+	switch short.(type) {
+	case string:
+		_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
+		return err
+
+	case []string:
+		_, err := db.Get().Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(short.([]string), ","))
+
+		return err
+	default:
+		return &packerr.WrongType
+	}
+
 }

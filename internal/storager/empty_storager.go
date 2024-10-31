@@ -15,7 +15,7 @@ func (one *EmptyStorager) StorageWrite(short, origin string, UUID int) error {
 }
 
 // удалить из базы
-func (one *EmptyStorager) Delete(short string) error {
+func (one *EmptyStorager) Delete(short interface{}) error {
 	return nil
 }
 

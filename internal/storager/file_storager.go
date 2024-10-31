@@ -65,7 +65,7 @@ func (one *FileStorager) Load(shorten *[]*Shorten) error {
 }
 
 // удалить
-func (one *FileStorager) Delete(short string) error {
+func (one *FileStorager) Delete(short interface{}) error {
 	return nil
 }
 

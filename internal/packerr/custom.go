@@ -22,3 +22,16 @@ func (e *ErrDeleted) Error() string {
 func (e *ErrConflict409) Error() string {
 	return e.S
 }
+
+// обьявил ошибку
+var WrongType ErrWrongType = ErrWrongType{S: "неправильный тип"}
+
+// ошибка когда просим шорт но он удален
+type ErrWrongType struct {
+	S string
+}
+
+// метод Error
+func (e *ErrWrongType) Error() string {
+	return e.S
+}

@@ -18,7 +18,7 @@ type Shorten struct {
 type Storager interface {
 	Load(*[]*Shorten) error
 	StorageWrite(short, origin string, UUID int) error
-	Delete(string) error
+	Delete(interface{}) error
 }
 
 // конструктор
