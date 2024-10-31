@@ -121,7 +121,10 @@ func TestCreateShortURLfromJSON(t *testing.T) {
 			res := w.Result()
 
 			body, err := io.ReadAll(res.Body)
-			defer res.Body.Close()
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
 			if err != nil {
 				return //err
 			}

@@ -86,9 +86,12 @@ func TestPing(t *testing.T) {
 			}
 
 			res := w.Result()
-			defer packerr.AddCloseErrToErr(&err, res.Body)
 
 			body, err := io.ReadAll(res.Body)
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
 			if err != nil {
 				return //err
 			}
@@ -97,8 +100,6 @@ func TestPing(t *testing.T) {
 
 			assert.Equal(t, test.want.code, res.StatusCode)
 
-			defer packerr.AddCloseErrToErr(&err, res.Body)
-			_, err = io.ReadAll(res.Body)
 			require.NoError(t, err)
 
 		})

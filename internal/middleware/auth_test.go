@@ -143,7 +143,7 @@ func TestAuth(t *testing.T) {
 			}
 
 			res := w.Result()
-			defer packerr.AddCloseErrToErr(&err, res.Body)
+
 			auth := ""
 			cookies := res.Cookies()
 			for _, c := range cookies {
@@ -173,8 +173,11 @@ func TestAuth(t *testing.T) {
 
 			assert.Equal(t, test.want.sendsGzip, sendsGzip)
 
-			defer packerr.AddCloseErrToErr(&err, res.Body)
 			_, err = io.ReadAll(res.Body)
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
 			require.NoError(t, err)
 
 		})
