@@ -77,7 +77,7 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 		return err
 	}
 
-	defer file.Close()
+	defer packerr.AddCloseErrToErr(&err, file)
 
 	writer := bufio.NewWriter(file)
 
