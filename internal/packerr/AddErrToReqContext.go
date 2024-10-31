@@ -30,7 +30,7 @@ func AddErrToReqContext(r *http.Request, err *error) *http.Request {
 }
 
 // Метод для добавления ошибки в контекст реквеста
-func CheckCloseErr(r *http.Request, closer io.Closer) {
+func AddCloseErrToReqContext(r *http.Request, closer io.Closer) {
 	err := closer.Close()
 	if err != nil {
 		AddErrToReqContext(r, &err)
@@ -38,4 +38,11 @@ func CheckCloseErr(r *http.Request, closer io.Closer) {
 
 }
 
-//Метод для чтения ошибки из контекста реквеста
+// Метод для чтения ошибки из контекста реквеста
+func AddCloseErrToErr(err *error, closer io.Closer) {
+	cerr := closer.Close()
+	if cerr != nil {
+		*err = errors.Join(*err, cerr)
+	}
+
+}

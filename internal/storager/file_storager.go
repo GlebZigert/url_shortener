@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"encoding/json"
 	"os"
+
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
 var id int
@@ -39,7 +41,7 @@ func (one *FileStorager) Load(shorten *[]*Shorten) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer packerr.AddCloseErrToErr(&err, file)
 
 	reader := bufio.NewReader(file)
 
