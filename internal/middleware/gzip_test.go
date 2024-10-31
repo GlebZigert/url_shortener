@@ -110,6 +110,7 @@ func TestGzip(t *testing.T) {
 			}
 
 			res := w.Result()
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 
 			//t.Log("res: ", res.StatusCode, " ", string(body))
 

@@ -65,13 +65,13 @@ func NewDBStorager(cfg dbstoreConfig) (*DBStorager, error) {
 // удалить из базы
 func (one *DBStorager) Delete(short interface{}) error {
 
-	switch short.(type) {
+	switch short := short.(type) {
 	case string:
 		_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
 		return err
 
 	case []string:
-		_, err := db.Get().Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(short.([]string), ","))
+		_, err := db.Get().Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(short, ","))
 
 		return err
 	default:

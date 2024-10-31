@@ -120,6 +120,7 @@ func TestCreateShortURL(t *testing.T) {
 			}
 
 			res := w.Result()
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 
 			body, err := io.ReadAll(res.Body)
 			if err != nil {

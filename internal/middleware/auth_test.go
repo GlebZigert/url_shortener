@@ -143,6 +143,7 @@ func TestAuth(t *testing.T) {
 			}
 
 			res := w.Result()
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 			auth := ""
 			cookies := res.Cookies()
 			for _, c := range cookies {
