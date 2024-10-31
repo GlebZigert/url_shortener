@@ -2,55 +2,10 @@
 package compress
 
 import (
-	"bytes"
-	"compress/flate"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"net/http"
 )
-
-// Compress func for compress
-func Compress(data []byte) ([]byte, error) {
-	var b bytes.Buffer
-	w, err := flate.NewWriter(&b, flate.BestCompression)
-	if err != nil {
-		return nil, fmt.Errorf("failed init compress writer: %v", err)
-	}
-
-	_, err = w.Write(data)
-	if err != nil {
-		return nil, fmt.Errorf("failed write data to compredd temporary buffer: %v ", err)
-	}
-
-	err = w.Close()
-
-	if err != nil {
-		return nil, fmt.Errorf("failed compress data: %v ", err)
-	}
-
-	return b.Bytes(), nil
-}
-
-// Decompress func for decompress
-func Decompress(data []byte) ([]byte, error) {
-	r := flate.NewReader(bytes.NewReader(data))
-	defer func(r io.ReadCloser) {
-		err := r.Close()
-		if err != nil {
-			fmt.Println("decompress r close error: ", err.Error())
-		}
-	}(r)
-
-	var b bytes.Buffer
-	_, err := b.ReadFrom(r)
-
-	if err != nil {
-		return nil, fmt.Errorf("failed decompress data: %v", err)
-	}
-
-	return b.Bytes(), nil
-}
 
 // compressWriter реализует интерфейс http.ResponseWriter и позволяет прозрачно для сервера
 // сжимать передаваемые данные и выставлять правильные HTTP-заголовки
