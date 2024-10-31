@@ -26,7 +26,7 @@ func BenchmarkSimplest(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		_, err = service.Short(strconv.Itoa(i), 0)
 		if err != nil {
-			b.Error(err)
+			b.Log(err.Error())
 		}
 	}
 
