@@ -25,7 +25,10 @@ func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
 	if err != nil {
 		return store, err
 	}
-	defer file.Close()
+	err = file.Close()
+	if err != nil {
+		return store, err
+	}
 	return store, err
 }
 
@@ -72,7 +75,10 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 		return err
 	}
 
-	defer file.Close()
+	err = file.Close()
+	if err != nil {
+		return err
+	}
 
 	writer := bufio.NewWriter(file)
 
