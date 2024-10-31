@@ -66,6 +66,6 @@ func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 
-	w.Write(resp)
+	_, err = w.Write(resp)
 
 }

@@ -71,6 +71,6 @@ func (srv *Server) CreateShortURLfromJSON(w http.ResponseWriter, req *http.Reque
 	}
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(header)
-	w.Write(resp)
+	_, err = w.Write(resp)
 
 }

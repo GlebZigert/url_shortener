@@ -69,6 +69,6 @@ func (srv *Server) CreateShortURL(w http.ResponseWriter, req *http.Request) {
 
 	}
 
-	w.Write([]byte(res))
+	_, err = w.Write([]byte(res))
 
 }

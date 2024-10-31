@@ -30,15 +30,23 @@ func (srv *Server) Delete(w http.ResponseWriter, req *http.Request) {
 
 		w.WriteHeader(http.StatusUnauthorized)
 
-		w.Write([]byte{})
+		_, err = w.Write([]byte{})
 		return
 	}
 
-	go srv.service.Delete(todel, user)
+	go func() {
+		err := srv.service.Delete(todel, user)
+		if err != nil {
+			srv.logger.Error("Delete ", map[string]interface{}{
+				"err": err.Error(),
+			})
+
+		}
+	}()
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 
-	w.Write([]byte{})
+	_, err = w.Write([]byte{})
 
 }
