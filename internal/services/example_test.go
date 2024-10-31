@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
@@ -15,11 +14,14 @@ func Example() {
 	//Инициируем компоненты сервиса
 	cfg, err := config.NewConfig("prog", []string{})
 	if err != nil {
-		fmt.Errorf("error parse config")
+		return
 	}
 	ctx := context.Background()
 
-	db.Init(cfg.DatabaseDSN)
+	err = db.Init(cfg.DatabaseDSN)
+	if err != nil {
+		return
+	}
 	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
@@ -35,14 +37,12 @@ func Example() {
 	short, err := service.Short(originFirst, uid1)
 
 	if err != nil {
-		fmt.Println("ошибка при генерации сокращенного url")
 		return
 	}
 
 	//Метод Origin на входе принимает сокращенный url
 	// возвращает оригинальный url либо ошибку
 
-	origin, err := service.Origin(short)
-	fmt.Println("Метод Origin принимает сокращенный URL возвращает оригинальный URL: ", origin)
+	_, err = service.Origin(short)
 
 }

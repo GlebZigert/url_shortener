@@ -10,7 +10,6 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -64,7 +63,6 @@ func TestGzip(t *testing.T) {
 
 	ctx := context.Background()
 
-	db.Init(cfg.DatabaseDSN)
 	//store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
@@ -122,7 +120,7 @@ func TestGzip(t *testing.T) {
 
 			assert.Equal(t, test.want.sendsGzip, sendsGzip)
 
-			defer res.Body.Close()
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 			_, err = io.ReadAll(res.Body)
 			require.NoError(t, err)
 

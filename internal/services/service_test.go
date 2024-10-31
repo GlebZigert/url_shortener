@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
@@ -59,7 +58,6 @@ func TestService(t *testing.T) {
 	}
 	ctx := context.Background()
 
-	db.Init(cfg.DatabaseDSN)
 	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
@@ -90,7 +88,10 @@ func TestService(t *testing.T) {
 	}
 
 	short := "example"
-	origin, _ := service.Short("example", 0)
+	origin, err := service.Short("example", 0)
+	if err != nil {
+		t.Error(err)
+	}
 	//Origin
 	tests = []struct {
 		name    string
@@ -180,7 +181,11 @@ func TestService(t *testing.T) {
 
 			assert.Equal(t, origin, test.request.value)
 
-			service.Delete([]string{short}, test.request.user)
+			err = service.Delete([]string{short}, test.request.user)
+
+			if err != nil {
+				t.Error(err)
+			}
 
 			_, err = service.Origin(short)
 			str := "шорт " + short + " удален"

@@ -10,7 +10,6 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -82,7 +81,6 @@ func TestCreateShortURLfromJSON(t *testing.T) {
 	}
 	ctx := context.Background()
 
-	db.Init(cfg.DatabaseDSN)
 	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
@@ -92,7 +90,10 @@ func TestCreateShortURLfromJSON(t *testing.T) {
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
 	mdl := middleware.NewMiddlewares(auc, logger)
 
-	srv, _ := NewServer(cfg, mdl, logger, service)
+	srv, err := NewServer(cfg, mdl, logger, service)
+	if err != nil {
+		t.Error(err)
+	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -127,7 +128,7 @@ func TestCreateShortURLfromJSON(t *testing.T) {
 			t.Log("res: ", res.StatusCode, " ", string(body))
 
 			assert.Equal(t, test.want.code, res.StatusCode)
-			defer res.Body.Close()
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 			_, err = io.ReadAll(res.Body)
 			require.NoError(t, err)
 

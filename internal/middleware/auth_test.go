@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -119,9 +118,9 @@ func TestAuth(t *testing.T) {
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-				_, err = w.Write([]byte("[]"))
+				_, err := w.Write([]byte("[]"))
 				if err != nil {
-					fmt.Print("error ", err.Error())
+					packerr.AddErrToReqContext(r, &err)
 				}
 
 			})
@@ -149,7 +148,7 @@ func TestAuth(t *testing.T) {
 			for _, c := range cookies {
 				if c.Name == "Authorization" {
 					// Found! Use it!
-					fmt.Println(c.Value) // The cookie's value
+					t.Log(c.Value) // The cookie's value
 					auth = c.Value
 				}
 			}
@@ -173,7 +172,7 @@ func TestAuth(t *testing.T) {
 
 			assert.Equal(t, test.want.sendsGzip, sendsGzip)
 
-			defer res.Body.Close()
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 			_, err = io.ReadAll(res.Body)
 			require.NoError(t, err)
 

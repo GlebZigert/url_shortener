@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -73,14 +71,12 @@ func TestGetURL(t *testing.T) {
 	}
 	ctx := context.Background()
 
-	db.Init(cfg.DatabaseDSN)
-
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
 	ctrl := gomock.NewController(t)
 	service := mocks.NewMocksrvService(ctrl)
 	service.EXPECT().Origin(gomock.Any()).DoAndReturn(func(str string) (string, error) {
-		fmt.Println("mock origin ", str)
+		t.Log("mock origin ", str)
 		if str == "aaa" {
 			return "bbb", nil
 		}
@@ -93,7 +89,10 @@ func TestGetURL(t *testing.T) {
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
 	mdl := middleware.NewMiddlewares(auc, logger)
 
-	srv, _ := NewServer(cfg, mdl, logger, service)
+	srv, err := NewServer(cfg, mdl, logger, service)
+	if err != nil {
+		t.Error(err)
+	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -129,7 +128,7 @@ func TestGetURL(t *testing.T) {
 			t.Log("res: ", res.StatusCode, " ", string(body))
 
 			assert.Equal(t, test.want.code, res.StatusCode)
-			defer res.Body.Close()
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 			_, err = io.ReadAll(res.Body)
 			require.NoError(t, err)
 
