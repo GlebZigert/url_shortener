@@ -6,7 +6,6 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/server"
@@ -23,10 +22,6 @@ func Run() (err error) {
 	}
 	ctx := context.Background()
 
-	err = db.Init(cfg.DatabaseDSN)
-	if err != nil {
-		return
-	}
 	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)

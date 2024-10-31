@@ -7,8 +7,13 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 )
 
+type dbstoreConfig interface {
+	GetDatabaseDSN() string
+}
+
 // хранение в базе
 type DBStorager struct {
+	cfg dbstoreConfig
 }
 
 // загрузить из базы
@@ -40,11 +45,17 @@ func (one *DBStorager) StorageWrite(short, origin string, UUID int) error {
 }
 
 // конструктор
-func NewDBStorager() (*DBStorager, error) {
+func NewDBStorager(cfg dbstoreConfig) (*DBStorager, error) {
 
-	store := &DBStorager{}
+	store := &DBStorager{cfg}
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
+
+	err := db.Init(cfg.GetDatabaseDSN())
+	if err != nil {
+		return nil, err
+	}
+
 	return store, db.Ping(ctx)
 
 }

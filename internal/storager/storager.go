@@ -2,6 +2,7 @@ package storager
 
 type storeConfig interface {
 	GetFileStoragePath() string
+	GetDatabaseDSN() string
 }
 
 // данные о шорте
@@ -24,7 +25,7 @@ type Storager interface {
 func New(cfg storeConfig) (store Storager) {
 	var err error
 
-	store, err = NewDBStorager()
+	store, err = NewDBStorager(cfg)
 	if err == nil {
 
 		return
