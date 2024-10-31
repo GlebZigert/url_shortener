@@ -88,10 +88,13 @@ func (s *Service) Short(oririn string, uuid int) (string, error) {
 		id = shorten[len(shorten)-1].ID + 1
 	}
 
+	err := s.store.StorageWrite(short, oririn, uuid)
+	if err != nil {
+		return "", err
+	}
+
 	sh := storager.Shorten{ID: id, UUID: uuid, ShortURL: short, OriginalURL: oririn, DeletedFlag: false}
 	shorten = append(shorten, &sh)
-
-	s.store.StorageWrite(short, oririn, uuid)
 
 	s.logger.Info("Сделан шорт: ", map[string]interface{}{
 
