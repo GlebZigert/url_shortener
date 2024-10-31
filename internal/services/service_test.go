@@ -70,8 +70,6 @@ func TestService(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			//t.Log("req: ", test.request.method, " ", test.request.url)
 
-			var err error
-
 			_, errr := service.Short(test.request.value, test.request.user)
 
 			if test.want.err != nil {

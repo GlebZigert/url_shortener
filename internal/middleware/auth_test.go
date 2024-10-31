@@ -81,7 +81,7 @@ func TestAuth(t *testing.T) {
 	cfg, err := config.NewConfig("prog", []string{})
 
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 
 	ctx := context.Background()
@@ -118,7 +118,7 @@ func TestAuth(t *testing.T) {
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-				_, err := w.Write([]byte("[]"))
+				_, err = w.Write([]byte("[]"))
 				if err != nil {
 					packerr.AddErrToReqContext(r, &err)
 				}
