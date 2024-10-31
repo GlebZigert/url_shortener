@@ -40,7 +40,7 @@ func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 		return //err
 	}
 
-	if err := json.Unmarshal(body, &batches); err != nil {
+	if err = json.Unmarshal(body, &batches); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return // err
 	}
@@ -48,8 +48,8 @@ func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 	batchback := make([]BatchBack, ll)
 	var conflict *packerr.ErrConflict409
 	for i, b := range batches {
-
-		ress, err := srv.service.Short(b.OriginalURL, -1)
+		var ress string
+		ress, err = srv.service.Short(b.OriginalURL, -1)
 		if err == nil || errors.As(err, &conflict) {
 			res := srv.cfg.GetBaseURL() + "/" + ress
 			batchback[i] = BatchBack{b.CorrelationID, res}

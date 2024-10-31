@@ -119,7 +119,7 @@ func TestAuth(t *testing.T) {
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-				_, err := w.Write([]byte("[]"))
+				_, err = w.Write([]byte("[]"))
 				if err != nil {
 					fmt.Print("error ", err.Error())
 				}

@@ -3,7 +3,6 @@ package config
 
 import (
 	"flag"
-	"fmt"
 	"os"
 )
 
@@ -109,7 +108,7 @@ func (cfg *Config) ParseFlags(progname string, args []string) (err error) {
 	if err != nil {
 		return
 	}
-	fmt.Println(cfg.GetRunAddr())
+
 	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
 		cfg.RunAddr = envRunAddr
 	}

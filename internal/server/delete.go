@@ -35,10 +35,10 @@ func (srv *Server) Delete(w http.ResponseWriter, req *http.Request) {
 	}
 
 	go func() {
-		err := srv.service.Delete(todel, user)
-		if err != nil {
+		cerr := srv.service.Delete(todel, user)
+		if cerr != nil {
 			srv.logger.Error("Delete ", map[string]interface{}{
-				"err": err.Error(),
+				"err": cerr.Error(),
 			})
 
 		}
