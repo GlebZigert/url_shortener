@@ -119,9 +119,9 @@ func TestCreateShortURLfromJSON(t *testing.T) {
 			}
 
 			res := w.Result()
-			defer packerr.AddCloseErrToErr(&err, res.Body)
 
 			body, err := io.ReadAll(res.Body)
+			defer packerr.AddCloseErrToErr(&err, res.Body)
 			if err != nil {
 				return //err
 			}
@@ -129,7 +129,7 @@ func TestCreateShortURLfromJSON(t *testing.T) {
 			t.Log("res: ", res.StatusCode, " ", string(body))
 
 			assert.Equal(t, test.want.code, res.StatusCode)
-			defer packerr.AddCloseErrToErr(&err, res.Body)
+
 			_, err = io.ReadAll(res.Body)
 			require.NoError(t, err)
 
