@@ -121,7 +121,7 @@ func TestAuth(t *testing.T) {
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				fmt.Println("testHandler")
-				w.Write([]byte("[]"))
+				_, err = w.Write([]byte("[]"))
 			})
 
 			if test.request.auth {

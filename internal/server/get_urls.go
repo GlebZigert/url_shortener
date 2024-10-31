@@ -23,7 +23,7 @@ func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 
 		w.WriteHeader(http.StatusUnauthorized)
 
-		w.Write([]byte{})
+		_, err = w.Write([]byte{})
 		return //errors.New("")
 	}
 
@@ -33,7 +33,7 @@ func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 
 		w.WriteHeader(http.StatusUnauthorized)
 
-		w.Write([]byte{})
+		_, err = w.Write([]byte{})
 		return //errors.New("")
 	}
 
@@ -49,7 +49,7 @@ func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 		//	w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNoContent)
 
-		w.Write([]byte{})
+		_, err = w.Write([]byte{})
 		return //errors.New("StatusNoContent")
 	}
 
@@ -65,7 +65,7 @@ func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		w.Write(resp)
+		_, err = w.Write(resp)
 
 	}
 

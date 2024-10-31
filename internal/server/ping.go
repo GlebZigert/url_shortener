@@ -24,6 +24,6 @@ func (srv *Server) Ping(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	w.Write([]byte{})
+	_, err = w.Write([]byte{})
 
 }

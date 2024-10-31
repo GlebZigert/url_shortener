@@ -56,8 +56,8 @@ func TestGzip(t *testing.T) {
 			},
 		},
 	}
-	cfg, err := config.NewConfig("prog", []string{})
 
+	cfg, err := config.NewConfig("prog", []string{})
 	if err != nil {
 		t.Errorf("error parse config")
 	}
@@ -94,7 +94,7 @@ func TestGzip(t *testing.T) {
 			r = r.WithContext(ctx)
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				w.Write([]byte("[]"))
+				_, err = w.Write([]byte("[]"))
 			})
 
 			if test.request.acceptEncoding {

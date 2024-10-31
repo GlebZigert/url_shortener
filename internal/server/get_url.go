@@ -43,7 +43,7 @@ func (srv *Server) GetURL(w http.ResponseWriter, req *http.Request) {
 		w.Header().Add("Location", res)
 		w.WriteHeader(http.StatusTemporaryRedirect)
 
-		w.Write([]byte(res))
+		_, err = w.Write([]byte(res))
 		return
 
 	}
@@ -57,13 +57,13 @@ func (srv *Server) GetURL(w http.ResponseWriter, req *http.Request) {
 		//w.Header().Add("Location", res)
 		w.WriteHeader(http.StatusGone)
 
-		w.Write([]byte(res))
+		_, err = w.Write([]byte(res))
 		return
 	}
 
 	w.Header().Set("Location", "")
 	w.WriteHeader(http.StatusTemporaryRedirect)
 
-	w.Write([]byte{})
+	_, err = w.Write([]byte{})
 
 }
