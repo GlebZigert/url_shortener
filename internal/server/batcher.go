@@ -27,21 +27,37 @@ func (srv *Server) Batcher(w http.ResponseWriter, req *http.Request) {
 	var err error
 	defer packerr.AddErrToReqContext(req, &err)
 
+	srv.logger.Info("Batcher: ", map[string]interface{}{})
+
 	//logger.Info("Batcher")
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusBadRequest)
-		return // errors.New("req.Method != http.MethodPost")
-	}
+
+	/*
+		if req.Method != http.MethodPost {
+			w.WriteHeader(http.StatusBadRequest)
+			return // errors.New("req.Method != http.MethodPost")
+		}
+	*/
 
 	var batches []Batch
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
+
+		srv.logger.Error("io.ReadAll(req.Body): ", map[string]interface{}{
+			"err: ": err.Error(),
+		})
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return //err
 	}
 
 	if err = json.Unmarshal(body, &batches); err != nil {
+
+		srv.logger.Error("json.Unmarshal(body, &batches): ", map[string]interface{}{
+			"err: ": err.Error(),
+		})
+
 		http.Error(w, err.Error(), http.StatusBadRequest)
+
 		return // err
 	}
 	ll := len(batches)
