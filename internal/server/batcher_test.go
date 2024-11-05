@@ -110,7 +110,10 @@ func TestBatcher(t *testing.T) {
 			}
 
 			res := w.Result()
-
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
 			assert.Equal(t, test.want.code, res.StatusCode)
 
 		})

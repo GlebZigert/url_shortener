@@ -87,6 +87,10 @@ func TestGetURLs(t *testing.T) {
 			srv.GetURLs(w, r)
 
 			res := w.Result()
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
 
 			if err != nil {
 				t.Log(err.Error())
@@ -173,6 +177,11 @@ func TestGetURLs1(t *testing.T) {
 
 			res := w.Result()
 
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
+
 			if err != nil {
 				t.Log(err.Error())
 			}
@@ -257,6 +266,11 @@ func TestGetURLs2(t *testing.T) {
 			srv.GetURLs(w, r)
 
 			res := w.Result()
+
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
 
 			if err != nil {
 				t.Log(err.Error())
