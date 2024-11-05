@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -21,16 +22,22 @@ func (srv *Server) GetURLs(w http.ResponseWriter, req *http.Request) {
 
 	if ok && vv {
 
+		srv.logger.Error("CheckNewFlag: ", map[string]interface{}{})
+
 		w.WriteHeader(http.StatusUnauthorized)
 
-		_, err = w.Write([]byte{})
+		err = errors.Join(err, &packerr.NewUserTryGetsURLs)
+		_, werr := w.Write([]byte{})
+		if werr != nil {
+			err = errors.Join(err, werr)
+		}
 		return //errors.New("")
 	}
 
 	user, ok := srv.mdl.CheckUID(req.Context())
 
 	if !ok {
-
+		srv.logger.Error("Check NO UID: ", map[string]interface{}{})
 		w.WriteHeader(http.StatusUnauthorized)
 
 		_, err = w.Write([]byte{})

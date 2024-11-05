@@ -35,3 +35,16 @@ type ErrWrongType struct {
 func (e *ErrWrongType) Error() string {
 	return e.S
 }
+
+// обьявил ошибку
+var NewUserTryGetsURLs ErrWrongType = ErrWrongType{S: "новый юзер не создал ни одного url но сразу пытается сразу взять свои urlы "}
+
+// ошибка когда просим шорт но он удален
+type ErrNewUserTryGetsURLs struct {
+	S string
+}
+
+// метод Error
+func (e *ErrNewUserTryGetsURLs) Error() string {
+	return e.S
+}
