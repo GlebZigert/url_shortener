@@ -23,7 +23,7 @@ func TestBatcher(t *testing.T) {
 
 	type batch struct {
 		ID       string `json:"correlation_id"`
-		Original string `json::original_url"`
+		Original string `json:"original_url"`
 	}
 
 	sreq := []batch{
