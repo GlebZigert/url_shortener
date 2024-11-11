@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"gotest.tools/assert"
 )
 
 func TestParseFlagsCorrect(t *testing.T) {
@@ -96,6 +98,15 @@ func TestParseFlagsCorrect(t *testing.T) {
 			if !reflect.DeepEqual(*config, tt.wantedConfig) {
 				t.Errorf("conf got %+v, want %+v", *config, tt.wantedConfig)
 			}
+			assert.Equal(t, tt.wantedConfig.RunAddr, config.GetRunAddr())
+			assert.Equal(t, tt.wantedConfig.BaseURL, config.GetBaseURL())
+			assert.Equal(t, tt.wantedConfig.FlagLogLevel, config.GetFlagLogLevel())
+			assert.Equal(t, tt.wantedConfig.FileStoragePath, config.GetFileStoragePath())
+			assert.Equal(t, tt.wantedConfig.NumWorkers, config.GetNumWorkers())
+			assert.Equal(t, tt.wantedConfig.DatabaseDSN, config.GetDatabaseDSN())
+			assert.Equal(t, tt.wantedConfig.TOKENEXP, config.GetTOKENEXP())
+			assert.Equal(t, tt.wantedConfig.SECRETKEY, config.GetSECRETKEY())
+			assert.Equal(t, tt.wantedConfig.ENABLEHTTPS, config.GetENABLEHTTPSflag())
 		})
 	}
 }
