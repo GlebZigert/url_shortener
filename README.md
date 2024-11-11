@@ -50,4 +50,10 @@ cat cover.out.tmp | grep -v "mock_" > cover.out
 
 go-cover-treemap -coverprofile cover.out > out.svg
 
+go test ./... -coverprofile=cover.out.tmp;cat cover.out.tmp | grep -v "mock_" > cover.out;go tool cover -func cover.out;go tool cover -html cover.out
+
+openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout key.pem -out cert.pem -days 3650
+
+
+
 

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
@@ -90,7 +91,26 @@ func (srv *Server) Start() (err error) {
 	})
 
 	if srv.cfg.GetENABLEHTTPSflag() {
-		err = http.ListenAndServeTLS(srv.cfg.GetRunAddr(), "", "", r)
+		// конструируем менеджер TLS-сертификатов
+
+		certFile := "cert.pem" // Your certificate file
+		keyFile := "key.pem"   // Your private key file
+
+		server := &http.Server{
+			Addr:    ":443",
+			Handler: r,
+			TLSConfig: &tls.Config{
+				MinVersion:               tls.VersionTLS12,
+				CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+				PreferServerCipherSuites: true,
+				CipherSuites: []uint16{
+					tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+				},
+			},
+		}
+
+		err = server.ListenAndServeTLS(certFile, keyFile)
 	} else {
 		err = http.ListenAndServe(srv.cfg.GetRunAddr(), r)
 	}

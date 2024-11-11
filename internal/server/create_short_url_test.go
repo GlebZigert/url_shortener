@@ -75,7 +75,7 @@ func TestCreateShortURL(t *testing.T) {
 			},
 		},
 	}
-	cfg, err := config.NewConfig("prog", []string{})
+	cfg, err := config.NewConfig("prog", []string{"-s"})
 	if err != nil {
 		t.Errorf("error parse config")
 	}
