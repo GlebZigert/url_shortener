@@ -75,6 +75,11 @@ func (cfg *Config) GetSECRETKEY() string {
 	return cfg.SECRETKEY
 }
 
+// GetSECRETKEY to get sekret key value
+func (cfg *Config) GetENABLEHTTPSflag() bool {
+	return cfg.ENABLEHTTPS
+}
+
 var ptr *Config
 
 // NewConfig is constructor for Config

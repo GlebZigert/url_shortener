@@ -17,6 +17,7 @@ type srvConfig interface {
 	GetDatabaseDSN() string
 	GetTOKENEXP() int
 	GetSECRETKEY() string
+	GetENABLEHTTPSflag() bool
 }
 
 type srvMiddleware interface {
@@ -88,7 +89,11 @@ func (srv *Server) Start() (err error) {
 
 	})
 
-	err = http.ListenAndServe(srv.cfg.GetRunAddr(), r)
+	if srv.cfg.GetENABLEHTTPSflag() {
+		err = http.ListenAndServeTLS(srv.cfg.GetRunAddr(), "", "", r)
+	} else {
+		err = http.ListenAndServe(srv.cfg.GetRunAddr(), r)
+	}
 
 	return
 }
