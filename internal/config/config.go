@@ -31,6 +31,8 @@ type Config struct {
 	TOKENEXP int
 
 	SECRETKEY string
+
+	ENABLEHTTPS bool
 }
 
 // GetRunAddr to get RunAddr value
@@ -103,6 +105,7 @@ func (cfg *Config) ParseFlags(progname string, args []string) (err error) {
 	flags.StringVar(&cfg.SECRETKEY, "SECRETKEY", "supersecretkey", "ключ")
 	flags.IntVar(&cfg.TOKENEXP, "TOKENEXP", 3, "время жизни токена в часах")
 	flags.IntVar(&cfg.NumWorkers, "NumWorkers", 3, "количество воркеров в fanOut")
+	flags.BoolVar(&cfg.ENABLEHTTPS, "s", false, "enable https")
 
 	err = flags.Parse(args)
 	if err != nil {
@@ -123,6 +126,11 @@ func (cfg *Config) ParseFlags(progname string, args []string) (err error) {
 
 	if envFileStoragePath := os.Getenv("FILE_STORAGE_PATH"); envFileStoragePath != "" {
 		cfg.FileStoragePath = envFileStoragePath
+	}
+
+	if envEnableHttps := os.Getenv("ENABLE_HTTPS"); envEnableHttps == "true" {
+
+		cfg.ENABLEHTTPS = true
 	}
 
 	return

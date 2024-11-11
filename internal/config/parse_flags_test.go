@@ -25,6 +25,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 				SECRETKEY:       "supersecretkey",
 				TOKENEXP:        3,
 				NumWorkers:      3,
+				ENABLEHTTPS:     false,
 			}},
 		{[]string{"-a", "localhost:8888"},
 			map[string]string{"RUN_ADDR": "localhost:8889",
@@ -41,12 +42,46 @@ func TestParseFlagsCorrect(t *testing.T) {
 				SECRETKEY:       "supersecretkey",
 				TOKENEXP:        3,
 				NumWorkers:      3,
+				ENABLEHTTPS:     false,
 			}},
+		//При передаче флага -s или переменной окружения ENABLE_HTTPS запускайте сервер с помощью метода http.ListenAndServeTLS или tls.Listen.
+
+		{[]string{"-s"},
+			map[string]string{},
+			Config{
+				RunAddr:         "localhost:8080",
+				BaseURL:         "http://localhost:8080",
+				FlagLogLevel:    "info",
+				FileStoragePath: "",
+				DatabaseDSN:     "",
+				SECRETKEY:       "supersecretkey",
+				TOKENEXP:        3,
+				NumWorkers:      3,
+				ENABLEHTTPS:     true,
+			},
+		},
+
+		{[]string{},
+			map[string]string{"ENABLE_HTTPS": "true"},
+			Config{
+				RunAddr:         "localhost:8080",
+				BaseURL:         "http://localhost:8080",
+				FlagLogLevel:    "info",
+				FileStoragePath: "",
+				DatabaseDSN:     "",
+				SECRETKEY:       "supersecretkey",
+				TOKENEXP:        3,
+				NumWorkers:      3,
+				ENABLEHTTPS:     true,
+			},
+		},
+
 		// ... many more test entries here
 	}
 
 	for _, tt := range tests {
 
+		os.Clearenv()
 		for k, v := range tt.envVars {
 			os.Setenv(k, v)
 		}
