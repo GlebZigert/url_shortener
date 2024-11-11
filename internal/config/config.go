@@ -78,15 +78,15 @@ var ptr *Config
 // NewConfig is constructor for Config
 func NewConfig(progname string, args []string) (*Config, error) {
 
-	if ptr == nil {
-		cfg := Config{}
-		err := cfg.ParseFlags(progname, args)
-		if err != nil {
-			return nil, err
-		}
-
-		ptr = &cfg
+	//if ptr == nil {
+	cfg := Config{}
+	err := cfg.ParseFlags(progname, args)
+	if err != nil {
+		return nil, err
 	}
+
+	ptr = &cfg
+	//}
 
 	return ptr, nil
 }
