@@ -6,6 +6,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/server"
@@ -16,7 +17,7 @@ import (
 // Запуск
 func Run() (err error) {
 
-	cfg, err := config.NewConfig(os.Args[0], os.Args[1:])
+	cfg, err := config.NewConfig(os.Args[0], os.Args[1:], file_reader.New())
 	if err != nil {
 		return
 	}

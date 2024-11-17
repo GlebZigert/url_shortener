@@ -5,6 +5,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
@@ -12,7 +13,7 @@ import (
 func Example() {
 
 	//Инициируем компоненты сервиса
-	cfg, err := config.NewConfig("prog", []string{})
+	cfg, err := config.NewConfig("prog", []string{}, file_reader.New())
 	if err != nil {
 		return
 	}

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
 	"gotest.tools/assert"
 )
 
@@ -19,15 +20,18 @@ func TestParseFlagsCorrect(t *testing.T) {
 		{[]string{"-a", "localhost:8888"},
 			map[string]string{},
 			Config{
-				RunAddr:         "localhost:8888",
-				BaseURL:         "http://localhost:8080",
-				FlagLogLevel:    "info",
-				FileStoragePath: "",
-				DatabaseDSN:     "",
-				SECRETKEY:       "supersecretkey",
-				TOKENEXP:        3,
-				NumWorkers:      3,
-				ENABLEHTTPS:     false,
+				Values{
+					RunAddr:         "localhost:8888",
+					BaseURL:         "http://localhost:8080",
+					FlagLogLevel:    "info",
+					FileStoragePath: "",
+					DatabaseDSN:     "",
+					SECRETKEY:       "supersecretkey",
+					TOKENEXP:        3,
+					NumWorkers:      3,
+					ENABLEHTTPS:     false,
+				},
+				"",
 			}},
 		{[]string{"-a", "localhost:8888"},
 			map[string]string{"RUN_ADDR": "localhost:8889",
@@ -36,45 +40,54 @@ func TestParseFlagsCorrect(t *testing.T) {
 				"FILE_STORAGE_PATH": "FILE_STORAGE_PATH",
 			},
 			Config{
-				RunAddr:         "localhost:8889",
-				BaseURL:         "http://localhost:8081",
-				FlagLogLevel:    "debug",
-				FileStoragePath: "FILE_STORAGE_PATH",
-				DatabaseDSN:     "",
-				SECRETKEY:       "supersecretkey",
-				TOKENEXP:        3,
-				NumWorkers:      3,
-				ENABLEHTTPS:     false,
+				Values{
+					RunAddr:         "localhost:8889",
+					BaseURL:         "http://localhost:8081",
+					FlagLogLevel:    "debug",
+					FileStoragePath: "FILE_STORAGE_PATH",
+					DatabaseDSN:     "",
+					SECRETKEY:       "supersecretkey",
+					TOKENEXP:        3,
+					NumWorkers:      3,
+					ENABLEHTTPS:     false,
+				},
+				"",
 			}},
 		//При передаче флага -s или переменной окружения ENABLE_HTTPS запускайте сервер с помощью метода http.ListenAndServeTLS или tls.Listen.
 
 		{[]string{"-s"},
 			map[string]string{},
 			Config{
-				RunAddr:         "localhost:8080",
-				BaseURL:         "http://localhost:8080",
-				FlagLogLevel:    "info",
-				FileStoragePath: "",
-				DatabaseDSN:     "",
-				SECRETKEY:       "supersecretkey",
-				TOKENEXP:        3,
-				NumWorkers:      3,
-				ENABLEHTTPS:     true,
+				Values{
+					RunAddr:         "localhost:8080",
+					BaseURL:         "http://localhost:8080",
+					FlagLogLevel:    "info",
+					FileStoragePath: "",
+					DatabaseDSN:     "",
+					SECRETKEY:       "supersecretkey",
+					TOKENEXP:        3,
+					NumWorkers:      3,
+					ENABLEHTTPS:     true,
+				},
+				"",
 			},
 		},
 
 		{[]string{},
 			map[string]string{"ENABLE_HTTPS": "true"},
 			Config{
-				RunAddr:         "localhost:8080",
-				BaseURL:         "http://localhost:8080",
-				FlagLogLevel:    "info",
-				FileStoragePath: "",
-				DatabaseDSN:     "",
-				SECRETKEY:       "supersecretkey",
-				TOKENEXP:        3,
-				NumWorkers:      3,
-				ENABLEHTTPS:     true,
+				Values{
+					RunAddr:         "localhost:8080",
+					BaseURL:         "http://localhost:8080",
+					FlagLogLevel:    "info",
+					FileStoragePath: "",
+					DatabaseDSN:     "",
+					SECRETKEY:       "supersecretkey",
+					TOKENEXP:        3,
+					NumWorkers:      3,
+					ENABLEHTTPS:     true,
+				},
+				"",
 			},
 		},
 
@@ -89,10 +102,10 @@ func TestParseFlagsCorrect(t *testing.T) {
 		}
 
 		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
-			config, err := NewConfig("prog", tt.args)
+			config, err := NewConfig("prog", tt.args, file_reader.New())
 
 			if err != nil {
-				t.Errorf("error parse config")
+				t.Error("error parse config", err)
 			}
 
 			if !reflect.DeepEqual(*config, tt.wantedConfig) {

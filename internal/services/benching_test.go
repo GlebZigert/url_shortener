@@ -6,13 +6,14 @@ import (
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
 func BenchmarkSimplest(b *testing.B) {
 
-	cfg, err := config.NewConfig("prog", []string{})
+	cfg, err := config.NewConfig("prog", []string{}, file_reader.New())
 	if err != nil {
 		b.Errorf("error parse config")
 	}

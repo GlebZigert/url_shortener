@@ -10,6 +10,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -75,7 +76,7 @@ func TestCreateShortURLfromJSON(t *testing.T) {
 			},
 		},
 	}
-	cfg, err := config.NewConfig("prog", []string{})
+	cfg, err := config.NewConfig("prog", []string{}, file_reader.New())
 	if err != nil {
 		t.Errorf("error parse config")
 	}

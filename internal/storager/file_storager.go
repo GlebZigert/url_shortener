@@ -35,14 +35,13 @@ func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
 }
 
 // загрузить из файла
-func (one *FileStorager) Load(shorten *[]*Shorten) error {
+func (one *FileStorager) Load(shorten *[]*Shorten) (err error) {
 
 	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
 	defer packerr.AddCloseErrToErr(&err, file)
-
 	reader := bufio.NewReader(file)
 
 	var data []byte
@@ -50,18 +49,18 @@ func (one *FileStorager) Load(shorten *[]*Shorten) error {
 	for err == nil {
 		data, err = reader.ReadBytes('\n')
 		if err != nil {
-			return err
+			return
 		}
 
 		var shorten Shorten
 		err = json.Unmarshal(data, &shorten)
 		if err != nil {
-			return err
+			return
 		}
 
 	}
 
-	return nil
+	return
 }
 
 // удалить
