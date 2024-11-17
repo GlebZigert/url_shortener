@@ -15,6 +15,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 		args         []string
 		envVars      map[string]string
 		wantedConfig Config
+		reader       getFileReader
 	}{
 
 		{[]string{"-a", "localhost:8888"},
@@ -32,7 +33,9 @@ func TestParseFlagsCorrect(t *testing.T) {
 					ENABLEHTTPS:     false,
 				},
 				"",
-			}},
+			},
+			file_reader.New(),
+		},
 		{[]string{"-a", "localhost:8888"},
 			map[string]string{"RUN_ADDR": "localhost:8889",
 				"BASE_URL":          "http://localhost:8081",
@@ -51,8 +54,9 @@ func TestParseFlagsCorrect(t *testing.T) {
 					NumWorkers:      3,
 					ENABLEHTTPS:     false,
 				},
-				"",
-			}},
+				""},
+			file_reader.New(),
+		},
 		//При передаче флага -s или переменной окружения ENABLE_HTTPS запускайте сервер с помощью метода http.ListenAndServeTLS или tls.Listen.
 
 		{[]string{"-s"},
@@ -69,8 +73,25 @@ func TestParseFlagsCorrect(t *testing.T) {
 					NumWorkers:      3,
 					ENABLEHTTPS:     true,
 				},
-				"",
-			},
+				""},
+			file_reader.New(),
+		},
+
+		{[]string{},
+			map[string]string{"ENABLE_HTTPS": "true"},
+			Config{
+				Values{
+					RunAddr:         "localhost:8080",
+					BaseURL:         "http://localhost:8080",
+					FlagLogLevel:    "info",
+					FileStoragePath: "",
+					DatabaseDSN:     "",
+					SECRETKEY:       "supersecretkey",
+					TOKENEXP:        3,
+					NumWorkers:      3,
+					ENABLEHTTPS:     true,
+				}, ""},
+			file_reader.New(),
 		},
 
 		{[]string{},
@@ -89,6 +110,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 				},
 				"",
 			},
+			file_reader.New(),
 		},
 
 		// ... many more test entries here
@@ -102,7 +124,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 		}
 
 		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
-			config, err := NewConfig("prog", tt.args, file_reader.New())
+			config, err := NewConfig("prog", tt.args, tt.reader)
 
 			if err != nil {
 				t.Error("error parse config", err)
