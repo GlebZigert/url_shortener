@@ -9,7 +9,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
+	"github.com/GlebZigert/url_shortener.git/internal/filereader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -22,7 +22,7 @@ import (
 
 func TestDelete(t *testing.T) {
 
-	cfg, err := config.NewConfig("prog", []string{}, file_reader.New())
+	cfg, err := config.NewConfig("prog", []string{}, filereader.New())
 	if err != nil {
 		t.Errorf("error parse config")
 	}
@@ -74,7 +74,7 @@ func TestDelete(t *testing.T) {
 
 func TestDelete1(t *testing.T) {
 
-	cfg, err := config.NewConfig("prog", []string{}, file_reader.New())
+	cfg, err := config.NewConfig("prog", []string{}, filereader.New())
 	if err != nil {
 		t.Errorf("error parse config")
 	}

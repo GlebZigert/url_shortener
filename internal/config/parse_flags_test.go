@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
+	"github.com/GlebZigert/url_shortener.git/internal/filereader"
 	"github.com/GlebZigert/url_shortener.git/mocks"
 	"github.com/golang/mock/gomock"
 	"gotest.tools/assert"
@@ -57,7 +57,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 				},
 				"",
 			},
-			file_reader.New(),
+			filereader.New(),
 		},
 		{[]string{"-a", "localhost:8888"},
 			map[string]string{"RUN_ADDR": "localhost:8889",
@@ -78,7 +78,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 					ENABLEHTTPS:     false,
 				},
 				""},
-			file_reader.New(),
+			filereader.New(),
 		},
 		//При передаче флага -s или переменной окружения ENABLE_HTTPS запускайте сервер с помощью метода http.ListenAndServeTLS или tls.Listen.
 
@@ -97,7 +97,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 					ENABLEHTTPS:     true,
 				},
 				""},
-			file_reader.New(),
+			filereader.New(),
 		},
 
 		{[]string{},
@@ -114,7 +114,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 					NumWorkers:      3,
 					ENABLEHTTPS:     true,
 				}, ""},
-			file_reader.New(),
+			filereader.New(),
 		},
 
 		{[]string{"-c", "/some_path"},
