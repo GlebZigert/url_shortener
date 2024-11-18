@@ -1,4 +1,4 @@
-package file_reader
+package filereader
 
 import (
 	"bufio"
@@ -7,9 +7,11 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
+// GetFileReader to read from file
 type GetFileReader struct {
 }
 
+// GetReader return reader
 func (GetFileReader) GetReader(path string) (*bufio.Reader, error) {
 
 	file, err := os.OpenFile(path, os.O_RDONLY|os.O_CREATE, 0666)
@@ -21,6 +23,7 @@ func (GetFileReader) GetReader(path string) (*bufio.Reader, error) {
 	return bufio.NewReader(file), nil
 }
 
+// New is constructor
 func New() *GetFileReader {
 	return &GetFileReader{}
 }

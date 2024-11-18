@@ -17,12 +17,13 @@ const (
 	// ...
 )
 
+// Config struct is a struct for config
 type Config struct {
 	Values
 	configFile string
 }
 
-// Config struct is a struct for config
+// Values struct is a struct for Values
 type Values struct {
 	RunAddr string
 
