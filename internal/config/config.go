@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"os"
 )
 
@@ -186,7 +185,6 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader GetFileR
 
 	}
 
-	fmt.Println("Visit()")
 	flags.Visit(visitor)
 
 	//берем енвы если есть и переписываем ими флаги
