@@ -1,36 +1,59 @@
 package config
 
 import (
+	"bufio"
+	"bytes"
 	"os"
 	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/internal/file_reader"
+	"github.com/GlebZigert/url_shortener.git/mocks"
+	"github.com/golang/mock/gomock"
 	"gotest.tools/assert"
 )
 
 func TestParseFlagsCorrect(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	mockreader := mocks.NewMockGetFileReader(ctrl)
+	mockreader.EXPECT().GetReader(gomock.Any()).DoAndReturn(func(path string) (*bufio.Reader, error) {
+		data := []byte(`{"server_address": "localhost:8083","base_url": "http://localhost","file_storage_path": "/path/to/file.db","database_dsn": "ddd","enable_https": true}
+		`)
+		buffer := bytes.NewBuffer(data)
+		reader := bufio.NewReader(buffer)
+		return reader, nil
+	})
+
 	var tests = []struct {
 		args         []string
 		envVars      map[string]string
 		wantedConfig Config
-		reader       getFileReader
+		reader       GetFileReader
 	}{
 
-		{[]string{"-a", "localhost:8888"},
+		{[]string{"-a", "localhost:8888",
+			"-b", "http://localhost:8888",
+			"-l", "debug",
+			"-f", "/path/to/file",
+			"-d", "dsn",
+			"-SECRETKEY", "SECRETKEY",
+			"-TOKENEXP", "8",
+			"-NumWorkers", "5",
+			"-s"},
 			map[string]string{},
 			Config{
 				Values{
 					RunAddr:         "localhost:8888",
-					BaseURL:         "http://localhost:8080",
-					FlagLogLevel:    "info",
-					FileStoragePath: "",
-					DatabaseDSN:     "",
-					SECRETKEY:       "supersecretkey",
-					TOKENEXP:        3,
-					NumWorkers:      3,
-					ENABLEHTTPS:     false,
+					BaseURL:         "http://localhost:8888",
+					FlagLogLevel:    "debug",
+					FileStoragePath: "/path/to/file",
+					DatabaseDSN:     "dsn",
+					SECRETKEY:       "SECRETKEY",
+					TOKENEXP:        8,
+					NumWorkers:      5,
+					ENABLEHTTPS:     true,
 				},
 				"",
 			},
@@ -94,23 +117,23 @@ func TestParseFlagsCorrect(t *testing.T) {
 			file_reader.New(),
 		},
 
-		{[]string{},
+		{[]string{"-c", "/some_path"},
 			map[string]string{"ENABLE_HTTPS": "true"},
 			Config{
 				Values{
-					RunAddr:         "localhost:8080",
-					BaseURL:         "http://localhost:8080",
+					RunAddr:         "localhost:8083",
+					BaseURL:         "http://localhost",
 					FlagLogLevel:    "info",
-					FileStoragePath: "",
-					DatabaseDSN:     "",
+					FileStoragePath: "/path/to/file.db",
+					DatabaseDSN:     "ddd",
 					SECRETKEY:       "supersecretkey",
 					TOKENEXP:        3,
 					NumWorkers:      3,
 					ENABLEHTTPS:     true,
 				},
-				"",
+				"/some_path",
 			},
-			file_reader.New(),
+			mockreader,
 		},
 
 		// ... many more test entries here

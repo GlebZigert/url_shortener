@@ -90,12 +90,12 @@ func (cfg *Values) GetENABLEHTTPSflag() bool {
 
 var ptr *Config
 
-type getFileReader interface {
+type GetFileReader interface {
 	GetReader(path string) (*bufio.Reader, error)
 }
 
 // NewConfig is constructor for Config
-func NewConfig(progname string, args []string, getreader getFileReader) (*Config, error) {
+func NewConfig(progname string, args []string, getreader GetFileReader) (*Config, error) {
 
 	//if ptr == nil {
 	cfg := Config{}
@@ -111,7 +111,7 @@ func NewConfig(progname string, args []string, getreader getFileReader) (*Config
 }
 
 // ParseFlags to parse Config fields form flags and envs
-func (cfg *Config) ParseFlags(progname string, args []string, getreader getFileReader) (err error) {
+func (cfg *Config) ParseFlags(progname string, args []string, getreader GetFileReader) (err error) {
 
 	//дефолтные значения -  низкий приоритет - перетрутся любым енвом и флагом
 
@@ -160,7 +160,7 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader getFileR
 	var flagNumWorkers bool
 
 	visitor := func(a *flag.Flag) {
-		fmt.Println(">", a.Name, "value=", a.Value)
+
 		switch a.Name {
 		case "a":
 			aFlag = true
@@ -171,7 +171,7 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader getFileR
 		case "f":
 			fFlag = true
 		case "d":
-			fFlag = true
+			dFlag = true
 		case "s":
 			sFlag = true
 
@@ -222,7 +222,8 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader getFileR
 		var cfgFileStruct ConfigFileStruct
 		data, errCfgFile := reader.ReadBytes('\n')
 		if errCfgFile == nil {
-			errCfgFile = json.Unmarshal(data, cfgFileStruct)
+
+			errCfgFile = json.Unmarshal(data, &cfgFileStruct)
 			//если файл распарсился
 
 			if errCfgFile == nil {
