@@ -30,9 +30,9 @@ func TestBatcher(t *testing.T) {
 	}
 
 	sreq := []batch{
-		batch{"1", "11111"},
-		batch{"2", "11112"},
-		batch{"3", "11113"},
+		{"1", "11111"},
+		{"2", "11112"},
+		{"3", "11113"},
 	}
 
 	reqbody, err := json.Marshal(sreq)
@@ -86,7 +86,6 @@ func TestBatcher(t *testing.T) {
 	for _, test := range tests {
 
 		t.Run(test.name, func(t *testing.T) {
-			t.Log("req: ")
 
 			r := httptest.NewRequest(http.MethodPost, "/api/shorten/batch", test.body)
 			w := httptest.NewRecorder()
