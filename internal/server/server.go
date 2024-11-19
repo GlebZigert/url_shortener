@@ -3,7 +3,12 @@ package server
 import (
 	"context"
 	"crypto/tls"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 	"github.com/go-chi/chi"
@@ -90,13 +95,43 @@ func (srv *Server) Start() (err error) {
 
 	})
 
+	var server *http.Server
+
+	serverCtx, serverStopCtx := context.WithCancel(context.Background())
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+
+	go func() {
+		<-sig
+		// Shutdown signal with grace period of 30 seconds
+		shutdownCtx, _ := context.WithTimeout(serverCtx, 30*time.Second)
+
+		go func() {
+			<-shutdownCtx.Done()
+			if shutdownCtx.Err() == context.DeadlineExceeded {
+				log.Fatal("graceful shutdown timed out.. forcing exit.")
+			}
+		}()
+
+		// Trigger graceful shutdown
+		if server != nil {
+			err := server.Shutdown(shutdownCtx)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		serverStopCtx()
+	}()
+
 	if srv.cfg.GetENABLEHTTPSflag() {
 		// конструируем менеджер TLS-сертификатов
 
 		certFile := "cert.pem" // Your certificate file
 		keyFile := "key.pem"   // Your private key file
 
-		server := &http.Server{
+		server = &http.Server{
 			Addr:    ":443",
 			Handler: r,
 			TLSConfig: &tls.Config{
@@ -111,8 +146,15 @@ func (srv *Server) Start() (err error) {
 		}
 
 		err = server.ListenAndServeTLS(certFile, keyFile)
+
 	} else {
-		err = http.ListenAndServe(srv.cfg.GetRunAddr(), r)
+		server = &http.Server{
+			Addr:    srv.cfg.GetRunAddr(),
+			Handler: r,
+		}
+
+		err = server.ListenAndServe()
+
 	}
 
 	return
