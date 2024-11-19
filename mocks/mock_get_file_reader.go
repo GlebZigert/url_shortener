@@ -6,8 +6,9 @@ package mocks
 
 import (
 	bufio "bufio"
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockGetFileReader is a mock of GetFileReader interface
