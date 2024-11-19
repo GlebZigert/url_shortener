@@ -15,7 +15,7 @@ type GetFileReader struct {
 func (GetFileReader) Read(path string) ([]byte, error) {
 
 	file, err := os.OpenFile(path, os.O_RDONLY|os.O_CREATE, 0666)
-	defer file.Close()
+
 	if err != nil {
 		return nil, err
 	}
