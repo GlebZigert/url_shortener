@@ -1,5 +1,6 @@
 package config
 
+// struct for configFile content
 type ConfigFileStruct struct {
 	ServerAddress   string `json:"server_address"`
 	BaseURL         string `json:"base_url"`

@@ -90,6 +90,7 @@ func (cfg *Values) GetENABLEHTTPSflag() bool {
 
 var ptr *Config
 
+// GetFileReader to get reader
 type GetFileReader interface {
 	GetReader(path string) (*bufio.Reader, error)
 }
