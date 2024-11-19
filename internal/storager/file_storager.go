@@ -16,13 +16,19 @@ type filestoreConfig interface {
 
 // хранение в файле
 type FileStorager struct {
-	cfg filestoreConfig
+	cfg       filestoreConfig
+	getreader GetFileReader
+}
+
+// GetFileReader to get reader
+type GetFileReader interface {
+	GetReader(path string) (*bufio.Reader, error)
 }
 
 // конструктор
-func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
+func NewFileStorager(cfg filestoreConfig, getreader GetFileReader) (*FileStorager, error) {
 
-	store := &FileStorager{cfg}
+	store := &FileStorager{cfg, getreader}
 	file, err := os.OpenFile(cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return store, err
@@ -37,12 +43,10 @@ func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
 // загрузить из файла
 func (one *FileStorager) Load(shorten *[]*Shorten) (err error) {
 
-	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
-	if err != nil {
-		return err
+	reader, errCfgFile := one.getreader.GetReader(one.cfg.GetFileStoragePath())
+	if errCfgFile != nil {
+		return errCfgFile
 	}
-	defer packerr.AddCloseErrToErr(&err, file)
-	reader := bufio.NewReader(file)
 
 	var data []byte
 	err = nil

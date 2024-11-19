@@ -68,7 +68,7 @@ func TestBatcher(t *testing.T) {
 	}
 	ctx := context.Background()
 
-	store := storager.New(cfg)
+	store := storager.New(cfg, filereader.New())
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
