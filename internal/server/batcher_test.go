@@ -20,8 +20,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestBatcher
 func TestBatcher(t *testing.T) {
 
+	//test struct
 	type batch struct {
 		ID       string `json:"correlation_id"`
 		Original string `json:"original_url"`
@@ -39,35 +41,24 @@ func TestBatcher(t *testing.T) {
 		t.Error(err)
 	}
 
-	type want struct {
-		code int
-	}
-
-	type request struct {
-		body io.Reader
-	}
-
 	tests := []struct {
-		name    string
-		request request
-		want    want
-	}{{
-		name: "1",
-		request: request{
-			strings.NewReader(string(reqbody)),
-		},
-		want: want{
+		name string
+		body io.Reader
+		code int
+	}{
+		{
+			name: "1",
+
+			body: strings.NewReader(string(reqbody)),
+
 			code: http.StatusCreated,
 		},
-	},
 		{
 			name: "nil body",
-			request: request{
-				nil,
-			},
-			want: want{
-				code: http.StatusBadRequest,
-			},
+
+			body: nil,
+
+			code: http.StatusBadRequest,
 		},
 	}
 
@@ -97,17 +88,17 @@ func TestBatcher(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Log("req: ")
 
-			r := httptest.NewRequest(http.MethodPost, "/api/shorten/batch", test.request.body)
+			r := httptest.NewRequest(http.MethodPost, "/api/shorten/batch", test.body)
 			w := httptest.NewRecorder()
 
-			var err error
-			//помещаем в контекст реквеста указатель на ошибку
-			packerr.AddErrToReqContext(r, &err)
+			var errCtx error
+
+			packerr.AddErrToReqContext(r, &errCtx)
 
 			srv.Batcher(w, r)
 
-			if err != nil {
-				t.Log("err: ", err.Error())
+			if errCtx != nil {
+				t.Log("err: ", errCtx.Error())
 			}
 
 			res := w.Result()
@@ -115,7 +106,7 @@ func TestBatcher(t *testing.T) {
 			if closeErr != nil {
 				return
 			}
-			assert.Equal(t, test.want.code, res.StatusCode)
+			assert.Equal(t, test.code, res.StatusCode)
 
 		})
 
