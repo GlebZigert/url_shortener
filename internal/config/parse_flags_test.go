@@ -1,8 +1,6 @@
 package config
 
 import (
-	"bufio"
-	"bytes"
 	"os"
 	"reflect"
 	"strings"
@@ -17,20 +15,19 @@ import (
 func TestParseFlagsCorrect(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
-	mockreader := mocks.NewMockGetFileReader(ctrl)
-	mockreader.EXPECT().GetReader(gomock.Any()).DoAndReturn(func(path string) (*bufio.Reader, error) {
+	mockreader := mocks.NewMockFileReader(ctrl)
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
 		data := []byte(`{"server_address": "localhost:8083","base_url": "http://localhost","file_storage_path": "/path/to/file.db","database_dsn": "ddd","enable_https": true}
 		`)
-		buffer := bytes.NewBuffer(data)
-		reader := bufio.NewReader(buffer)
-		return reader, nil
+
+		return data, nil
 	})
 
 	var tests = []struct {
 		args         []string
 		envVars      map[string]string
 		wantedConfig Config
-		reader       GetFileReader
+		reader       FileReader
 	}{
 
 		{[]string{"-a", "localhost:8888",

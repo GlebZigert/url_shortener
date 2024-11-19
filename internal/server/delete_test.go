@@ -29,7 +29,7 @@ func TestDelete(t *testing.T) {
 
 	ctx := context.Background()
 
-	store := storager.New(cfg, filereader.New())
+	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
@@ -81,7 +81,7 @@ func TestDelete1(t *testing.T) {
 
 	ctx := context.Background()
 
-	store := storager.New(cfg, filereader.New())
+	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 

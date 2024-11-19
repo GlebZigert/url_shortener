@@ -12,15 +12,20 @@ type GetFileReader struct {
 }
 
 // GetReader return reader
-func (GetFileReader) GetReader(path string) (*bufio.Reader, error) {
+func (GetFileReader) Read(path string) ([]byte, error) {
 
 	file, err := os.OpenFile(path, os.O_RDONLY|os.O_CREATE, 0666)
+	defer file.Close()
 	if err != nil {
 		return nil, err
 	}
 	defer packerr.AddCloseErrToErr(&err, file)
 
-	return bufio.NewReader(file), nil
+	reader := bufio.NewReader(file)
+	var data []byte
+	_, err = reader.Read(data)
+
+	return data, err
 }
 
 // New is constructor

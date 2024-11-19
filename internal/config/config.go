@@ -2,7 +2,6 @@
 package config
 
 import (
-	"bufio"
 	"encoding/json"
 	"flag"
 	"os"
@@ -91,12 +90,12 @@ func (cfg *Values) GetENABLEHTTPSflag() bool {
 var ptr *Config
 
 // GetFileReader to get reader
-type GetFileReader interface {
-	GetReader(path string) (*bufio.Reader, error)
+type FileReader interface {
+	Read(path string) ([]byte, error)
 }
 
 // NewConfig is constructor for Config
-func NewConfig(progname string, args []string, getreader GetFileReader) (*Config, error) {
+func NewConfig(progname string, args []string, getreader FileReader) (*Config, error) {
 
 	//if ptr == nil {
 	cfg := Config{}
@@ -112,7 +111,7 @@ func NewConfig(progname string, args []string, getreader GetFileReader) (*Config
 }
 
 // ParseFlags to parse Config fields form flags and envs
-func (cfg *Config) ParseFlags(progname string, args []string, getreader GetFileReader) (err error) {
+func (cfg *Config) ParseFlags(progname string, args []string, getreader FileReader) (err error) {
 
 	//дефолтные значения -  низкий приоритет - перетрутся любым енвом и флагом
 
@@ -215,29 +214,25 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader GetFileR
 		flagEnv.ENABLEHTTPS = true
 	}
 	var errCfgFile error
-	reader, errCfgFile := getreader.GetReader(cfg.configFile)
-	//если файл откылся
+	//	reader, errCfgFile := getreader.GetReader(cfg.configFile)
+
+	var cfgFileStruct ConfigFileStruct
+	data, errCfgFile := getreader.Read(cfg.configFile)
 	if errCfgFile == nil {
 
-		var cfgFileStruct ConfigFileStruct
-		data, errCfgFile := reader.ReadBytes('\n')
+		errCfgFile = json.Unmarshal(data, &cfgFileStruct)
+		//если файл распарсился
+
 		if errCfgFile == nil {
 
-			errCfgFile = json.Unmarshal(data, &cfgFileStruct)
-			//если файл распарсился
+			//записать из файла в дефолтные значения
+			defaultValues.RunAddr = cfgFileStruct.ServerAddress
+			defaultValues.BaseURL = cfgFileStruct.BaseURL
+			defaultValues.FileStoragePath = cfgFileStruct.FileStoragePath
+			defaultValues.DatabaseDSN = cfgFileStruct.DatabaseDsn
+			defaultValues.ENABLEHTTPS = cfgFileStruct.EnableHTTPS
 
-			if errCfgFile == nil {
-
-				//записать из файла в дефолтные значения
-				defaultValues.RunAddr = cfgFileStruct.ServerAddress
-				defaultValues.BaseURL = cfgFileStruct.BaseURL
-				defaultValues.FileStoragePath = cfgFileStruct.FileStoragePath
-				defaultValues.DatabaseDSN = cfgFileStruct.DatabaseDsn
-				defaultValues.ENABLEHTTPS = cfgFileStruct.EnableHTTPS
-
-			}
 		}
-
 	}
 
 	//теперь если есть флаги енвы пишем их - если нет пишем дефолтные

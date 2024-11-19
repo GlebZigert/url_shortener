@@ -23,7 +23,7 @@ func Example() {
 	if err != nil {
 		return
 	}
-	store := storager.New(cfg, filereader.New())
+	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 

@@ -19,7 +19,7 @@ func BenchmarkSimplest(b *testing.B) {
 	}
 	ctx := context.Background()
 
-	store := storager.New(cfg, filereader.New())
+	store := storager.New(cfg)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 

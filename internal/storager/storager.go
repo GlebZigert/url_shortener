@@ -22,7 +22,7 @@ type Storager interface {
 }
 
 // конструктор
-func New(cfg storeConfig, getreader GetFileReader) (store Storager) {
+func New(cfg storeConfig) (store Storager) {
 	var err error
 
 	store, err = NewDBStorager(cfg)
@@ -31,7 +31,7 @@ func New(cfg storeConfig, getreader GetFileReader) (store Storager) {
 		return
 	}
 
-	store, err = NewFileStorager(cfg, getreader)
+	store, err = NewFileStorager(cfg)
 	if err == nil {
 
 		return
