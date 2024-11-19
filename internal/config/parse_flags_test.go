@@ -135,8 +135,6 @@ func TestParseFlagsCorrect(t *testing.T) {
 			},
 			mockreader,
 		},
-
-		// ... many more test entries here
 	}
 
 	for _, tt := range tests {
