@@ -105,12 +105,13 @@ func (srv *Server) Start() (err error) {
 	go func() {
 		<-sig
 		// Shutdown signal with grace period of 30 seconds
-		shutdownCtx, _ := context.WithTimeout(serverCtx, 30*time.Second)
+		shutdownCtx, cancelfunc := context.WithTimeout(serverCtx, 30*time.Second)
 
 		go func() {
 			<-shutdownCtx.Done()
 			if shutdownCtx.Err() == context.DeadlineExceeded {
 				log.Fatal("graceful shutdown timed out.. forcing exit.")
+				cancelfunc()
 			}
 		}()
 
