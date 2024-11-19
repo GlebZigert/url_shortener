@@ -143,7 +143,10 @@ func TestParseFlagsCorrect(t *testing.T) {
 
 		os.Clearenv()
 		for k, v := range tt.envVars {
-			os.Setenv(k, v)
+			err := os.Setenv(k, v)
+			if err != nil {
+				return
+			}
 		}
 
 		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
