@@ -17,7 +17,7 @@ var shorten []*storager.Shorten
 
 // хранилище
 type Storager interface {
-	Load(*[]*storager.Shorten) error
+	Load(*[]*storager.Shorten) (*[]*storager.Shorten, error)
 	StorageWrite(short, origin string, UUID int) error
 	Delete(interface{}) error
 }

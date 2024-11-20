@@ -19,24 +19,24 @@ type DBStorager struct {
 }
 
 // загрузить из базы
-func (one *DBStorager) Load(shorten *[]*Shorten) error {
+func (one *DBStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
 
 	rows, err := db.Get().Query("SELECT * FROM strazh")
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for rows.Next() {
 		var u Shorten
 		err = rows.Scan(&u.ID, &u.UUID, &u.ShortURL, &u.OriginalURL, &u.DeletedFlag)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		*shorten = append(*shorten, &u)
 	}
 
-	return nil
+	return shorten, nil
 }
 
 // записать в базу

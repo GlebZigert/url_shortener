@@ -2,6 +2,7 @@ package storager
 
 import (
 	"encoding/json"
+	"log"
 )
 
 var id int
@@ -32,28 +33,34 @@ func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, e
 }
 
 // загрузить из файла
-func (one *FileStorager) Load(shorten *[]*Shorten) (err error) {
+func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) {
 
 	var data []byte
 	err = nil
 	for err == nil {
-		//	log.Println("load...")
+		log.Println("load...")
 
 		data, err = one.rw.Read(one.cfg.GetFileStoragePath())
 		if err != nil {
-			return
+			log.Println(err.Error())
+			continue
 		}
-		//	log.Println(string(data))
+		log.Println(string(data))
 
 		var short Shorten
 		err = json.Unmarshal(data, &short)
 		if err != nil {
-			return
+			log.Println(err.Error())
+			continue
 		}
+		log.Println("append")
 		*shorten = append(*shorten, &short)
+		log.Println("len: ", len(*shorten))
 
 	}
+	log.Println("err: ", err.Error())
 
+	res = shorten
 	return
 }
 

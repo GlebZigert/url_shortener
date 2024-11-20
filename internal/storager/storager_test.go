@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-func TestFStore(t *testing.T) {
+func TestStore(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	cfg := storemocks.NewMockStoreConfig(ctrl)
@@ -40,11 +40,8 @@ func TestFStore(t *testing.T) {
 		return "any dsn"
 	}).AnyTimes()
 
-	store, err := NewFileStorager(cfg, mockreader)
+	store := New(cfg, mockreader)
 
-	if err != nil {
-		t.Error(err.Error())
-	}
 	tests := []struct {
 		name string
 		len  int
