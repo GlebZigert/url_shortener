@@ -53,6 +53,7 @@ func (GetFileReader) Write(data []byte, filepath string) error {
 
 }
 
+// CheckFile проверка открывается ли файл
 func (GetFileReader) CheckFile(filepath string) error {
 	file, err := os.OpenFile(filepath, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {

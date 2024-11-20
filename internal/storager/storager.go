@@ -1,5 +1,6 @@
 package storager
 
+// StoreConfig интерфейс конфига
 type StoreConfig interface {
 	GetFileStoragePath() string
 	GetDatabaseDSN() string

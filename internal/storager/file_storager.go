@@ -7,6 +7,7 @@ import (
 
 var id int
 
+// FilestoreConfig интерфейс конфига
 type FilestoreConfig interface {
 	GetFileStoragePath() string
 }
