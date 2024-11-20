@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/filereader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
@@ -18,8 +19,8 @@ func BenchmarkSimplest(b *testing.B) {
 		b.Errorf("error parse config")
 	}
 	ctx := context.Background()
-
-	store := storager.New(cfg, filereader.New())
+	dber := db.Get()
+	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 

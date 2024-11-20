@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/filereader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
@@ -49,8 +50,8 @@ func TestGetURLs(t *testing.T) {
 		t.Errorf("error parse config")
 	}
 	ctx := context.Background()
-
-	store := storager.New(cfg, filereader.New())
+	dber := db.Get()
+	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
@@ -65,7 +66,7 @@ func TestGetURLs(t *testing.T) {
 
 	mdl := middleware.NewMiddlewares(auc, logger)
 
-	srv, err := NewServer(cfg, mdl, logger, service)
+	srv, err := NewServer(cfg, mdl, logger, service, dber)
 
 	if err != nil {
 		t.Error(err)
@@ -134,8 +135,8 @@ func TestGetURLs1(t *testing.T) {
 		t.Errorf("error parse config")
 	}
 	ctx := context.Background()
-
-	store := storager.New(cfg, filereader.New())
+	dber := db.Get()
+	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
@@ -154,7 +155,7 @@ func TestGetURLs1(t *testing.T) {
 
 	mdl := middleware.NewMiddlewares(auc, logger)
 
-	srv, err := NewServer(cfg, mdl, logger, service)
+	srv, err := NewServer(cfg, mdl, logger, service, dber)
 
 	if err != nil {
 		t.Error(err)
@@ -224,8 +225,8 @@ func TestGetURLs2(t *testing.T) {
 		t.Errorf("error parse config")
 	}
 	ctx := context.Background()
-
-	store := storager.New(cfg, filereader.New())
+	dber := db.Get()
+	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
@@ -244,7 +245,7 @@ func TestGetURLs2(t *testing.T) {
 
 	mdl := middleware.NewMiddlewares(auc, logger)
 
-	srv, err := NewServer(cfg, mdl, logger, service)
+	srv, err := NewServer(cfg, mdl, logger, service, dber)
 
 	if err != nil {
 		t.Error(err)

@@ -2,12 +2,17 @@ package storager
 
 import (
 	"context"
-	"strings"
+	"database/sql"
 	"time"
-
-	"github.com/GlebZigert/url_shortener.git/internal/db"
-	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
+
+type DB interface {
+	Init(DatabaseDSN string) error
+	Ping(ctx context.Context) error
+	Insert(ctx context.Context, short, origin string, UUID int) error
+	DBLoad() (*sql.Rows, error)
+	Delete(short interface{}) error
+}
 
 type dbstoreConfig interface {
 	GetDatabaseDSN() string
@@ -16,12 +21,13 @@ type dbstoreConfig interface {
 // хранение в базе
 type DBStorager struct {
 	cfg dbstoreConfig
+	DB
 }
 
 // загрузить из базы
 func (one *DBStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
 
-	rows, err := db.Get().Query("SELECT * FROM strazh")
+	rows, err := one.DBLoad()
 
 	if err != nil {
 		return nil, err
@@ -42,40 +48,22 @@ func (one *DBStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
 // записать в базу
 func (one *DBStorager) StorageWrite(short, origin string, UUID int) error {
 
-	return db.Insert(context.Background(), short, origin, UUID)
+	return one.Insert(context.Background(), short, origin, UUID)
 
 }
 
 // конструктор
-func NewDBStorager(cfg dbstoreConfig) (*DBStorager, error) {
+func NewDBStorager(cfg dbstoreConfig, db DB) (*DBStorager, error) {
 
-	store := &DBStorager{cfg}
+	store := &DBStorager{cfg, db}
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
-	err := db.Init(cfg.GetDatabaseDSN())
+	err := store.Init(cfg.GetDatabaseDSN())
 	if err != nil {
 		return nil, err
 	}
 
 	return store, db.Ping(ctx)
-
-}
-
-// удалить из базы
-func (one *DBStorager) Delete(short interface{}) error {
-
-	switch short := short.(type) {
-	case string:
-		_, err := db.Get().Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
-		return err
-
-	case []string:
-		_, err := db.Get().Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(short, ","))
-
-		return err
-	default:
-		return &packerr.WrongType
-	}
 
 }

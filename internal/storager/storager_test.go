@@ -3,6 +3,7 @@ package storager
 import (
 	"testing"
 
+	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/storemocks"
 	"github.com/golang/mock/gomock"
 )
@@ -40,7 +41,7 @@ func TestStore(t *testing.T) {
 		return "any dsn"
 	}).AnyTimes()
 
-	store := New(cfg, mockreader)
+	store := New(cfg, mockreader, db.Get())
 
 	tests := []struct {
 		name string

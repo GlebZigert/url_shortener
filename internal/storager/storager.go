@@ -23,10 +23,10 @@ type Storager interface {
 }
 
 // конструктор
-func New(cfg StoreConfig, rw FileReaderWriter) (store Storager) {
+func New(cfg StoreConfig, rw FileReaderWriter, db DB) (store Storager) {
 	var err error
 
-	store, err = NewDBStorager(cfg)
+	store, err = NewDBStorager(cfg, db)
 	if err == nil {
 
 		return

@@ -50,17 +50,22 @@ type srvService interface {
 	GetAll() *[]*storager.Shorten
 }
 
+type srvPinger interface {
+	Ping(ctx context.Context) error
+}
+
 // сервер
 type Server struct {
 	cfg     srvConfig
 	mdl     srvMiddleware
 	logger  srvLogger
 	service srvService
+	pinger  srvPinger
 }
 
 // var errNoAuthMiddleware = errors.New("в миддлеварах не определен auth")
 // конструктор сервера
-func NewServer(cfg srvConfig, mdl srvMiddleware, logger srvLogger, service srvService) (*Server, error) {
+func NewServer(cfg srvConfig, mdl srvMiddleware, logger srvLogger, service srvService, pinger srvPinger) (*Server, error) {
 
 	/*
 		auch := mdl.GetAuch()
@@ -69,7 +74,7 @@ func NewServer(cfg srvConfig, mdl srvMiddleware, logger srvLogger, service srvSe
 		}
 	*/
 
-	return &Server{cfg, mdl, logger, service}, nil
+	return &Server{cfg, mdl, logger, service, pinger}, nil
 }
 
 // запуск сервера

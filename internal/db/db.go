@@ -3,7 +3,9 @@ package db
 import (
 	"context"
 	"database/sql"
+	"strings"
 
+	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -16,24 +18,27 @@ CREATE TABLE IF NOT EXISTS strazh (
 deleted		BOOLEAN
 )`
 
-var db *sql.DB
+type DBer struct {
+	db *sql.DB
+}
 
-// доступ к бд
-func Get() *sql.DB {
-	return db
+var dber DBer
+
+func Get() *DBer {
+	return &dber
 }
 
 // запуск бд
-func Init(DatabaseDSN string) error {
+func (dber *DBer) Init(DatabaseDSN string) error {
 
 	var err error
-	db, err = sql.Open("pgx", DatabaseDSN)
+	dber.db, err = sql.Open("pgx", DatabaseDSN)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = db.Exec(table)
+	_, err = dber.db.Exec(table)
 
 	if err != nil {
 		return err
@@ -42,16 +47,16 @@ func Init(DatabaseDSN string) error {
 }
 
 // пинг дб
-func Ping(ctx context.Context) error {
+func (dber *DBer) Ping(ctx context.Context) error {
 
-	err := db.PingContext(ctx)
+	err := dber.db.PingContext(ctx)
 	return err
 }
 
 // вставка в  бд
-func Insert(ctx context.Context, short, origin string, UUID int) error {
+func (dber *DBer) Insert(ctx context.Context, short, origin string, UUID int) error {
 
-	_, err := db.ExecContext(ctx, "insert into strazh (uid,origin, short) values ($1, $2, $3)", UUID, origin, short)
+	_, err := dber.db.ExecContext(ctx, "insert into strazh (uid,origin, short) values ($1, $2, $3)", UUID, origin, short)
 	if err != nil {
 		return err
 	}
@@ -59,13 +64,24 @@ func Insert(ctx context.Context, short, origin string, UUID int) error {
 	return nil
 }
 
-// удалить из бд
-func Del(ctx context.Context, short string) error {
+func (dber *DBer) DBLoad() (*sql.Rows, error) {
+	return dber.db.Query("SELECT * FROM strazh")
+}
 
-	_, err := db.ExecContext(ctx, "UPDATE strazh SET deleted = true WHERE short = $1;", short)
-	if err != nil {
+// удалить из бд
+func (dber *DBer) Delete(short interface{}) error {
+
+	switch short := short.(type) {
+	case string:
+		_, err := dber.db.Exec("UPDATE strazh SET deleted = true WHERE short = $1", short)
 		return err
+
+	case []string:
+		_, err := dber.db.Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(short, ","))
+
+		return err
+	default:
+		return &packerr.WrongType
 	}
 
-	return nil
 }

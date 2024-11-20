@@ -10,6 +10,7 @@ import (
 
 	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
+	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/filereader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/middleware"
@@ -89,8 +90,8 @@ func TestGetURL(t *testing.T) {
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
 	mdl := middleware.NewMiddlewares(auc, logger)
-
-	srv, err := NewServer(cfg, mdl, logger, service)
+	dber := db.Get()
+	srv, err := NewServer(cfg, mdl, logger, service, dber)
 	if err != nil {
 		t.Error(err)
 	}

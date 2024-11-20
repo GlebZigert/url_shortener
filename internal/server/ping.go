@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
@@ -17,7 +16,7 @@ func (srv *Server) Ping(w http.ResponseWriter, req *http.Request) {
 
 	ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)
 	defer cancel()
-	if err = db.Ping(ctx); err == nil {
+	if err = srv.pinger.Ping(ctx); err == nil {
 		w.WriteHeader(http.StatusOK)
 
 	} else {

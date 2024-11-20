@@ -18,12 +18,12 @@ func Example() {
 		return
 	}
 	ctx := context.Background()
-
-	err = db.Init(cfg.DatabaseDSN)
+	dber := db.Get()
+	err = dber.Init(cfg.DatabaseDSN)
 	if err != nil {
 		return
 	}
-	store := storager.New(cfg, filereader.New())
+	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
