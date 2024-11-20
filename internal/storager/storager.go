@@ -1,6 +1,6 @@
 package storager
 
-type storeConfig interface {
+type StoreConfig interface {
 	GetFileStoragePath() string
 	GetDatabaseDSN() string
 }
@@ -22,7 +22,7 @@ type Storager interface {
 }
 
 // конструктор
-func New(cfg storeConfig) (store Storager) {
+func New(cfg StoreConfig, rw FileReaderWriter) (store Storager) {
 	var err error
 
 	store, err = NewDBStorager(cfg)
@@ -31,7 +31,7 @@ func New(cfg storeConfig) (store Storager) {
 		return
 	}
 
-	store, err = NewFileStorager(cfg)
+	store, err = NewFileStorager(cfg, rw)
 	if err == nil {
 
 		return

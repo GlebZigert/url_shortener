@@ -125,6 +125,7 @@ func (s *Service) Origin(short string) (string, error) {
 }
 
 // получить все шорты
+
 func (s *Service) GetAll() *[]*storager.Shorten {
 
 	return &shorten

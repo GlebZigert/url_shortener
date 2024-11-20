@@ -1,62 +1,56 @@
 package storager
 
 import (
-	"bufio"
 	"encoding/json"
-	"os"
-
-	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
 var id int
 
-type filestoreConfig interface {
+type FilestoreConfig interface {
 	GetFileStoragePath() string
 }
 
 // хранение в файле
 type FileStorager struct {
-	cfg filestoreConfig
+	cfg FilestoreConfig
+	rw  FileReaderWriter
+}
+
+// GetFileReader to get reader
+type FileReaderWriter interface {
+	Read(path string) ([]byte, error)
+	Write(data []byte, filepath string) error
+	CheckFile(filepath string) error
 }
 
 // конструктор
-func NewFileStorager(cfg filestoreConfig) (*FileStorager, error) {
+func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, error) {
 
-	store := &FileStorager{cfg}
-	file, err := os.OpenFile(cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
-	if err != nil {
-		return store, err
-	}
-	err = file.Close()
-	if err != nil {
-		return store, err
-	}
+	store := &FileStorager{cfg, rw}
+	err := rw.CheckFile(cfg.GetFileStoragePath())
 	return store, err
 }
 
 // загрузить из файла
 func (one *FileStorager) Load(shorten *[]*Shorten) (err error) {
 
-	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_RDONLY|os.O_CREATE, 0666)
-	if err != nil {
-		return err
-	}
-	defer packerr.AddCloseErrToErr(&err, file)
-	reader := bufio.NewReader(file)
-
 	var data []byte
 	err = nil
 	for err == nil {
-		data, err = reader.ReadBytes('\n')
-		if err != nil {
-			return
-		}
+		//	log.Println("load...")
 
-		var shorten Shorten
-		err = json.Unmarshal(data, &shorten)
+		data, err = one.rw.Read(one.cfg.GetFileStoragePath())
 		if err != nil {
 			return
 		}
+		//	log.Println(string(data))
+
+		var short Shorten
+		err = json.Unmarshal(data, &short)
+		if err != nil {
+			return
+		}
+		*shorten = append(*shorten, &short)
 
 	}
 
@@ -71,15 +65,6 @@ func (one *FileStorager) Delete(short interface{}) error {
 // записать в файл
 func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 
-	file, err := os.OpenFile(one.cfg.GetFileStoragePath(), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		return err
-	}
-
-	defer packerr.AddCloseErrToErr(&err, file)
-
-	writer := bufio.NewWriter(file)
-
 	shorten := Shorten{id, UUID, short, origin, false}
 
 	data, err := json.Marshal(&shorten)
@@ -87,12 +72,7 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 		return err
 	}
 	data = append(data, '\n')
-	_, err = writer.Write(data)
-	if err != nil {
-		return err
-	}
-
-	err = writer.Flush()
+	err = one.rw.Write(data, one.cfg.GetFileStoragePath())
 	if err != nil {
 		return err
 	}
