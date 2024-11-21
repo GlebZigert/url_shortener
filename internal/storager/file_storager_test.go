@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-func TestFStore(t *testing.T) {
+func TestFStoreLoad(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	cfg := storemocks.NewMockStoreConfig(ctrl)
@@ -62,6 +62,54 @@ func TestFStore(t *testing.T) {
 			store.Load(&shorten)
 
 			t.Log(len(shorten))
+
+		})
+	}
+
+}
+
+func TestFStoreWrite(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	cfg := storemocks.NewMockStoreConfig(ctrl)
+
+	mockreader := storemocks.NewMockFileReaderWriter(ctrl)
+
+	mockreader.EXPECT().Write(gomock.Any(), gomock.Any()).DoAndReturn(func(data []byte, filepath string) error {
+		return nil
+	}).AnyTimes()
+
+	mockreader.EXPECT().CheckFile(gomock.Any()).DoAndReturn(func(path string) error {
+		return nil
+	}).AnyTimes()
+
+	cfg.EXPECT().GetFileStoragePath().DoAndReturn(func() string {
+		return "any path"
+	}).AnyTimes()
+
+	cfg.EXPECT().GetDatabaseDSN().DoAndReturn(func() string {
+		return "any dsn"
+	}).AnyTimes()
+
+	store, err := NewFileStorager(cfg, mockreader)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+	tests := []struct {
+		name string
+		len  int
+	}{
+		{
+			name: "1",
+			len:  1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			store.StorageWrite("11", "222", 0)
 
 		})
 	}
