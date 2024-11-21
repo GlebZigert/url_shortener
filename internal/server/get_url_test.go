@@ -90,7 +90,7 @@ func TestGetURL(t *testing.T) {
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
 	mdl := middleware.NewMiddlewares(auc, logger)
-	dber := db.Get()
+	dber := db.Get(db.Init(cfg.GetBaseURL()))
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 	if err != nil {
 		t.Error(err)

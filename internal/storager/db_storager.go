@@ -3,11 +3,13 @@ package storager
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"log"
+	"reflect"
 	"time"
 )
 
 type DB interface {
-	Init(DatabaseDSN string) error
 	Ping(ctx context.Context) error
 	Insert(ctx context.Context, short, origin string, UUID int) error
 	DBLoad() (*sql.Rows, error)
@@ -55,14 +57,14 @@ func (one *DBStorager) StorageWrite(short, origin string, UUID int) error {
 // конструктор
 func NewDBStorager(cfg dbstoreConfig, db DB) (*DBStorager, error) {
 
+	if db == nil || reflect.ValueOf(db).IsNil() {
+		log.Println("no db")
+		return nil, errors.New("no db")
+	}
+
 	store := &DBStorager{cfg, db}
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
-
-	err := store.Init(cfg.GetDatabaseDSN())
-	if err != nil {
-		return nil, err
-	}
 
 	return store, db.Ping(ctx)
 

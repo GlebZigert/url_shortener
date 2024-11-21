@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"net/http"
+	"reflect"
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -16,7 +17,10 @@ func (srv *Server) Ping(w http.ResponseWriter, req *http.Request) {
 
 	ctx, cancel := context.WithTimeout(req.Context(), 1*time.Second)
 	defer cancel()
-	if err = srv.pinger.Ping(ctx); err == nil {
+
+	if srv.pinger == nil || reflect.ValueOf(srv.pinger).IsNil() {
+		w.WriteHeader(http.StatusInternalServerError)
+	} else if err = srv.pinger.Ping(ctx); err == nil {
 		w.WriteHeader(http.StatusOK)
 
 	} else {

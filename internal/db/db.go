@@ -3,6 +3,8 @@ package db
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"log"
 	"strings"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -22,33 +24,47 @@ type DBer struct {
 	db *sql.DB
 }
 
-var dber DBer
+var ptr *DBer
 
-func Get() *DBer {
-	return &dber
+func Get(db *sql.DB) *DBer {
+
+	if db == nil {
+		log.Println("db 3 err: mo db")
+		return nil
+	}
+	ptr = &DBer{db}
+
+	return ptr
 }
 
+var db *sql.DB
+
 // запуск бд
-func (dber *DBer) Init(DatabaseDSN string) error {
+func Init(DatabaseDSN string) *sql.DB {
 
 	var err error
-	dber.db, err = sql.Open("pgx", DatabaseDSN)
+	db, err = sql.Open("pgx", DatabaseDSN)
 
 	if err != nil {
-		return err
+		log.Println("db 1 err: ", err.Error())
+		return nil
 	}
 
-	_, err = dber.db.Exec(table)
+	_, err = db.Exec(table)
 
 	if err != nil {
-		return err
+		log.Println("db 2 err: ", err.Error())
+		return nil
 	}
-	return err
+	return db
 }
 
 // пинг дб
 func (dber *DBer) Ping(ctx context.Context) error {
 
+	if dber.db == nil {
+		return errors.New("no db")
+	}
 	err := dber.db.PingContext(ctx)
 	return err
 }

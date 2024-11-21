@@ -50,7 +50,7 @@ func TestGetURLs(t *testing.T) {
 		t.Errorf("error parse config")
 	}
 	ctx := context.Background()
-	dber := db.Get()
+	dber := db.Get(db.Init(cfg.GetBaseURL()))
 	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
@@ -135,7 +135,7 @@ func TestGetURLs1(t *testing.T) {
 		t.Errorf("error parse config")
 	}
 	ctx := context.Background()
-	dber := db.Get()
+	dber := db.Get(db.Init(cfg.GetBaseURL()))
 	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
@@ -225,7 +225,7 @@ func TestGetURLs2(t *testing.T) {
 		t.Errorf("error parse config")
 	}
 	ctx := context.Background()
-	dber := db.Get()
+	dber := db.Get(db.Init(cfg.GetBaseURL()))
 	store := storager.New(cfg, filereader.New(), dber)
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
