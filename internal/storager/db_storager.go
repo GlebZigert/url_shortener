@@ -32,6 +32,7 @@ func (one *DBStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
 	rows, err := one.DBLoad()
 
 	if err != nil {
+		log.Println("db load err: ", err.Error())
 		return nil, err
 	}
 
