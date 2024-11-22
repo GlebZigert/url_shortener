@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLog(t *testing.T) {
+func TestLogLogrus(t *testing.T) {
 	type want struct {
 		code        int
 		contentType string
