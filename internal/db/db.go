@@ -96,8 +96,13 @@ func (dber *DBer) Delete(short interface{}) error {
 		return err
 
 	case []string:
-		_, err := dber.db.Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(short, ","))
-
+		rows, err := dber.db.Query("UPDATE strazh SET deleted = true WHERE id = ($1)", strings.Join(short, ","))
+		if err != nil {
+			return err
+		}
+		if rows.Err() != nil {
+			return rows.Err()
+		}
 		return err
 	default:
 		return &packerr.WrongType
