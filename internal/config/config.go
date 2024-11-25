@@ -40,6 +40,8 @@ type Values struct {
 	SECRETKEY string
 
 	ENABLEHTTPS bool
+
+	CIDR string
 }
 
 // GetRunAddr to get RunAddr value
@@ -85,6 +87,11 @@ func (cfg *Values) GetSECRETKEY() string {
 // GetSECRETKEY to get sekret key value
 func (cfg *Values) GetENABLEHTTPSflag() bool {
 	return cfg.ENABLEHTTPS
+}
+
+// GetRunAddr to get GetCIDRvalue
+func (cfg *Values) GetCIDR() string {
+	return cfg.CIDR
 }
 
 var ptr *Config

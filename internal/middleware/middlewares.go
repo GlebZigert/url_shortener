@@ -16,13 +16,19 @@ type mdlLogger interface {
 	Error(msg string, fields map[string]interface{})
 }
 
+// интерфейс для источника CIDR
+type SrcCIDR interface {
+	GetCIDR() string // метод получения CIDR
+}
+
 // струткура с методами-мидлами
 type Middleware struct {
 	mdlAuth
-	logger mdlLogger
+	logger  mdlLogger
+	SrcCIDR //источник CIDR для миддла который фильтрует по IP адресам
 }
 
 // ее конструктор
-func NewMiddlewares(auth mdlAuth, logger mdlLogger) *Middleware {
-	return &Middleware{auth, logger}
+func NewMiddlewares(auth mdlAuth, logger mdlLogger, cidr SrcCIDR) *Middleware {
+	return &Middleware{auth, logger, cidr}
 }

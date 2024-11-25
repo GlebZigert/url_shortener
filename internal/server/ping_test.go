@@ -64,7 +64,7 @@ func TestPing(t *testing.T) {
 	service := services.NewService(logger, store)
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 	if err != nil {
@@ -152,7 +152,7 @@ func TestPing1(t *testing.T) {
 	service := services.NewService(logger, store)
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	ctrl := gomock.NewController(t)
 	pinger := mocks.NewMockSrvPinger(ctrl)
@@ -246,7 +246,7 @@ func TestPing2(t *testing.T) {
 	service := services.NewService(logger, store)
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	ctrl := gomock.NewController(t)
 	pinger := mocks.NewMockSrvPinger(ctrl)

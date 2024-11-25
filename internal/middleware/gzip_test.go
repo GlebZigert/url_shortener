@@ -71,7 +71,7 @@ func TestGzip(t *testing.T) {
 	//service := services.NewService(logger, store)
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
-	mdl := NewMiddlewares(auc, logger)
+	mdl := NewMiddlewares(auc, logger, cfg)
 
 	//srv, _ := NewServer(cfg, mdl, logger, service)
 

@@ -14,7 +14,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-type srvConfig interface {
+type SrvConfig interface {
 	GetRunAddr() string
 	GetBaseURL() string
 	GetFlagLogLevel() string
@@ -57,7 +57,7 @@ type SrvPinger interface {
 
 // сервер
 type Server struct {
-	cfg     srvConfig
+	cfg     SrvConfig
 	mdl     srvMiddleware
 	logger  srvLogger
 	service srvService
@@ -66,7 +66,7 @@ type Server struct {
 
 // var errNoAuthMiddleware = errors.New("в миддлеварах не определен auth")
 // конструктор сервера
-func NewServer(cfg srvConfig, mdl srvMiddleware, logger srvLogger, service srvService, pinger SrvPinger) (*Server, error) {
+func NewServer(cfg SrvConfig, mdl srvMiddleware, logger srvLogger, service srvService, pinger SrvPinger) (*Server, error) {
 
 	/*
 		auch := mdl.GetAuch()

@@ -54,6 +54,8 @@ go test ./... -coverprofile=cover.out.tmp;cat cover.out.tmp | grep -v "mock_" > 
 
 openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout key.pem -out cert.pem -days 3650
 
+mockgen -destination=mocks/mock_srv_cfg.go -package mocks github.com/GlebZigert/url_shortener.git/internal/server SrvConfig
+
 
 
 

@@ -64,7 +64,7 @@ func TestGetURLs(t *testing.T) {
 		return true, true
 	}).AnyTimes()
 
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 
@@ -153,7 +153,7 @@ func TestGetURLs1(t *testing.T) {
 		return 0, false
 	}).AnyTimes()
 
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 
@@ -243,7 +243,7 @@ func TestGetURLs2(t *testing.T) {
 		return 0, true
 	}).AnyTimes()
 
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 

@@ -43,7 +43,7 @@ func TestDelete(t *testing.T) {
 		return true, true
 	}).AnyTimes()
 
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 
@@ -90,7 +90,7 @@ func TestDelete1(t *testing.T) {
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
 
-	mdl := middleware.NewMiddlewares(auc, logger)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg)
 
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 
