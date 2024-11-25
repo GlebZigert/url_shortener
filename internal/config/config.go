@@ -41,7 +41,7 @@ type Values struct {
 
 	ENABLEHTTPS bool
 
-	CIDR string
+	CIDR []string
 }
 
 // GetRunAddr to get RunAddr value
@@ -90,7 +90,7 @@ func (cfg *Values) GetENABLEHTTPSflag() bool {
 }
 
 // GetRunAddr to get GetCIDRvalue
-func (cfg *Values) GetCIDR() string {
+func (cfg *Values) GetCIDR() []string {
 	return cfg.CIDR
 }
 

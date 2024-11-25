@@ -10,7 +10,7 @@ import (
 
 // Convert IPv4 range into CIDR
 // Convert IPv4 range into CIDR
-func iPv4RangeToCIDR(ipStart string, ipEnd string) (CIDRs []string, err error) {
+func IPv4RangeToCIDR(ipStart string, ipEnd string) (CIDRs []string, err error) {
 
 	cidr2mask := []uint32{
 		0x00000000, 0x80000000, 0xC0000000,
@@ -117,7 +117,7 @@ func uInt32ToIPv4(iPuInt32 uint32) (iP string) {
 	return iP
 }
 
-func check(ipstr string, cidr []string) bool {
+func Check(ipstr string, cidr []string) bool {
 
 	var ip uint32  // ip address
 	var ipS uint32 // Start IP address range

@@ -50,7 +50,7 @@ func Test(t *testing.T) {
 			ipStart := test.ipStart
 			ipEnd := test.ipEnd
 
-			cidr, err := iPv4RangeToCIDR(ipStart, ipEnd)
+			cidr, err := IPv4RangeToCIDR(ipStart, ipEnd)
 			if err != nil {
 				t.Error(err.Error())
 			}
@@ -63,7 +63,7 @@ func Test(t *testing.T) {
 			assert.Equal(t, ipStart, resStart)
 			assert.Equal(t, ipEnd, resEnd)
 
-			assert.Equal(t, test.check, check(test.ip, cidr))
+			assert.Equal(t, test.check, Check(test.ip, cidr))
 
 		})
 	}

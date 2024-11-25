@@ -34,10 +34,10 @@ func (m *MockSrcCIDR) EXPECT() *MockSrcCIDRMockRecorder {
 }
 
 // GetCIDR mocks base method.
-func (m *MockSrcCIDR) GetCIDR() string {
+func (m *MockSrcCIDR) GetCIDR() []string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCIDR")
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].([]string)
 	return ret0
 }
 

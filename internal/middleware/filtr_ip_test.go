@@ -8,6 +8,8 @@ import (
 	"github.com/GlebZigert/url_shortener.git/mocks"
 	"github.com/golang/mock/gomock"
 	"gotest.tools/v3/assert"
+
+	convert "github.com/GlebZigert/url_shortener.git/pkg/convertIPtoCIDR"
 )
 
 // Тест миддла Stat
@@ -25,11 +27,16 @@ func TestFiltrIP(t *testing.T) {
 		{
 			name:   "запрос который не пройдет",
 			ip:     "",
-			answer: answer{status: http.StatusBadRequest},
+			answer: answer{status: http.StatusForbidden},
 		},
 		{
-			name:   "запрос который пройдет",
+			name:   "запрос который также не пройдет",
 			ip:     "192.168.2.104",
+			answer: answer{status: http.StatusForbidden},
+		},
+		{
+			name:   "запрос который  пройдет",
+			ip:     "192.168.1.12",
 			answer: answer{status: http.StatusOK},
 		},
 	}
@@ -38,8 +45,12 @@ func TestFiltrIP(t *testing.T) {
 	//мок на источник cidr
 	cidr := mocks.NewMockSrcCIDR(ctrl)
 
-	cidr.EXPECT().GetCIDR().DoAndReturn(func() string {
-		return "192.168.0.0"
+	cidr.EXPECT().GetCIDR().DoAndReturn(func() []string {
+		cidr, err := convert.IPv4RangeToCIDR("192.168.1.10", "192.168.1.17")
+		if err != nil {
+			return []string{}
+		}
+		return cidr
 	}).AnyTimes()
 	//в конструктор миддлов надо передать аргументом интерфес с методом получения CIDR
 	mdl := NewMiddlewares(nil, nil, cidr)

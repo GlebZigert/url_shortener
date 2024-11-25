@@ -9,13 +9,14 @@ import (
 	"sync"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
+	convert "github.com/GlebZigert/url_shortener.git/pkg/convertIPtoCIDR"
 )
 
 // Миддл который проверяет,
 // что переданный в заголовке запроса
 // X-Real-IP IP-адрес клиента входит в доверенную подсеть,
 // в противном случае возвращать статус ответа 403 Forbidden.
-var CIDR string
+var CIDR []string
 
 func (mdl *Middleware) FiltrIP(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +41,11 @@ func (mdl *Middleware) FiltrIP(h http.Handler) http.Handler {
 			return //err
 		}
 
-		log.Println("ip: ", ip)
+		log.Println("ip: ", ip.String())
+
+		if !convert.Check(ip.String(), CIDR) {
+			w.WriteHeader(http.StatusForbidden)
+		}
 
 		//если ip есть - проверяем его
 

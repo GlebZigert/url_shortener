@@ -18,7 +18,7 @@ type mdlLogger interface {
 
 // интерфейс для источника CIDR
 type SrcCIDR interface {
-	GetCIDR() string // метод получения CIDR
+	GetCIDR() []string // метод получения CIDR
 }
 
 // струткура с методами-мидлами
