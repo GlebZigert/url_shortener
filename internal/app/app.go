@@ -1,15 +1,43 @@
 package app
 
 import (
-	"fmt"
+	"context"
+	"os"
 
+	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
-	"github.com/GlebZigert/url_shortener.git/internal/transport"
+	"github.com/GlebZigert/url_shortener.git/internal/db"
+	"github.com/GlebZigert/url_shortener.git/internal/filereader"
+	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/internal/middleware"
+	"github.com/GlebZigert/url_shortener.git/internal/server"
+	"github.com/GlebZigert/url_shortener.git/internal/services"
+	"github.com/GlebZigert/url_shortener.git/internal/storager"
 )
 
-func Run() {
+// Запуск
+func Run() (err error) {
 
-	config.ParseFlags()
-	fmt.Println("Running server on", config.RunAddr, " with BasURL ", config.BaseURL)
-	transport.InitRouter()
+	cfg, err := config.NewConfig(os.Args[0], os.Args[1:], filereader.New())
+	if err != nil {
+		return
+	}
+	ctx := context.Background()
+	dber := db.Get(db.Init(cfg.GetDatabaseDSN()))
+	store := storager.New(cfg, filereader.New(), dber)
+
+	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
+
+	service := services.NewService(logger, store)
+
+	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
+	mdl := middleware.NewMiddlewares(auc, logger)
+	server, err := server.NewServer(cfg, mdl, logger, service, dber)
+
+	if err != nil {
+		return
+	}
+	err = server.Start()
+
+	return
 }
