@@ -29,6 +29,10 @@ func TestDBStoragerLoad(t *testing.T) {
 
 	store, err := NewDBStorager(cfg, db.Get(tdb))
 
+	if err != nil {
+		t.Error(err.Error())
+	}
+
 	tests := []struct {
 		name string
 		len  int
@@ -70,7 +74,9 @@ func TestDBStoragerInsert(t *testing.T) {
 	mock.ExpectQuery("SELECT * FROM strazh").WillReturnRows(rows)
 
 	store, err := NewDBStorager(cfg, db.Get(tdb))
-
+	if err != nil {
+		t.Error(err.Error())
+	}
 	tests := []struct {
 		name string
 		len  int
@@ -112,7 +118,9 @@ func TestDBStoragerDelete(t *testing.T) {
 	mock.ExpectQuery("SELECT * FROM strazh").WillReturnRows(rows)
 
 	store, err := NewDBStorager(cfg, db.Get(tdb))
-
+	if err != nil {
+		t.Error(err.Error())
+	}
 	tests := []struct {
 		name string
 		len  int
@@ -154,7 +162,9 @@ func TestDBStoragerDeleteList(t *testing.T) {
 	mock.ExpectQuery("SELECT * FROM strazh").WillReturnRows(rows)
 
 	store, err := NewDBStorager(cfg, db.Get(tdb))
-
+	if err != nil {
+		t.Error(err.Error())
+	}
 	tests := []struct {
 		name string
 		len  int
