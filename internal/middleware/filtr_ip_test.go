@@ -19,14 +19,17 @@ func TestFiltrIP(t *testing.T) {
 
 	tests := []struct {
 		name   string
+		ip     string
 		answer answer
 	}{
 		{
 			name:   "запрос который не пройдет",
+			ip:     "",
 			answer: answer{status: http.StatusBadRequest},
 		},
 		{
 			name:   "запрос который пройдет",
+			ip:     "192.168.2.104",
 			answer: answer{status: http.StatusOK},
 		},
 	}
@@ -34,6 +37,10 @@ func TestFiltrIP(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	//мок на источник cidr
 	cidr := mocks.NewMockSrcCIDR(ctrl)
+
+	cidr.EXPECT().GetCIDR().DoAndReturn(func() string {
+		return "192.168.0.0"
+	}).AnyTimes()
 	//в конструктор миддлов надо передать аргументом интерфес с методом получения CIDR
 	mdl := NewMiddlewares(nil, nil, cidr)
 
@@ -41,6 +48,11 @@ func TestFiltrIP(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 
 			r := httptest.NewRequest(http.MethodGet, "/api/internal/stats", nil)
+
+			if test.ip != "" {
+				r.Header.Set("X-Real-IP", test.ip)
+			}
+
 			w := httptest.NewRecorder()
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
