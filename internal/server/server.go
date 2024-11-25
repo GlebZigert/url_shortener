@@ -50,6 +50,7 @@ type srvService interface {
 	GetAll() *[]*storager.Shorten
 }
 
+// Interface for ping db
 type SrvPinger interface {
 	Ping(ctx context.Context) error
 }

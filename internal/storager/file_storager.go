@@ -39,7 +39,6 @@ func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) 
 	var data []byte
 	err = nil
 	for err == nil {
-		log.Println("load...")
 
 		data, err = one.rw.Read(one.cfg.GetFileStoragePath())
 		if err != nil {
@@ -54,12 +53,11 @@ func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) 
 			log.Println(err.Error())
 			continue
 		}
-		log.Println("append")
+
 		*shorten = append(*shorten, &short)
-		log.Println("len: ", len(*shorten))
 
 	}
-	log.Println("err: ", err.Error())
+	//	log.Println("err: ", err.Error())
 
 	res = shorten
 	return

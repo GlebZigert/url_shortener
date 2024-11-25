@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Interface for DB
 type DB interface {
 	Ping(ctx context.Context) error
 	Insert(ctx context.Context, short, origin string, UUID int) error
@@ -32,6 +33,11 @@ func (one *DBStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
 	rows, err := one.DBLoad()
 
 	if err != nil {
+		log.Println("db load err: ", err.Error())
+		return nil, err
+	}
+
+	if rows.Err() != nil {
 		log.Println("db load err: ", err.Error())
 		return nil, err
 	}

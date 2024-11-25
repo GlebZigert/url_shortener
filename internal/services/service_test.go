@@ -75,6 +75,7 @@ func TestService(t *testing.T) {
 			_, errr := service.Short(test.request.value, test.request.user)
 
 			if test.want.err != nil {
+
 				assert.Equal(t, errr, test.want.err)
 			} else {
 				assert.NilError(t, errr)

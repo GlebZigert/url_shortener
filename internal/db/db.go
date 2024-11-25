@@ -20,12 +20,14 @@ CREATE TABLE IF NOT EXISTS strazh (
 deleted		BOOLEAN
 )`
 
+// DBer is struct for db
 type DBer struct {
 	db *sql.DB
 }
 
 var ptr *DBer
 
+// Get DBer struct
 func Get(db *sql.DB) *DBer {
 
 	if db == nil {
@@ -80,6 +82,7 @@ func (dber *DBer) Insert(ctx context.Context, short, origin string, UUID int) er
 	return nil
 }
 
+// Load from db
 func (dber *DBer) DBLoad() (*sql.Rows, error) {
 	return dber.db.Query("SELECT * FROM strazh")
 }
