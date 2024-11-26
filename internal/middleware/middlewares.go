@@ -2,7 +2,7 @@ package middleware
 
 import "context"
 
-type mdlAuth interface {
+type MdlAuth interface {
 	BuildJWTString(id int) (string, error)
 	GetUserID(tokenString string) (int, error)
 	CheckUID(ctx context.Context) (user int, ok bool)
@@ -23,12 +23,12 @@ type SrcCIDR interface {
 
 // струткура с методами-мидлами
 type Middleware struct {
-	mdlAuth
+	MdlAuth
 	logger  mdlLogger
 	SrcCIDR //источник CIDR для миддла который фильтрует по IP адресам
 }
 
 // ее конструктор
-func NewMiddlewares(auth mdlAuth, logger mdlLogger, cidr SrcCIDR) *Middleware {
+func NewMiddlewares(auth MdlAuth, logger mdlLogger, cidr SrcCIDR) *Middleware {
 	return &Middleware{auth, logger, cidr}
 }

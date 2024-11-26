@@ -129,3 +129,10 @@ func (s *Service) GetAll() *[]*storager.Shorten {
 
 	return &shorten
 }
+
+func (s *Service) GetUsersCount() int {
+	return 0
+}
+func (s *Service) GetUrlsCount() int {
+	return 0
+}

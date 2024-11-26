@@ -17,7 +17,10 @@ func (srv *Server) Stats(w http.ResponseWriter, req *http.Request) {
 		Users int `json:"users"`
 	}
 
-	stat := StatsStruct{0, 0}
+	users := srv.service.GetUsersCount()
+	urls := srv.service.GetUrlsCount()
+
+	stat := StatsStruct{urls, users}
 
 	bytes, err := json.Marshal(stat)
 

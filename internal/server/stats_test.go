@@ -27,7 +27,16 @@ func TestStats(t *testing.T) {
 	t.Run("test Stats endpoint", func(t *testing.T) {
 
 		ctrl := gomock.NewController(t)
-		service := mocks.NewMocksrvService(ctrl)
+		service := mocks.NewMockSrvService(ctrl)
+
+		service.EXPECT().GetUsersCount().DoAndReturn(func() int {
+			return 3
+		}).AnyTimes()
+
+		service.EXPECT().GetUrlsCount().DoAndReturn(func() int {
+			return 3
+		}).AnyTimes()
+
 		server, err := NewServer(nil, nil, nil, service, nil)
 		if err != nil {
 			t.Error(err.Error())

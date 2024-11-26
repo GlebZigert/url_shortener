@@ -43,11 +43,13 @@ type srvLogger interface {
 	Error(msg string, fields map[string]interface{})
 }
 
-type srvService interface {
+type SrvService interface {
 	Short(oririn string, uuid int) (string, error)
 	Delete(shorts []string, uid int) error
 	Origin(short string) (string, error)
 	GetAll() *[]*storager.Shorten
+	GetUsersCount() int
+	GetUrlsCount() int
 }
 
 // Interface for ping db
@@ -60,13 +62,13 @@ type Server struct {
 	cfg     SrvConfig
 	mdl     srvMiddleware
 	logger  srvLogger
-	service srvService
+	service SrvService
 	pinger  SrvPinger
 }
 
 // var errNoAuthMiddleware = errors.New("в миддлеварах не определен auth")
 // конструктор сервера
-func NewServer(cfg SrvConfig, mdl srvMiddleware, logger srvLogger, service srvService, pinger SrvPinger) (*Server, error) {
+func NewServer(cfg SrvConfig, mdl srvMiddleware, logger srvLogger, service SrvService, pinger SrvPinger) (*Server, error) {
 
 	/*
 		auch := mdl.GetAuch()

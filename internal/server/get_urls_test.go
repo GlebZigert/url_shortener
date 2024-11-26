@@ -58,7 +58,7 @@ func TestGetURLs(t *testing.T) {
 	service := services.NewService(logger, store)
 
 	ctrl := gomock.NewController(t)
-	auc := mocks.NewMockmdlAuth(ctrl)
+	auc := mocks.NewMockMdlAuth(ctrl)
 
 	auc.EXPECT().CheckNewFlag(gomock.Any()).DoAndReturn(func(ctx context.Context) (bool, bool) {
 		return true, true
@@ -143,7 +143,7 @@ func TestGetURLs1(t *testing.T) {
 	service := services.NewService(logger, store)
 
 	ctrl := gomock.NewController(t)
-	auc := mocks.NewMockmdlAuth(ctrl)
+	auc := mocks.NewMockMdlAuth(ctrl)
 
 	auc.EXPECT().CheckNewFlag(gomock.Any()).DoAndReturn(func(ctx context.Context) (bool, bool) {
 		return false, false
@@ -233,7 +233,7 @@ func TestGetURLs2(t *testing.T) {
 	service := services.NewService(logger, store)
 
 	ctrl := gomock.NewController(t)
-	auc := mocks.NewMockmdlAuth(ctrl)
+	auc := mocks.NewMockMdlAuth(ctrl)
 
 	auc.EXPECT().CheckNewFlag(gomock.Any()).DoAndReturn(func(ctx context.Context) (bool, bool) {
 		return false, false

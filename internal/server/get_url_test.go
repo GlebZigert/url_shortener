@@ -76,7 +76,7 @@ func TestGetURL(t *testing.T) {
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
 	ctrl := gomock.NewController(t)
-	service := mocks.NewMocksrvService(ctrl)
+	service := mocks.NewMockSrvService(ctrl)
 	service.EXPECT().Origin(gomock.Any()).DoAndReturn(func(str string) (string, error) {
 		t.Log("mock origin ", str)
 		if str == "aaa" {
