@@ -1,7 +1,15 @@
 package server
 
 import (
+	"encoding/json"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"testing"
+
+	"github.com/GlebZigert/url_shortener.git/mocks"
+	"github.com/golang/mock/gomock"
+	"gotest.tools/v3/assert"
 )
 
 /*
@@ -16,37 +24,54 @@ import (
 */
 func TestStats(t *testing.T) {
 
-	/*
-		var CIDR string
+	t.Run("test Stats endpoint", func(t *testing.T) {
+
 		ctrl := gomock.NewController(t)
-		mcfg := mocks.NewMockSrvConfig(ctrl)
-		//мок на srvConfig
-
-		tests := []struct {
-			name    string
-			urls    int       //количество сокращённых URL в сервисе
-			users   int       //количество пользователей в сервисе
-			XRealIP string    //переданный в заголовке запроса IP-адрес клиента
-			cfg     SrvConfig //интерфейс настроек у которого должен быть метод получения бесклассовой адресации getCIDR
-		}{{
-			name:    "запрос который обработается",
-			urls:    5,
-			users:   2,
-			XRealIP: CIDR,
-			cfg:     mcfg,
-		}}
-
-		for _, test := range tests {
-			t.Run(test.name, func(t *testing.T) {
-				ctx := context.Background()
-
-				logger := logger.NewLogrusLogger("debug", ctx)
-				auth := auth.NewAuth("dd", 5)
-				mdl := middleware.NewMiddlewares(auth, logger)
-
-				mdl.Auth()
-
-			})
+		service := mocks.NewMocksrvService(ctrl)
+		server, err := NewServer(nil, nil, nil, service, nil)
+		if err != nil {
+			t.Error(err.Error())
 		}
-	*/
+
+		r := httptest.NewRequest(http.MethodGet, "/api/internal/stats", nil)
+		w := httptest.NewRecorder()
+
+		server.Stats(w, r)
+
+		res := w.Result()
+
+		assert.Equal(t, res.Header.Get("Content-Type"), "application/json")
+		assert.Equal(t, res.StatusCode, http.StatusOK)
+		//Здесь должен быть получен ответ JSON
+
+		/*
+			{
+			  "urls": <int>, // количество сокращённых URL в сервисе
+			  "users": <int> // количество пользователей в сервисе
+			}
+
+		*/
+
+		type StatsStruct struct {
+			Urls  int `json:"urls"`
+			Users int `json:"users"`
+		}
+
+		var varStat StatsStruct
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			t.Error(err.Error())
+		}
+		closeErr := res.Body.Close()
+		if closeErr != nil {
+			return
+		}
+
+		if err = json.Unmarshal(body, &varStat); err != nil {
+			t.Error(err.Error())
+		}
+
+	})
+
 }
