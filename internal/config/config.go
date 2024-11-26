@@ -6,6 +6,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strings"
 )
 
 // ключи в контекст
@@ -42,7 +43,7 @@ type Values struct {
 
 	ENABLEHTTPS bool
 
-	CIDR []string
+	CIDR string
 }
 
 // GetRunAddr to get RunAddr value
@@ -92,7 +93,8 @@ func (cfg *Values) GetENABLEHTTPSflag() bool {
 
 // GetRunAddr to get GetCIDRvalue
 func (cfg *Values) GetCIDR() []string {
-	return cfg.CIDR
+
+	return strings.Split(cfg.CIDR, " ")
 }
 
 var ptr *Config
@@ -152,7 +154,7 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader FileRead
 	flags.IntVar(&flagEnv.NumWorkers, "NumWorkers", 0, "количество воркеров в fanOut")
 	flags.BoolVar(&flagEnv.ENABLEHTTPS, "s", false, "enable https")
 	flags.StringVar(&cfg.configFile, "c", "", "файл конфигурации")
-
+	flags.StringVar(&flagEnv.CIDR, "t", "", "CIDR")
 	err = flags.Parse(args)
 	if err != nil {
 		return
@@ -166,9 +168,10 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader FileRead
 	var flagSECRETKEY bool
 	var flagTOKENEXP bool
 	var flagNumWorkers bool
+	var flagCIDR bool
 
 	visitor := func(a *flag.Flag) {
-
+		log.Println("flag: ", a.Name)
 		switch a.Name {
 		case "a":
 			aFlag = true
@@ -189,6 +192,8 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader FileRead
 			flagTOKENEXP = true
 		case "NumWorkers":
 			flagNumWorkers = true
+		case "t":
+			flagCIDR = true
 		}
 
 	}
@@ -220,6 +225,12 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader FileRead
 		sFlag = true
 
 		flagEnv.ENABLEHTTPS = true
+	}
+
+	if envTrustedSubnet := os.Getenv("TRUSTED_SUBNET"); envTrustedSubnet != "" {
+		flagCIDR = true
+
+		flagEnv.CIDR = envTrustedSubnet
 	}
 	var errCfgFile error
 	//	reader, errCfgFile := getreader.GetReader(cfg.configFile)
@@ -301,8 +312,11 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader FileRead
 		cfg.NumWorkers = defaultValues.NumWorkers
 	}
 
-	cfg.CIDR = defaultValues.CIDR
-
+	if flagCIDR {
+		cfg.CIDR = flagEnv.CIDR
+	} else {
+		cfg.CIDR = defaultValues.CIDR
+	}
 	//if flagEnv.RunAddr {
 	//	cfg.RunAddr = flagEnv.RunAddr
 	//}

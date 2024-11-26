@@ -17,11 +17,11 @@ func TestParseFlagsCorrect(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockreader := mocks.NewMockFileReader(ctrl)
 	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
-		data := []byte(`{"server_address": "localhost:8083","base_url": "http://localhost","file_storage_path": "/path/to/file.db","database_dsn": "ddd","enable_https": true,"trusted_subnet":["192.168.1.10/31","192.168.1.12/30","192.168.1.16/31"]}
+		data := []byte(`{"server_address": "localhost:8083","base_url": "http://localhost","file_storage_path": "/path/to/file.db","database_dsn": "ddd","enable_https": true,"trusted_subnet":"192.168.1.10/31 192.168.1.12/30 192.168.1.16/31"}
 		`)
 
 		return data, nil
-	})
+	}).AnyTimes()
 
 	var tests = []struct {
 		args         []string
@@ -51,6 +51,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 					TOKENEXP:        8,
 					NumWorkers:      5,
 					ENABLEHTTPS:     true,
+					CIDR:            "",
 				},
 				"",
 			},
@@ -127,7 +128,46 @@ func TestParseFlagsCorrect(t *testing.T) {
 					TOKENEXP:        3,
 					NumWorkers:      3,
 					ENABLEHTTPS:     true,
-					CIDR:            []string{"192.168.1.10/31", "192.168.1.12/30", "192.168.1.16/31"},
+					CIDR:            "192.168.1.10/31 192.168.1.12/30 192.168.1.16/31",
+				},
+				"/some_path",
+			},
+			mockreader,
+		},
+		{[]string{"-c", "/some_path", "-t", "192.168.1.10/31"},
+			map[string]string{"ENABLE_HTTPS": "true"},
+			Config{
+				Values{
+					RunAddr:         "localhost:8083",
+					BaseURL:         "http://localhost",
+					FlagLogLevel:    "info",
+					FileStoragePath: "/path/to/file.db",
+					DatabaseDSN:     "ddd",
+					SECRETKEY:       "supersecretkey",
+					TOKENEXP:        3,
+					NumWorkers:      3,
+					ENABLEHTTPS:     true,
+					CIDR:            "192.168.1.10/31",
+				},
+				"/some_path",
+			},
+			mockreader,
+		},
+
+		{[]string{"-c", "/some_path", "-t", "192.168.1.10/31"},
+			map[string]string{"ENABLE_HTTPS": "true", "TRUSTED_SUBNET": "192.168.1.10/31 192.168.1.12/30"},
+			Config{
+				Values{
+					RunAddr:         "localhost:8083",
+					BaseURL:         "http://localhost",
+					FlagLogLevel:    "info",
+					FileStoragePath: "/path/to/file.db",
+					DatabaseDSN:     "ddd",
+					SECRETKEY:       "supersecretkey",
+					TOKENEXP:        3,
+					NumWorkers:      3,
+					ENABLEHTTPS:     true,
+					CIDR:            "192.168.1.10/31 192.168.1.12/30",
 				},
 				"/some_path",
 			},
@@ -164,7 +204,10 @@ func TestParseFlagsCorrect(t *testing.T) {
 			assert.Equal(t, tt.wantedConfig.TOKENEXP, config.GetTOKENEXP())
 			assert.Equal(t, tt.wantedConfig.SECRETKEY, config.GetSECRETKEY())
 			assert.Equal(t, tt.wantedConfig.ENABLEHTTPS, config.GetENABLEHTTPSflag())
-			assert.DeepEqual(t, tt.wantedConfig.CIDR, config.GetCIDR())
+
+			t.Log(config.GetCIDR(), " ", len(config.GetCIDR()))
+			t.Log(strings.Split(tt.wantedConfig.CIDR, " "), " ", len(strings.Split(tt.wantedConfig.CIDR, " ")))
+			assert.DeepEqual(t, strings.Split(tt.wantedConfig.CIDR, " "), config.GetCIDR())
 		})
 	}
 }
