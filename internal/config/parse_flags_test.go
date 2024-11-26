@@ -17,7 +17,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockreader := mocks.NewMockFileReader(ctrl)
 	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
-		data := []byte(`{"server_address": "localhost:8083","base_url": "http://localhost","file_storage_path": "/path/to/file.db","database_dsn": "ddd","enable_https": true}
+		data := []byte(`{"server_address": "localhost:8083","base_url": "http://localhost","file_storage_path": "/path/to/file.db","database_dsn": "ddd","enable_https": true,"trusted_subnet":["192.168.1.10/31","192.168.1.12/30","192.168.1.16/31"]}
 		`)
 
 		return data, nil
@@ -127,6 +127,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 					TOKENEXP:        3,
 					NumWorkers:      3,
 					ENABLEHTTPS:     true,
+					CIDR:            []string{"192.168.1.10/31", "192.168.1.12/30", "192.168.1.16/31"},
 				},
 				"/some_path",
 			},
@@ -163,6 +164,7 @@ func TestParseFlagsCorrect(t *testing.T) {
 			assert.Equal(t, tt.wantedConfig.TOKENEXP, config.GetTOKENEXP())
 			assert.Equal(t, tt.wantedConfig.SECRETKEY, config.GetSECRETKEY())
 			assert.Equal(t, tt.wantedConfig.ENABLEHTTPS, config.GetENABLEHTTPSflag())
+			assert.DeepEqual(t, tt.wantedConfig.CIDR, config.GetCIDR())
 		})
 	}
 }

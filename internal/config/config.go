@@ -4,6 +4,7 @@ package config
 import (
 	"encoding/json"
 	"flag"
+	"log"
 	"os"
 )
 
@@ -238,7 +239,10 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader FileRead
 			defaultValues.FileStoragePath = cfgFileStruct.FileStoragePath
 			defaultValues.DatabaseDSN = cfgFileStruct.DatabaseDsn
 			defaultValues.ENABLEHTTPS = cfgFileStruct.EnableHTTPS
+			defaultValues.CIDR = cfgFileStruct.CIDR
 
+		} else {
+			log.Println("errCfgFile: ", errCfgFile.Error())
 		}
 	}
 
@@ -296,6 +300,8 @@ func (cfg *Config) ParseFlags(progname string, args []string, getreader FileRead
 	} else {
 		cfg.NumWorkers = defaultValues.NumWorkers
 	}
+
+	cfg.CIDR = defaultValues.CIDR
 
 	//if flagEnv.RunAddr {
 	//	cfg.RunAddr = flagEnv.RunAddr
