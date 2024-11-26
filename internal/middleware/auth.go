@@ -14,7 +14,6 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
 
-		// проверяем, что клиент умеет получать от сервера сжатые данные в формате gzip
 		authv, err := r.Cookie("Authorization") // Header.Get("Authorization")
 
 		var userid int
@@ -30,6 +29,8 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 		}
 
 		if err != nil {
+
+			userid = userid + 1
 			jwt, err := mdl.BuildJWTString(userid)
 			if err != nil {
 
