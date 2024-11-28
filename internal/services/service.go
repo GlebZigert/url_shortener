@@ -20,8 +20,6 @@ type Storager interface {
 	Load(*[]*storager.Shorten) (*[]*storager.Shorten, error)
 	StorageWrite(short, origin string, UUID int) error
 	Delete(interface{}) error
-	GetUsersCount() int
-	GetUrlsCount() int
 }
 
 // логгер
@@ -133,8 +131,8 @@ func (s *Service) GetAll() *[]*storager.Shorten {
 }
 
 func (s *Service) GetUsersCount() int {
-	return s.store.GetUsersCount()
+	return 0
 }
 func (s *Service) GetUrlsCount() int {
-	return s.store.GetUrlsCount()
+	return 0
 }
