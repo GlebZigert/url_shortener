@@ -15,6 +15,9 @@ import (
 // это массив для хранения сокращенных url
 var shorten []*storager.Shorten
 
+// uid послежнего добавленного пользователя - он же и количество пользователей
+var uid int
+
 // хранилище
 type Storager interface {
 	Load(*[]*storager.Shorten) (*[]*storager.Shorten, error)
@@ -131,8 +134,8 @@ func (s *Service) GetAll() *[]*storager.Shorten {
 }
 
 func (s *Service) GetUsersCount() int {
-	return 0
+	return uid
 }
 func (s *Service) GetUrlsCount() int {
-	return 0
+	return len(shorten)
 }
