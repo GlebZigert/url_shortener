@@ -20,6 +20,8 @@ type Storager interface {
 	Load(*[]*Shorten) (*[]*Shorten, error)
 	StorageWrite(short, origin string, UUID int) error
 	Delete(interface{}) error
+	GetUsersCount() int
+	GetUrlsCount() int
 }
 
 // конструктор

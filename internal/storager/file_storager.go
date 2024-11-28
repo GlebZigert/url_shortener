@@ -86,3 +86,10 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 	id++
 	return nil
 }
+
+func (one *FileStorager) GetUsersCount() int {
+	return 0
+}
+func (one *FileStorager) GetUrlsCount() int {
+	return 0
+}

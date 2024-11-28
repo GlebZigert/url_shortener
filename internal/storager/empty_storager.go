@@ -25,3 +25,10 @@ func NewEmptyStorager() (*EmptyStorager, error) {
 	return store, nil
 
 }
+
+func (one *EmptyStorager) GetUsersCount() int {
+	return 0
+}
+func (one *EmptyStorager) GetUrlsCount() int {
+	return 0
+}

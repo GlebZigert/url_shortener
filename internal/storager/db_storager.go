@@ -76,3 +76,10 @@ func NewDBStorager(cfg dbstoreConfig, db DB) (*DBStorager, error) {
 	return store, db.Ping(ctx)
 
 }
+
+func (one *DBStorager) GetUsersCount() int {
+	return 0
+}
+func (one *DBStorager) GetUrlsCount() int {
+	return 0
+}
