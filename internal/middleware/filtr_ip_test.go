@@ -53,7 +53,7 @@ func TestFiltrIP(t *testing.T) {
 		return cidr
 	}).AnyTimes()
 	//в конструктор миддлов надо передать аргументом интерфес с методом получения CIDR
-	mdl := NewMiddlewares(nil, nil, cidr)
+	mdl := NewMiddlewares(nil, nil, cidr, nil)
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

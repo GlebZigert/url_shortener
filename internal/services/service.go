@@ -139,3 +139,10 @@ func (s *Service) GetUsersCount() int {
 func (s *Service) GetUrlsCount() int {
 	return len(shorten)
 }
+
+func (s *Service) CreateNextUID() (int, error) {
+
+	uid = uid + 1
+
+	return uid, nil
+}

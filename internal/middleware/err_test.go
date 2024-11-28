@@ -67,10 +67,8 @@ func TestErr(t *testing.T) {
 
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
-	//service := services.NewService(logger, store)
-
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
-	mdl := NewMiddlewares(auc, logger, cfg)
+	mdl := NewMiddlewares(auc, logger, cfg, nil)
 
 	//srv, _ := NewServer(cfg, mdl, logger, service)
 

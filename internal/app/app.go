@@ -31,7 +31,7 @@ func Run() (err error) {
 	service := services.NewService(logger, store)
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
-	mdl := middleware.NewMiddlewares(auc, logger, cfg)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg, service)
 	server, err := server.NewServer(cfg, mdl, logger, service, dber)
 
 	if err != nil {

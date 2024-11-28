@@ -12,6 +12,8 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/filereader"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
+	"github.com/GlebZigert/url_shortener.git/mocks"
+	"github.com/golang/mock/gomock"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 	"github.com/stretchr/testify/assert"
@@ -87,16 +89,15 @@ func TestAuth(t *testing.T) {
 
 	ctx := context.Background()
 
-	//store := storager.New(cfg, filereader.New())
-
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
-	//service := services.NewService(logger, store)
-
+	ctrl := gomock.NewController(t)
+	service := mocks.NewMockMdlUserStore(ctrl)
+	service.EXPECT().CreateNextUID().DoAndReturn(func() (int, error) { return 0, nil }).AnyTimes()
 	//заменить на мок
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
 
-	mdl := NewMiddlewares(auc, logger, cfg)
+	mdl := NewMiddlewares(auc, logger, cfg, service)
 
 	//srv, _ := NewServer(cfg, mdl, logger, service)
 

@@ -76,7 +76,7 @@ func TestBatcher(t *testing.T) {
 	service := services.NewService(logger, store)
 
 	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
-	mdl := middleware.NewMiddlewares(auc, logger, cfg)
+	mdl := middleware.NewMiddlewares(auc, logger, cfg, service)
 
 	srv, err := NewServer(cfg, mdl, logger, service, dber)
 

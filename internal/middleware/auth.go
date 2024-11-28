@@ -30,7 +30,8 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 
 		if err != nil {
 
-			userid = userid + 1
+			userid, err := mdl.CreateNextUID()
+
 			jwt, err := mdl.BuildJWTString(userid)
 			if err != nil {
 
