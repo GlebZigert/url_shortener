@@ -31,7 +31,7 @@ type Middleware struct {
 	MdlAuth
 	logger  mdlLogger
 	SrcCIDR //источник CIDR для миддла который фильтрует по IP адресам
-	MdlUserStore
+	users   MdlUserStore
 }
 
 // ее конструктор

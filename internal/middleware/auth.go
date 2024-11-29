@@ -6,7 +6,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
-// мидл для атворизации
+// Auth мидл для атворизации
 func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -30,7 +30,11 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 
 		if err != nil {
 
-			userid, err := mdl.CreateNextUID()
+			userid, err = mdl.users.CreateNextUID()
+			if err != nil {
+				http.Error(w, "", http.StatusInternalServerError)
+				return
+			}
 
 			jwt, err := mdl.BuildJWTString(userid)
 			if err != nil {

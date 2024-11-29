@@ -25,3 +25,8 @@ func NewEmptyStorager() (*EmptyStorager, error) {
 	return store, nil
 
 }
+
+func (one *EmptyStorager) WriteUID(uid int) error {
+	//пока заглушка
+	return nil
+}

@@ -2,6 +2,7 @@ package storager
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 )
 
@@ -29,6 +30,9 @@ type FileReaderWriter interface {
 func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, error) {
 
 	store := &FileStorager{cfg, rw}
+	if rw == nil {
+		return nil, errors.New("no rw")
+	}
 	err := rw.CheckFile(cfg.GetFileStoragePath())
 	return store, err
 }
@@ -84,5 +88,10 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 	}
 
 	id++
+	return nil
+}
+
+func (one *FileStorager) WriteUID(uid int) error {
+	//пока заглушка
 	return nil
 }

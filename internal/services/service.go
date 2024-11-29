@@ -23,6 +23,7 @@ type Storager interface {
 	Load(*[]*storager.Shorten) (*[]*storager.Shorten, error)
 	StorageWrite(short, origin string, UUID int) error
 	Delete(interface{}) error
+	WriteUID(int) error
 }
 
 // логгер
@@ -146,8 +147,13 @@ type ErrCreateNextID error
 var errCreateNextUID ErrCreateNextID
 
 func (s *Service) CreateNextUID() (int, error) {
+	next := uid + 1
 
-	uid = uid + 1
+	//если запись не прошла - возвращаем ошибку об этом
+	if err := s.store.WriteUID(next); err != nil {
+		return -1, errCreateNextUID
+	}
+	uid = next
 
 	return uid, nil
 }

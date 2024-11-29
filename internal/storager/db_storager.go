@@ -76,3 +76,8 @@ func NewDBStorager(cfg dbstoreConfig, db DB) (*DBStorager, error) {
 	return store, db.Ping(ctx)
 
 }
+
+func (one *DBStorager) WriteUID(uid int) error {
+	//пока заглушка
+	return nil
+}

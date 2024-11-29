@@ -56,6 +56,10 @@ openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout key.pem -out cert.pem 
 
 mockgen -destination=mocks/mock_srv_cfg.go -package mocks github.com/GlebZigert/url_shortener.git/internal/server SrvConfig
 
+mockgen -destination=mocks/mock_mdl_userstore.go -package mocks github.com/GlebZigert/url_shortener.git/internal/middleware MdlUserStore
+
+export PATH=$PATH:$(go env GOPATH)/bin
+
 
 
 
