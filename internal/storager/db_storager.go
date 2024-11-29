@@ -28,30 +28,30 @@ type DBStorager struct {
 }
 
 // загрузить из базы
-func (one *DBStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
+func (one *DBStorager) Load(shorten *[]*Shorten) (*[]*Shorten, int, error) {
 
 	rows, err := one.DBLoad()
 
 	if err != nil {
 		log.Println("db load err: ", err.Error())
-		return nil, err
+		return nil, 0, err
 	}
 
 	if rows.Err() != nil {
 		log.Println("db load err: ", rows.Err().Error())
-		return nil, err
+		return nil, 0, err
 	}
 
 	for rows.Next() {
 		var u Shorten
 		err = rows.Scan(&u.ID, &u.UUID, &u.ShortURL, &u.OriginalURL, &u.DeletedFlag)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		*shorten = append(*shorten, &u)
 	}
 
-	return shorten, nil
+	return shorten, 0, nil
 }
 
 // записать в базу

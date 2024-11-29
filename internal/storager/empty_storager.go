@@ -5,8 +5,8 @@ type EmptyStorager struct {
 }
 
 // загрузить из базы
-func (one *EmptyStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
-	return shorten, nil
+func (one *EmptyStorager) Load(shorten *[]*Shorten) (*[]*Shorten, int, error) {
+	return shorten, 0, nil
 }
 
 // положить в базу

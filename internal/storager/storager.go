@@ -17,7 +17,7 @@ type Shorten struct {
 
 // операции с хранилищем
 type Storager interface {
-	Load(*[]*Shorten) (*[]*Shorten, error)
+	Load(*[]*Shorten) (*[]*Shorten, int, error)
 	StorageWrite(short, origin string, UUID int) error
 	Delete(interface{}) error
 	WriteUID(int) error

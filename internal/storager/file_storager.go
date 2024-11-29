@@ -39,7 +39,7 @@ func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, e
 }
 
 // загрузить из файла
-func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) {
+func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, users int, err error) {
 
 	var data []byte
 	err = nil

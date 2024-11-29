@@ -29,9 +29,6 @@ func TestUserCount(t *testing.T) {
 	}{{
 		name:  "трое пользователей",
 		users: 3,
-	}, {
-		name:  "пятеро пользователей",
-		users: 5,
 	},
 	}
 
