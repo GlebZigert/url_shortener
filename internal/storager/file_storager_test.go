@@ -1,10 +1,14 @@
 package storager
 
 import (
+	"bytes"
+	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/storemocks"
 	"github.com/golang/mock/gomock"
+	"gotest.tools/v3/assert"
 )
 
 func TestFStoreLoad(t *testing.T) {
@@ -101,7 +105,7 @@ func TestFStoreWrite(t *testing.T) {
 		len  int
 	}{
 		{
-			name: "1",
+			name: "01",
 			len:  1,
 		},
 	}
@@ -109,8 +113,96 @@ func TestFStoreWrite(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 
-			store.StorageWrite("11", "222", 0)
+			err := store.StorageWrite("11", "222", 0)
+			if err != nil {
+				t.Error(err.Error())
+			}
 
+		})
+	}
+
+}
+
+// MockFileWriter используется для имитации записи данных в файл.
+type MockFileWriter struct {
+	buffer bytes.Buffer //я создал его ради этого буффера.
+	err    error
+}
+
+func (m *MockFileWriter) Write(p []byte, filepath string) error {
+	if m.err != nil {
+		return m.err
+	}
+
+	_, err := m.buffer.Write(p)
+
+	return err
+}
+
+func (m *MockFileWriter) CheckFile(filepath string) error {
+	return nil
+}
+
+func (m *MockFileWriter) Read(path string) ([]byte, error) {
+	return []byte{}, nil
+}
+
+func TestFStoreWrite1(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	cfg := storemocks.NewMockStoreConfig(ctrl)
+
+	mockreader := &MockFileWriter{err: nil}
+
+	cfg.EXPECT().GetFileStoragePath().DoAndReturn(func() string {
+		return "any path"
+	}).AnyTimes()
+
+	cfg.EXPECT().GetDatabaseDSN().DoAndReturn(func() string {
+		return "any dsn"
+	}).AnyTimes()
+
+	store, err := NewFileStorager(cfg, mockreader)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+	tests := []struct {
+		name string
+		len  int
+	}{
+		{
+			name: "1",
+			len:  1,
+		},
+	}
+
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			t.Log("-->")
+
+			err := store.StorageWrite("11", "222", 0)
+
+			shorten := Shorten{1, 0, "11", "222", false}
+
+			data, err := json.Marshal(&shorten)
+			if err != nil {
+				t.Errorf(err.Error())
+			}
+
+			if err != nil {
+				t.Error(err.Error())
+			}
+			// буффер я создал чтобы получать эту строку - которую пишет в файл тестируемый метод
+
+			res := mockreader.buffer.String()
+			wanted := string(data) + "\n"
+			t.Log("res   : ", res)
+			t.Log("wanted: ", wanted)
+			assert.Equal(t, strings.Compare(res, wanted), 0)
+
+			t.Log("<--")
 		})
 	}
 
