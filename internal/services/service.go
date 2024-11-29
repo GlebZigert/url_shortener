@@ -140,6 +140,11 @@ func (s *Service) GetUrlsCount() int {
 	return len(shorten)
 }
 
+// ошибка в случае если не прошла запись свежего uid в бд или файл
+type ErrCreateNextID error
+
+var errCreateNextUID ErrCreateNextID
+
 func (s *Service) CreateNextUID() (int, error) {
 
 	uid = uid + 1
