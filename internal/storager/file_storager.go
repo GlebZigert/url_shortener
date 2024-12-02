@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"strconv"
 )
 
 var id int
@@ -94,7 +93,17 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 
 func (one *FileStorager) WriteUID(uid int) error {
 	//пока заглушка
-	err := one.rw.Write([]byte("User: "+strconv.Itoa(uid)+"\n"), one.cfg.GetFileStoragePath())
+
+	var id User
+	id.Uid = uid
+
+	data, err := json.Marshal(id)
+
+	if err != nil {
+		return err
+	}
+
+	err = one.rw.Write(data, one.cfg.GetFileStoragePath())
 
 	return err
 }

@@ -15,6 +15,10 @@ type Shorten struct {
 	DeletedFlag bool   `db:"is_deleted"`
 }
 
+type User struct {
+	Uid int `json:"uid"`
+}
+
 // операции с хранилищем
 type Storager interface {
 	Load(*[]*Shorten) (*[]*Shorten, int, error)

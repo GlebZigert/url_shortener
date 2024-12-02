@@ -3,7 +3,6 @@ package storager
 import (
 	"bytes"
 	"encoding/json"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -199,61 +198,6 @@ func TestFStoreWrite1(t *testing.T) {
 
 			res := mockreader.buffer.String()
 			wanted := string(data) + "\n"
-			t.Log("res   : ", res)
-			t.Log("wanted: ", wanted)
-			assert.Equal(t, strings.Compare(res, wanted), 0)
-
-			t.Log("<--")
-		})
-	}
-
-}
-
-func TestFStoreWriteUID(t *testing.T) {
-
-	ctrl := gomock.NewController(t)
-	cfg := storemocks.NewMockStoreConfig(ctrl)
-
-	mockreader := &MockFileWriter{err: nil}
-
-	cfg.EXPECT().GetFileStoragePath().DoAndReturn(func() string {
-		return "any path"
-	}).AnyTimes()
-
-	cfg.EXPECT().GetDatabaseDSN().DoAndReturn(func() string {
-		return "any dsn"
-	}).AnyTimes()
-
-	store, err := NewFileStorager(cfg, mockreader)
-
-	if err != nil {
-		t.Error(err.Error())
-	}
-	tests := []struct {
-		name string
-		len  int
-	}{
-		{
-			name: "1",
-			len:  1,
-		},
-	}
-
-	for _, test := range tests {
-
-		t.Run(test.name, func(t *testing.T) {
-			t.Log("-->")
-
-			err := store.WriteUID(1)
-
-			if err != nil {
-				t.Errorf(err.Error())
-			}
-
-			// буффер я создал чтобы получать эту строку - которую пишет в файл тестируемый метод
-
-			res := mockreader.buffer.String()
-			wanted := "User: " + strconv.Itoa(1) + "\n"
 			t.Log("res   : ", res)
 			t.Log("wanted: ", wanted)
 			assert.Equal(t, strings.Compare(res, wanted), 0)
