@@ -9,9 +9,9 @@ type StoreConfig interface {
 // данные о шорте
 type Shorten struct {
 	ID          int    `db:"id"`
-	UUID        int    `db:"user_id"`
-	ShortURL    string `db:"short_url"`
-	OriginalURL string `db:"original_url"`
+	UUID        int    `db:"user_id" json:"uuid,notempty"`
+	ShortURL    string `db:"short_url" json:"short_url"`
+	OriginalURL string `db:"original_url" json:"original_url"`
 	DeletedFlag bool   `db:"is_deleted"`
 }
 

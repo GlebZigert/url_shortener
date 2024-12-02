@@ -1,6 +1,7 @@
 package storager
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/GlebZigert/url_shortener.git/storemocks"
@@ -22,11 +23,22 @@ func TestStore(t *testing.T) {
 				`)
 		*/
 
-		data := []byte(`{"uuid":"1","short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
+		data := []byte(`{"uuid":1,"short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
 					`)
 
 		return data, nil
 	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		/*
+			data := []byte(`{"uuid":"1","short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
+			{"uuid":"2","short_url":"edVPg3ks","original_url":"http://ya.ru"}
+			{"uuid":"3","short_url":"dG56Hqxm","original_url":"http://practicum.yandex.ru"}
+				`)
+		*/
+
+		return nil, errors.New("")
+	}).AnyTimes()
 
 	mockreader.EXPECT().CheckFile(gomock.Any()).DoAndReturn(func(path string) error {
 		return nil

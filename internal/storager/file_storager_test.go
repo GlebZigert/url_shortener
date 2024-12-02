@@ -3,6 +3,7 @@ package storager
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
 
@@ -19,19 +20,30 @@ func TestFStoreLoad(t *testing.T) {
 	mockreader := storemocks.NewMockFileReaderWriter(ctrl)
 
 	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
-		/*
-			data := []byte(`{"uuid":"1","short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
-			{"uuid":"2","short_url":"edVPg3ks","original_url":"http://ya.ru"}
-			{"uuid":"3","short_url":"dG56Hqxm","original_url":"http://practicum.yandex.ru"}
-				`)
-		*/
-
-		data := []byte(`{"uuid":"1","short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
+		data := []byte(`{"uuid":1,"short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
 					`)
-
 		return data, nil
 	}).Times(1)
 
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		data := []byte(`{"uid":1}`)
+		return data, nil
+	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		data := []byte(`{"uid":2}`)
+		return data, nil
+	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		data := []byte(`{"uuid":2,"short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
+					`)
+		return data, nil
+	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		return nil, errors.New("")
+	}).AnyTimes()
 	mockreader.EXPECT().CheckFile(gomock.Any()).DoAndReturn(func(path string) error {
 		return nil
 	}).AnyTimes()
@@ -63,9 +75,19 @@ func TestFStoreLoad(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 
 			var shorten []*Shorten
-			store.Load(&shorten)
+			res, users, err := store.Load(&shorten)
 
-			t.Log(len(shorten))
+			if err != nil {
+				t.Error(err.Error())
+			}
+
+			t.Log(len(*res))
+
+			assert.Equal(t, 2, len(*res))
+
+			t.Log(users)
+
+			assert.Equal(t, 2, users)
 
 		})
 	}

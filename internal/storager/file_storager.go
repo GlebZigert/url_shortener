@@ -40,30 +40,48 @@ func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, e
 // загрузить из файла
 func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, users int, err error) {
 
-	var data []byte
 	err = nil
+	var flag bool
 	for err == nil {
 
-		data, err = one.rw.Read(one.cfg.GetFileStoragePath())
+		flag = true
+		data, err := one.rw.Read(one.cfg.GetFileStoragePath())
 		if err != nil {
+			flag = false
 			log.Println(err.Error())
-			continue
+			break
 		}
+
 		log.Println(string(data))
 
 		var short Shorten
 		err = json.Unmarshal(data, &short)
-		if err != nil {
-			log.Println(err.Error())
-			continue
+		if err != nil || short.OriginalURL == "" {
+
+			flag = false
+
+			var user User
+			err = json.Unmarshal(data, &user)
+
+			if err != nil || user.Uid == 0 {
+				log.Println(err.Error())
+				continue
+			}
+			users = user.Uid
+
 		}
 
-		*shorten = append(*shorten, &short)
+		if flag {
+			log.Println(short.ID, short.UUID, short.OriginalURL, short.ShortURL)
+			log.Println("...append... ", string(data))
+			*shorten = append(*shorten, &short)
+		}
 
 	}
 	//	log.Println("err: ", err.Error())
 
 	res = shorten
+	err = nil
 	return
 }
 
