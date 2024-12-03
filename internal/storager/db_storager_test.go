@@ -104,6 +104,58 @@ func TestDBStoragerLoad01(t *testing.T) {
 
 }
 
+func TestDBStoragerLoadUsers(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	cfg := storemocks.NewMockStoreConfig(ctrl)
+
+	tdb, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer tdb.Close()
+
+	rows := sqlmock.NewRows([]string{"uid"}).
+		AddRow(1).
+		AddRow(2)
+
+	mock.ExpectQuery("SELECT uid FROM users").WillReturnRows(rows)
+
+	store, err := NewDBStorager(cfg, db.Get(tdb))
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	tests := []struct {
+		name string
+		len  int
+	}{
+		{
+			name: "1",
+			len:  1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			var users []*User
+			res, err := store.LoadUsers(&users)
+
+			if err != nil {
+				t.Error(err.Error())
+			}
+
+			t.Log(len(*res))
+
+			assert.Equal(t, 2, len(*res))
+
+		})
+	}
+
+}
+
 func TestDBStoragerInsert(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
