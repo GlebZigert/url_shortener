@@ -82,7 +82,8 @@ func TestErr(t *testing.T) {
 			if test.request.user >= 0 {
 				ctx = auc.SetUID(ctx, test.request.user)
 			}
-
+			var err error
+			packerr.AddErrToReqContext(r, &err)
 			r = r.WithContext(ctx)
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
