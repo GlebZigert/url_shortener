@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// Интерфейс конфигурации
 type SrvConfig interface {
 	GetRunAddr() string
 	GetBaseURL() string
@@ -26,6 +27,7 @@ type SrvConfig interface {
 	GetENABLEHTTPSflag() bool
 }
 
+// миддлы
 type srvMiddleware interface {
 	Auth(h http.Handler) http.Handler
 	ErrHandler(f http.Handler) http.Handler
@@ -38,11 +40,13 @@ type srvMiddleware interface {
 	Gzip(h http.HandlerFunc) http.HandlerFunc
 }
 
+// логгер
 type srvLogger interface {
 	Info(msg string, fields map[string]interface{})
 	Error(msg string, fields map[string]interface{})
 }
 
+// сервис
 type SrvService interface {
 	Short(oririn string, uuid int) (string, error)
 	Delete(shorts []string, uid int) error

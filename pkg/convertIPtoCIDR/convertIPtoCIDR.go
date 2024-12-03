@@ -117,6 +117,7 @@ func uInt32ToIPv4(iPuInt32 uint32) (iP string) {
 	return iP
 }
 
+// проверка
 func Check(ipstr string, cidr []string) bool {
 
 	var ip uint32  // ip address

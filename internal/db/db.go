@@ -93,6 +93,7 @@ func (dber *DBer) DBLoad() (*sql.Rows, error) {
 	return dber.db.Query("SELECT * FROM strazh")
 }
 
+// Load Users from db
 func (dber *DBer) DBLoadUsers() (*sql.Rows, error) {
 	return dber.db.Query("SELECT uid FROM users")
 }
@@ -120,6 +121,7 @@ func (dber *DBer) Delete(short interface{}) error {
 
 }
 
+// DBInsertUser insert user to db
 func (dber *DBer) DBInsertUser(ctx context.Context, uid int) error {
 
 	stmt, err := dber.db.PrepareContext(ctx, "INSERT INTO users (uid) VALUES ($1)")

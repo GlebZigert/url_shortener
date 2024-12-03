@@ -7,6 +7,7 @@ type MdlUserStore interface {
 	CreateNextUID() (int, error)
 }
 
+// Интерфейс авторизации
 type MdlAuth interface {
 	BuildJWTString(id int) (string, error)
 	GetUserID(tokenString string) (int, error)

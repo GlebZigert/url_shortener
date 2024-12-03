@@ -18,6 +18,7 @@ import (
 // в противном случае возвращать статус ответа 403 Forbidden.
 var CIDR []string
 
+// FiltrIP to filtr ip
 func (mdl *Middleware) FiltrIP(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error

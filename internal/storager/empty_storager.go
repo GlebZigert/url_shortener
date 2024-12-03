@@ -26,11 +26,13 @@ func NewEmptyStorager() (*EmptyStorager, error) {
 
 }
 
+// запись пользователя
 func (one *EmptyStorager) WriteUID(uid int) error {
 	//пока заглушка
 	return nil
 }
 
+// загрузка пользователей
 func (one *EmptyStorager) LoadUsers(users *[]*User) (res *[]*User, err error) {
 	return nil, nil
 }

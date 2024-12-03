@@ -106,6 +106,7 @@ func NewDBStorager(cfg dbstoreConfig, db DB) (*DBStorager, error) {
 
 }
 
+// запись пользователя
 func (one *DBStorager) WriteUID(uid int) error {
 	//пока заглушка
 	return one.DBInsertUser(context.Background(), uid)
