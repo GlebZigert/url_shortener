@@ -41,7 +41,7 @@ func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, e
 func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) {
 
 	var flag bool
-	for err == nil {
+	for {
 
 		flag = true
 		data, err := one.rw.Read(one.cfg.GetFileStoragePath())
@@ -78,7 +78,7 @@ func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) 
 // загрузить из файла
 func (one *FileStorager) LoadUsers(users *[]*User) (res *[]*User, err error) {
 
-	for err == nil {
+	for {
 
 		data, err := one.rw.Read(one.cfg.GetFileStoragePath())
 		if err != nil {

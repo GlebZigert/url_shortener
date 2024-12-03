@@ -149,6 +149,7 @@ type ErrCreateNextID error
 
 var errCreateNextUID ErrCreateNextID
 
+// CreateNextUID
 func (s *Service) CreateNextUID() (int, error) {
 
 	var maxUid int
