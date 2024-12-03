@@ -67,11 +67,9 @@ func TestDBStoragerInsert(t *testing.T) {
 	}
 	defer tdb.Close()
 
-	rows := sqlmock.NewRows([]string{"id", "title", "body"}).
-		AddRow(1, "post 1", "hello").
-		AddRow(2, "post 2", "world")
+	mock.ExpectPrepare("INSERT INTO strazh").ExpectExec().WithArgs(1, "example.org", "short_url").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	mock.ExpectQuery("SELECT * FROM strazh").WillReturnRows(rows)
+	//mock.ExpectExec("INSERT INTO strazh (uid,origin, short) VALUES ($1, $2, $3)").WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	store, err := NewDBStorager(cfg, db.Get(tdb))
 	if err != nil {
@@ -91,7 +89,10 @@ func TestDBStoragerInsert(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 
 			var shorten []*Shorten
-			store.StorageWrite("", "", 1)
+			err = store.StorageWrite("short_url", "example.org", 1)
+			if err != nil {
+				t.Error(err.Error())
+			}
 
 			t.Log(len(shorten))
 

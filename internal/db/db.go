@@ -74,7 +74,13 @@ func (dber *DBer) Ping(ctx context.Context) error {
 // вставка в  бд
 func (dber *DBer) Insert(ctx context.Context, short, origin string, UUID int) error {
 
-	_, err := dber.db.ExecContext(ctx, "insert into strazh (uid,origin, short) values ($1, $2, $3)", UUID, origin, short)
+	stmt, err := dber.db.PrepareContext(ctx, "INSERT INTO strazh (uid,origin, short) VALUES ($1, $2, $3)")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.ExecContext(ctx, UUID, origin, short)
 	if err != nil {
 		return err
 	}
