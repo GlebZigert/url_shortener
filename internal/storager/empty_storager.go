@@ -5,8 +5,8 @@ type EmptyStorager struct {
 }
 
 // загрузить из базы
-func (one *EmptyStorager) Load(shorten *[]*Shorten) (*[]*Shorten, int, error) {
-	return shorten, 0, nil
+func (one *EmptyStorager) Load(shorten *[]*Shorten) (*[]*Shorten, error) {
+	return shorten, nil
 }
 
 // положить в базу
@@ -29,4 +29,8 @@ func NewEmptyStorager() (*EmptyStorager, error) {
 func (one *EmptyStorager) WriteUID(uid int) error {
 	//пока заглушка
 	return nil
+}
+
+func (one *EmptyStorager) LoadUsers(users *[]*User) (res *[]*User, err error) {
+	return nil, nil
 }

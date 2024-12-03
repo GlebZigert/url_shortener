@@ -75,7 +75,7 @@ func TestFStoreLoad(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 
 			var shorten []*Shorten
-			res, users, err := store.Load(&shorten)
+			res, err := store.Load(&shorten)
 
 			if err != nil {
 				t.Error(err.Error())
@@ -85,9 +85,80 @@ func TestFStoreLoad(t *testing.T) {
 
 			assert.Equal(t, 2, len(*res))
 
-			t.Log(users)
+		})
+	}
 
-			assert.Equal(t, 2, users)
+}
+
+func TestFStoreLoadUsers(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	cfg := storemocks.NewMockStoreConfig(ctrl)
+
+	mockreader := storemocks.NewMockFileReaderWriter(ctrl)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		data := []byte(`{"uuid":1,"short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
+					`)
+		return data, nil
+	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		data := []byte(`{"uid":1}`)
+		return data, nil
+	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		data := []byte(`{"uid":2}`)
+		return data, nil
+	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		data := []byte(`{"uuid":2,"short_url":"4rSPg8ap","original_url":"http://yandex.ru"}
+					`)
+		return data, nil
+	}).Times(1)
+
+	mockreader.EXPECT().Read(gomock.Any()).DoAndReturn(func(path string) ([]byte, error) {
+		return nil, errors.New("")
+	}).AnyTimes()
+	mockreader.EXPECT().CheckFile(gomock.Any()).DoAndReturn(func(path string) error {
+		return nil
+	}).AnyTimes()
+
+	cfg.EXPECT().GetFileStoragePath().DoAndReturn(func() string {
+		return "any path"
+	}).AnyTimes()
+
+	cfg.EXPECT().GetDatabaseDSN().DoAndReturn(func() string {
+		return "any dsn"
+	}).AnyTimes()
+
+	store, err := NewFileStorager(cfg, mockreader)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+	tests := []struct {
+		name string
+		len  int
+	}{
+		{
+			name: "1",
+			len:  1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			var users []*User
+			resusers, err := store.LoadUsers(&users)
+
+			if err != nil {
+				t.Error(err.Error())
+			}
+			assert.Equal(t, 2, len(*resusers))
 
 		})
 	}

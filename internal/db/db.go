@@ -93,6 +93,10 @@ func (dber *DBer) DBLoad() (*sql.Rows, error) {
 	return dber.db.Query("SELECT * FROM strazh")
 }
 
+func (dber *DBer) DBLoadUsers() (*sql.Rows, error) {
+	return dber.db.Query("SELECT uid FROM users")
+}
+
 // удалить из бд
 func (dber *DBer) Delete(short interface{}) error {
 

@@ -38,7 +38,7 @@ func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, e
 }
 
 // загрузить из файла
-func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, users int, err error) {
+func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) {
 
 	err = nil
 	var flag bool
@@ -60,15 +60,6 @@ func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, users int, 
 
 			flag = false
 
-			var user User
-			err = json.Unmarshal(data, &user)
-
-			if err != nil || user.Uid == 0 {
-				log.Println(err.Error())
-				continue
-			}
-			users = user.Uid
-
 		}
 
 		if flag {
@@ -81,6 +72,46 @@ func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, users int, 
 	//	log.Println("err: ", err.Error())
 
 	res = shorten
+	err = nil
+	return
+}
+
+// загрузить из файла
+func (one *FileStorager) LoadUsers(users *[]*User) (res *[]*User, err error) {
+
+	err = nil
+
+	for err == nil {
+
+		data, err := one.rw.Read(one.cfg.GetFileStoragePath())
+		if err != nil {
+
+			log.Println(err.Error())
+			break
+		}
+
+		log.Println(string(data))
+
+		var user User
+		err = json.Unmarshal(data, &user)
+
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
+
+		if user.Uid == 0 {
+
+			continue
+		}
+
+		log.Println("...users append... ", string(data))
+		*users = append(*users, &user)
+
+	}
+	//	log.Println("err: ", err.Error())
+
+	res = users
 	err = nil
 	return
 }

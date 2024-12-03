@@ -21,7 +21,8 @@ type User struct {
 
 // операции с хранилищем
 type Storager interface {
-	Load(*[]*Shorten) (*[]*Shorten, int, error)
+	Load(*[]*Shorten) (*[]*Shorten, error)
+	LoadUsers(*[]*User) (*[]*User, error)
 	StorageWrite(short, origin string, UUID int) error
 	Delete(interface{}) error
 	WriteUID(int) error

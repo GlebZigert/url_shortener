@@ -20,7 +20,7 @@ var uid int
 
 // хранилище
 type Storager interface {
-	Load(*[]*storager.Shorten) (*[]*storager.Shorten, int, error)
+	Load(*[]*storager.Shorten) (*[]*storager.Shorten, error)
 	StorageWrite(short, origin string, UUID int) error
 	Delete(interface{}) error
 	WriteUID(int) error
