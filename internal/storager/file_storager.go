@@ -137,6 +137,7 @@ func (one *FileStorager) StorageWrite(short, origin string, UUID int) error {
 	return nil
 }
 
+// записать пользователя
 func (one *FileStorager) WriteUID(uid int) error {
 	//пока заглушка
 

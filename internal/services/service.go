@@ -16,7 +16,7 @@ import (
 var shorten []*storager.Shorten
 
 // uid послежнего добавленного пользователя - он же и количество пользователей
-var uid int
+var users []*storager.User
 
 // хранилище
 type Storager interface {
@@ -134,9 +134,12 @@ func (s *Service) GetAll() *[]*storager.Shorten {
 	return &shorten
 }
 
+// количество пользователей
 func (s *Service) GetUsersCount() int {
-	return uid
+	return len(users)
 }
+
+// количество шортов
 func (s *Service) GetUrlsCount() int {
 	return len(shorten)
 }
@@ -147,13 +150,22 @@ type ErrCreateNextID error
 var errCreateNextUID ErrCreateNextID
 
 func (s *Service) CreateNextUID() (int, error) {
-	next := uid + 1
+
+	var maxUid int
+	for _, user := range users {
+		if user.Uid > maxUid {
+			maxUid = user.Uid
+		}
+	}
+
+	next := maxUid + 1
 
 	//если запись не прошла - возвращаем ошибку об этом
 	if err := s.store.WriteUID(next); err != nil {
 		return -1, errCreateNextUID
 	}
-	uid = next
 
-	return uid, nil
+	users = append(users, &storager.User{Uid: next})
+
+	return next, nil
 }

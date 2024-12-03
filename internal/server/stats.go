@@ -7,6 +7,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
 )
 
+// Статистика
 func (srv *Server) Stats(w http.ResponseWriter, req *http.Request) {
 
 	var err error
