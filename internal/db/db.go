@@ -119,3 +119,19 @@ func (dber *DBer) Delete(short interface{}) error {
 	}
 
 }
+
+func (dber *DBer) DBInsertUser(ctx context.Context, uid int) error {
+
+	stmt, err := dber.db.PrepareContext(ctx, "INSERT INTO users (uid) VALUES ($1)")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.ExecContext(ctx, uid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

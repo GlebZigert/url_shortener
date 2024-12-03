@@ -15,6 +15,7 @@ type DB interface {
 	Insert(ctx context.Context, short, origin string, UUID int) error
 	DBLoad() (*sql.Rows, error)
 	DBLoadUsers() (*sql.Rows, error)
+	DBInsertUser(context.Context, int) error
 	Delete(short interface{}) error
 }
 
@@ -107,5 +108,5 @@ func NewDBStorager(cfg dbstoreConfig, db DB) (*DBStorager, error) {
 
 func (one *DBStorager) WriteUID(uid int) error {
 	//пока заглушка
-	return nil
+	return one.DBInsertUser(context.Background(), uid)
 }

@@ -330,3 +330,49 @@ func TestDBStoragerLoad1(t *testing.T) {
 	}
 
 }
+
+// результатом выполнения функции WriteUID должна быть запись в файл
+// "User: x" где x - следующий uid пользователя
+// проконтролировать наличие и форму записи в буфер как результат выполнения функции WriteUID
+func TestDBStoreWriteUID(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	cfg := storemocks.NewMockStoreConfig(ctrl)
+
+	tdb, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer tdb.Close()
+
+	mock.ExpectPrepare("INSERT INTO users (uid) VALUES ($1)").ExpectExec().WithArgs(1).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	store, err := NewDBStorager(cfg, db.Get(tdb))
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	tests := []struct {
+		name string
+		uid  int
+	}{
+		{
+			name: "1",
+			uid:  1,
+		},
+	}
+
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			err = store.WriteUID(test.uid)
+
+			if err != nil {
+				t.Error(err.Error())
+			}
+
+		})
+	}
+
+}
