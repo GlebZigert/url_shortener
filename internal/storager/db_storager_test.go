@@ -8,6 +8,7 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/filereader"
 	"github.com/GlebZigert/url_shortener.git/storemocks"
 	"github.com/golang/mock/gomock"
+	"gotest.tools/v3/assert"
 )
 
 func TestDBStoragerLoad(t *testing.T) {
@@ -51,6 +52,7 @@ func TestDBStoragerLoad(t *testing.T) {
 
 			t.Log(len(shorten))
 
+			assert.Equal(t, 2, len(shorten))
 		})
 	}
 
