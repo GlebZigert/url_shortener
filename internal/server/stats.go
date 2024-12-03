@@ -25,7 +25,8 @@ func (srv *Server) Stats(w http.ResponseWriter, req *http.Request) {
 	bytes, err := json.Marshal(stat)
 
 	if err != nil {
-
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")

@@ -18,7 +18,7 @@ func TestCreateNextUID(t *testing.T) {
 		service := NewService(logger, store)
 		first, err := service.CreateNextUID()
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Error(err.Error())
 		}
 		assert.Equal(t, service.GetUsersCount(), first)
 		assert.Equal(t, 1, first)

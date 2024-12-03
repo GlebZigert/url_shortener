@@ -40,7 +40,6 @@ func NewFileStorager(cfg FilestoreConfig, rw FileReaderWriter) (*FileStorager, e
 // загрузить из файла
 func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) {
 
-	err = nil
 	var flag bool
 	for err == nil {
 
@@ -78,8 +77,6 @@ func (one *FileStorager) Load(shorten *[]*Shorten) (res *[]*Shorten, err error) 
 
 // загрузить из файла
 func (one *FileStorager) LoadUsers(users *[]*User) (res *[]*User, err error) {
-
-	err = nil
 
 	for err == nil {
 

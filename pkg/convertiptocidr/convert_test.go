@@ -1,4 +1,4 @@
-package convertIPtoCIDR
+package convertiptocidr
 
 import (
 	"testing"

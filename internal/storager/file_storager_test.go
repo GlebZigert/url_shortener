@@ -276,12 +276,14 @@ func TestFStoreWrite1(t *testing.T) {
 			t.Log("-->")
 
 			err := store.StorageWrite("11", "222", 0)
-
+			if err != nil {
+				t.Error(err.Error())
+			}
 			shorten := Shorten{1, 0, "11", "222", false}
 
 			data, err := json.Marshal(&shorten)
 			if err != nil {
-				t.Errorf(err.Error())
+				t.Error(err.Error())
 			}
 
 			if err != nil {

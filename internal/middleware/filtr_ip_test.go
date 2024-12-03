@@ -9,7 +9,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"gotest.tools/v3/assert"
 
-	convert "github.com/GlebZigert/url_shortener.git/pkg/convertIPtoCIDR"
+	convert "github.com/GlebZigert/url_shortener.git/pkg/convertiptocidr"
 )
 
 // Тест миддла Stat
@@ -74,9 +74,13 @@ func TestFiltrIP(t *testing.T) {
 			handler := mdl.FiltrIP(testHandler)
 			handler.ServeHTTP(w, r)
 
-			result := w.Result()
+			res := w.Result()
+			closeErr := res.Body.Close()
+			if closeErr != nil {
+				return
+			}
 
-			assert.Equal(t, test.answer.status, result.StatusCode)
+			assert.Equal(t, test.answer.status, res.StatusCode)
 
 		})
 	}

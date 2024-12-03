@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
-	convert "github.com/GlebZigert/url_shortener.git/pkg/convertIPtoCIDR"
+	convert "github.com/GlebZigert/url_shortener.git/pkg/convertiptocidr"
 )
 
 // Миддл который проверяет,

@@ -222,7 +222,7 @@
 	text-anchor="start"
 	transform="translate(923.206939,78.800000) scale(0.186253)"
 	style="font-family: Open Sans, verdana, arial, sans-serif !important; font-size: 12px; fill: rgb(255, 255, 255); fill-opacity: 1.00; white-space: pre;" 
-	data-math="N">convertIPtoCIDR/convertIPtoCIDR.go</text>
+	data-math="N">convertiptocidr/convertiptocidr.go</text>
 		
 </g>
 
