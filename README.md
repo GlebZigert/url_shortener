@@ -60,6 +60,16 @@ mockgen -destination=mocks/mock_mdl_userstore.go -package mocks github.com/GlebZ
 
 export PATH=$PATH:$(go env GOPATH)/bin
 
+protoc --go_out=. --go_opt=paths=source_relative \
+  --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+  proto/demo.proto 
+
+export PATH="/home/qwerty/go/bin:$PATH"
+
+  protoc --go_out=. --go_opt=paths=source_relative \
+  --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+  proto/url_shortener.proto 
+
 
 
 
