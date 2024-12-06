@@ -8,9 +8,11 @@ import (
 	"net"
 	"os"
 
+	"github.com/GlebZigert/url_shortener.git/internal/auth"
 	"github.com/GlebZigert/url_shortener.git/internal/config"
 	"github.com/GlebZigert/url_shortener.git/internal/db"
 	"github.com/GlebZigert/url_shortener.git/internal/filereader"
+	"github.com/GlebZigert/url_shortener.git/internal/interseptors"
 	"github.com/GlebZigert/url_shortener.git/internal/logger"
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
@@ -30,12 +32,14 @@ type UrlShortenerServer struct {
 	service *services.Service
 }
 
-func (s *UrlShortenerServer) AddUser(ctx context.Context, in *pb.CreateShortURLRequest) (*pb.CreateShortURLResponse, error) {
+func (s *UrlShortenerServer) CreateShortURL(ctx context.Context, in *pb.CreateShortURLRequest) (*pb.CreateShortURLResponse, error) {
 	var response pb.CreateShortURLResponse
 
 	res, err := s.service.Short(in.Origin, 0)
 	response.Short = res
-	response.Error = err.Error()
+	if err != nil {
+		response.Error = err.Error()
+	}
 	return &response, nil
 }
 
@@ -46,8 +50,6 @@ func main() {
 		log.Fatal(err)
 	}
 	// создаём gRPC-сервер без зарегистрированной службы
-	s := grpc.NewServer()
-	// регистрируем сервис
 
 	cfg, err := config.NewConfig(os.Args[0], os.Args[1:], filereader.New())
 	if err != nil {
@@ -61,6 +63,13 @@ func main() {
 	logger := logger.NewLogrusLogger(cfg.FlagLogLevel, ctx)
 
 	srvc := services.NewService(logger, store)
+
+	auc := auth.NewAuth(cfg.SECRETKEY, cfg.TOKENEXP)
+
+	cpt := interseptors.NewInterseptors(auc, logger, cfg, srvc)
+
+	s := grpc.NewServer(grpc.UnaryInterceptor(cpt.AuthInterceptor))
+	// регистрируем сервис
 
 	pb.RegisterUrlShortenerServer(s, &UrlShortenerServer{service: srvc})
 

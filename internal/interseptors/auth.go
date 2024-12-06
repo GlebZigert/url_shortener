@@ -1,0 +1,66 @@
+package interseptors
+
+import (
+	"context"
+	"errors"
+	"log"
+	"strconv"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
+)
+
+// AuthInterceptor проверяет наличие и валидность токена в заголовках запроса
+func (s *Interseptors) AuthInterceptor(ctx context.Context, req interface{},
+	info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler) (interface{}, error) {
+	// Получаем заголовки из контекста
+	log.Println("--AuthInterceptor")
+
+	token, err := GetTokenFromCtx(ctx)
+
+	if err != nil || uid == 0 {
+
+		uid, err = s.users.CreateNextUID()
+		if err != nil {
+			s.logger.Error("GetUserID: ", map[string]interface{}{
+				"err": err.Error(),
+			})
+
+			return nil, status.Error(codes.Internal, "")
+
+		}
+		//SetUidtoCtx(uid, ctx)
+
+	}
+
+	//если нет токена - гененируем его и возвращаем его в ответе  с ошибкой сodes.Unauthenticated
+
+	return handler(ctx, req)
+}
+
+var NoTokenErr error = errors.New("No valid token")
+
+func GetTokenFromCtx(ctx context.Context) (int, error) {
+
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return 0, NoTokenErr
+		//	return nil, status.Error(codes.InvalidArgument, "missing metadata")
+	}
+
+	authHeader := md.Get("authorisation")
+	if len(authHeader) == 0 {
+		return 0, NoTokenErr
+	}
+
+	return 0, NoTokenErr
+}
+
+func SetTokentoCtx(uid int, ctx context.Context) context.Context {
+
+	md := metadata.Pairs("authorization", strconv.Itoa(uid))
+	return metadata.NewOutgoingContext(ctx, md)
+}
