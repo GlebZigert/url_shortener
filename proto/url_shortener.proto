@@ -14,7 +14,16 @@ message CreateShortURLResponse {
   string error = 2;
 }
 
+message GetURLRequest {
+  string short = 1;
+}
+
+message GetURLResponse {
+  string origin = 1;
+  string error = 2;
+}
+
 service UrlShortener {
   rpc CreateShortURL(CreateShortURLRequest) returns (CreateShortURLResponse);
-
+  rpc GetURL(GetURLRequest) returns (GetURLResponse);
 }
