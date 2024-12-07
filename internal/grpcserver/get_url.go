@@ -9,5 +9,11 @@ import (
 func (s *UrlShortenerServer) GetURL(ctx context.Context, in *pb.GetURLRequest) (*pb.GetURLResponse, error) {
 	var response pb.GetURLResponse
 
-	return &response, nil
+	res, err := s.service.Origin(in.Short)
+
+	if err == nil {
+		response.Origin = res
+
+	}
+	return &response, err
 }

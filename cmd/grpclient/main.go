@@ -54,9 +54,21 @@ func Test(c pb.UrlShortenerClient) {
 	ctx = context.Background()
 	req = &pb.CreateShortURLRequest{Origin: "http.google.com"}
 
-	_, err = c.CreateShortURL(ctx,
+	resp, err := c.CreateShortURL(ctx,
 		req,
 		grpc.Header(&header), // will retrieve header
 		grpc.Trailer(&trailer))
+
+	short := resp.Short
+
+	ctx = context.Background()
+	getUrlreq := &pb.GetURLRequest{Short: short}
+
+	getUrlresp, err := c.GetURL(ctx,
+		getUrlreq,
+		grpc.Header(&header), // will retrieve header
+		grpc.Trailer(&trailer))
+
+	log.Println(getUrlresp.Origin)
 
 }
