@@ -17,10 +17,21 @@ import (
 	"github.com/GlebZigert/url_shortener.git/internal/services"
 	"github.com/GlebZigert/url_shortener.git/internal/storager"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	// импортируем пакет со сгенерированными protobuf-файлами
 	pb "github.com/GlebZigert/url_shortener.git/proto"
 )
+
+type GrpcServerAuc interface {
+	CheckUID(context.Context) (int, bool)
+}
+
+type GrpcServerLogger interface {
+	Info(msg string, fields map[string]interface{})
+	Error(msg string, fields map[string]interface{})
+}
 
 // UsersServer поддерживает все необходимые методы сервера.
 type UrlShortenerServer struct {
@@ -30,16 +41,28 @@ type UrlShortenerServer struct {
 
 	// используем sync.Map для хранения пользователей
 	service *services.Service
+
+	logger GrpcServerLogger
+
+	auc GrpcServerAuc
 }
 
 func (s *UrlShortenerServer) CreateShortURL(ctx context.Context, in *pb.CreateShortURLRequest) (*pb.CreateShortURLResponse, error) {
 	var response pb.CreateShortURLResponse
 
-	res, err := s.service.Short(in.Origin, 0)
+	user, ok := s.auc.CheckUID(ctx)
+	if !ok {
+		s.logger.Error("Нет данных о пользователе: ", map[string]interface{}{})
+
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	res, err := s.service.Short(in.Origin, user)
 	response.Short = res
 	if err != nil {
 		response.Error = err.Error()
 	}
+
 	return &response, nil
 }
 
@@ -71,7 +94,7 @@ func main() {
 	s := grpc.NewServer(grpc.UnaryInterceptor(cpt.AuthInterceptor))
 	// регистрируем сервис
 
-	pb.RegisterUrlShortenerServer(s, &UrlShortenerServer{service: srvc})
+	pb.RegisterUrlShortenerServer(s, &UrlShortenerServer{service: srvc, logger: logger, auc: auc})
 
 	fmt.Println("Сервер gRPC начал работу")
 	// получаем запрос gRPC

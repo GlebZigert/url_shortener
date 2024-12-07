@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/GlebZigert/url_shortener.git/internal/packerr"
@@ -99,7 +100,7 @@ func (auc *AuthController) CheckUID(ctx context.Context) (user int, ok bool) {
 
 // достать uid из контекста реквеста - применяется в ендпойнтах
 func (auc *AuthController) SetUID(ctx context.Context, user int) context.Context {
-
+	log.Println("setUID: ", user)
 	return context.WithValue(ctx, UIDkey, user)
 }
 

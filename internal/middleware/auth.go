@@ -19,23 +19,28 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 		var userid int
 		ctx := r.Context()
 
+		//получил строку токена
+		token := authv.Value
+
 		if err == nil {
 			mdl.logger.Info("auth: ", map[string]interface{}{
 				"auth": authv,
 			})
-
-			userid, err = mdl.GetUserID(authv.Value)
+			//достал uid из токена
+			userid, err = mdl.GetUserID(token)
 			//ctx = r.Context()
 		}
-
+		//если не смог полчуить uid из входных данных
 		if err != nil {
 
+			//создал следующий uid
 			userid, err = mdl.users.CreateNextUID()
 			if err != nil {
 				http.Error(w, "", http.StatusInternalServerError)
 				return
 			}
 
+			//создал токен с этим следующим uid
 			jwt, err := mdl.BuildJWTString(userid)
 			if err != nil {
 
@@ -59,6 +64,8 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 			ctx = mdl.SetNewFlag(ctx, true)
 
 			//	w.Header().Add("Authorization", string(jwt))
+
+			//положил токен на выход (здесь -  в cookie)
 			cookie := http.Cookie{
 				Name:     "Authorization",
 				Value:    string(jwt),
@@ -69,6 +76,7 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 
 		}
 
+		//положил uid во входные данные чтобы вместе с ними передать в хэндлер
 		ctx = mdl.SetUID(ctx, userid)
 
 		r = r.WithContext(ctx)

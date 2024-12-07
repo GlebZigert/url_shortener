@@ -19,10 +19,15 @@ func (s *Interseptors) AuthInterceptor(ctx context.Context, req interface{},
 	// Получаем заголовки из контекста
 	log.Println("--AuthInterceptor")
 
+	//достаем токен из входных данных
 	token, err := GetTokenFromCtx(ctx)
 
-	if err != nil || uid == 0 {
+	log.Println("token: ", token)
 
+	uid, err := s.GetUserID(token)
+
+	if err != nil || uid == 0 {
+		log.Println("не смог взять uid из входных")
 		uid, err = s.users.CreateNextUID()
 		if err != nil {
 			s.logger.Error("GetUserID: ", map[string]interface{}{
@@ -32,35 +37,58 @@ func (s *Interseptors) AuthInterceptor(ctx context.Context, req interface{},
 			return nil, status.Error(codes.Internal, "")
 
 		}
-		//SetUidtoCtx(uid, ctx)
+		log.Println("next UID: ", uid)
+
+		jwt, err := s.BuildJWTString(uid)
+		if err != nil {
+
+			s.logger.Error("BuildJWTString: ", map[string]interface{}{
+				"err": err.Error(),
+			})
+			return nil, status.Error(codes.Internal, "")
+
+		}
+
+		// create and set header
+
+		header := metadata.Pairs("authorisation", jwt)
+		grpc.SetHeader(ctx, header)
+
+		ctx = s.SetNewFlag(ctx, true)
 
 	}
 
 	//если нет токена - гененируем его и возвращаем его в ответе  с ошибкой сodes.Unauthenticated
-
+	ctx = s.SetUID(ctx, uid)
 	return handler(ctx, req)
 }
 
 var NoTokenErr error = errors.New("No valid token")
 
-func GetTokenFromCtx(ctx context.Context) (int, error) {
+func GetTokenFromCtx(ctx context.Context) (string, error) {
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return 0, NoTokenErr
+
+		return "", NoTokenErr
 		//	return nil, status.Error(codes.InvalidArgument, "missing metadata")
 	}
 
 	authHeader := md.Get("authorisation")
 	if len(authHeader) == 0 {
-		return 0, NoTokenErr
+
+		return "", NoTokenErr
+	}
+	if len(authHeader[0]) == 0 {
+
+		return "", NoTokenErr
 	}
 
-	return 0, NoTokenErr
+	return authHeader[0], NoTokenErr
 }
 
 func SetTokentoCtx(uid int, ctx context.Context) context.Context {
 
-	md := metadata.Pairs("authorization", strconv.Itoa(uid))
+	md := metadata.Pairs("authorisation", strconv.Itoa(uid))
 	return metadata.NewOutgoingContext(ctx, md)
 }
