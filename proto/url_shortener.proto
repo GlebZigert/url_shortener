@@ -23,7 +23,30 @@ message GetURLResponse {
   string error = 2;
 }
 
+message BatcherRequest {
+
+    message Nested {
+        string correlation_id = 1;
+        string original_url = 2;
+    }
+
+    repeated Nested items = 1;
+}
+
+message BatcherResponce {
+
+    message Nested {
+        string correlation_id = 1;
+        string short_url = 2;
+    }
+
+    repeated Nested items = 1;
+}
+
+
+
 service UrlShortener {
   rpc CreateShortURL(CreateShortURLRequest) returns (CreateShortURLResponse);
   rpc GetURL(GetURLRequest) returns (GetURLResponse);
+  rpc Batcher(BatcherRequest) returns(BatcherResponce);
 }

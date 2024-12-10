@@ -71,4 +71,11 @@ func Test(c pb.UrlShortenerClient) {
 
 	log.Println(getUrlresp.Origin)
 
+	br := &pb.BatcherRequest{Items: []*pb.BatcherRequest_Nested{
+		&pb.BatcherRequest_Nested{CorrelationId: "1", OriginalUrl: "url0001"},
+		&pb.BatcherRequest_Nested{CorrelationId: "2", OriginalUrl: "url0002"},
+	}}
+
+	c.Batcher(context.Background(), br)
+
 }
