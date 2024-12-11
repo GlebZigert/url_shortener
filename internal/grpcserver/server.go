@@ -7,6 +7,18 @@ import (
 	pb "github.com/GlebZigert/url_shortener.git/proto"
 )
 
+type GrpcServerConfig interface {
+	GetRunAddr() string
+	GetBaseURL() string
+	GetFlagLogLevel() string
+	GetFileStoragePath() string
+	GetNumWorkers() int
+	GetDatabaseDSN() string
+	GetTOKENEXP() int
+	GetSECRETKEY() string
+	GetENABLEHTTPSflag() bool
+}
+
 type GrpcServerAuc interface {
 	CheckUID(context.Context) (int, bool)
 }
@@ -22,6 +34,7 @@ type UrlShortenerServer struct {
 	// для совместимости с будущими версиями
 	pb.UnimplementedUrlShortenerServer
 
+	cfg GrpcServerConfig
 	// используем sync.Map для хранения пользователей
 	service *services.Service
 
@@ -30,8 +43,9 @@ type UrlShortenerServer struct {
 	auc GrpcServerAuc
 }
 
-func New(srvc *services.Service,
+func New(cfg GrpcServerConfig,
+	srvc *services.Service,
 	logger GrpcServerLogger,
 	auc GrpcServerAuc) *UrlShortenerServer {
-	return &UrlShortenerServer{service: srvc, logger: logger, auc: auc}
+	return &UrlShortenerServer{cfg: cfg, service: srvc, logger: logger, auc: auc}
 }

@@ -49,7 +49,7 @@ func Run() (err error) {
 	s := grpc.NewServer(grpc.UnaryInterceptor(cpt.AuthInterceptor))
 	// регистрируем сервис
 
-	pb.RegisterUrlShortenerServer(s, grpcserver.New(srvc, logger, auc))
+	pb.RegisterUrlShortenerServer(s, grpcserver.New(cfg, srvc, logger, auc))
 
 	fmt.Println("Сервер gRPC начал работу")
 	// получаем запрос gRPC
