@@ -41,7 +41,7 @@ func Test(c pb.UrlShortenerClient) {
 	log.Println(":::", authHeader)
 
 	jwt := authHeader[0]
-
+	log.Println(":::", jwt)
 	md := metadata.Pairs("authorisation", jwt)
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
 	req = &pb.CreateShortURLRequest{Origin: "http.yandex.ru"}
@@ -59,15 +59,26 @@ func Test(c pb.UrlShortenerClient) {
 		grpc.Header(&header), // will retrieve header
 		grpc.Trailer(&trailer))
 
+	if err != nil {
+		log.Println(err.Error())
+		return
+
+	}
 	short := resp.Short
 
-	ctx = context.Background()
+	ctx = metadata.NewOutgoingContext(context.Background(), md)
 	getUrlreq := &pb.GetURLRequest{Short: short}
 
 	getUrlresp, err := c.GetURL(ctx,
 		getUrlreq,
 		grpc.Header(&header), // will retrieve header
 		grpc.Trailer(&trailer))
+
+	if err != nil {
+		log.Println(err.Error())
+		return
+
+	}
 
 	log.Println(getUrlresp.Origin)
 
@@ -76,6 +87,25 @@ func Test(c pb.UrlShortenerClient) {
 		&pb.BatcherRequest_Nested{CorrelationId: "2", OriginalUrl: "url0002"},
 	}}
 
-	c.Batcher(context.Background(), br)
+	batchresp, err := c.Batcher(context.Background(), br)
+
+	if err != nil {
+		log.Println(err.Error())
+		return
+
+	}
+	getUrlreq = &pb.GetURLRequest{Short: batchresp.Items[0].ShortUrl}
+	getUrlresp, err = c.GetURL(ctx,
+		getUrlreq,
+		grpc.Header(&header), // will retrieve header
+		grpc.Trailer(&trailer))
+
+	if err != nil {
+		log.Println(err.Error())
+		return
+
+	}
+
+	log.Println(getUrlresp)
 
 }
