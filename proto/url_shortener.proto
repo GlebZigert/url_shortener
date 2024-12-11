@@ -43,10 +43,25 @@ message BatcherResponce {
     repeated Nested items = 1;
 }
 
+message GetURLsRequest {
+
+}
+
+message GetURLsResponce {
+
+   message Nested {
+        string short = 1;
+        string origin = 2;
+    }
+
+    repeated Nested items = 1;
+}
+
 
 
 service UrlShortener {
   rpc CreateShortURL(CreateShortURLRequest) returns (CreateShortURLResponse);
   rpc GetURL(GetURLRequest) returns (GetURLResponse);
   rpc Batcher(BatcherRequest) returns(BatcherResponce);
+  rpc GetURLs(GetURLsRequest) returns(GetURLsResponce);
 }

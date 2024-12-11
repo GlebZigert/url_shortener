@@ -107,5 +107,16 @@ func Test(c pb.UrlShortenerClient) {
 	}
 
 	log.Println(getUrlresp)
+	ctx = metadata.NewOutgoingContext(context.Background(), md)
+	urlsreq := &pb.GetURLsRequest{}
+
+	geturlresp, err := c.GetURLs(ctx,
+		urlsreq,
+		grpc.Header(&header), // will retrieve header
+		grpc.Trailer(&trailer))
+
+	for _, v := range geturlresp.Items {
+		log.Println(v.Origin, " ", v.Short)
+	}
 
 }
