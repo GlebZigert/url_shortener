@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	conn, err := grpc.Dial(":3200", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(":3200", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		log.Fatal(err)
@@ -51,6 +51,11 @@ func Test(c pb.UrlShortenerClient) {
 		grpc.Header(&header), // will retrieve header
 		grpc.Trailer(&trailer))
 
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
 	ctx = context.Background()
 	req = &pb.CreateShortURLRequest{Origin: "http.google.com"}
 
@@ -62,8 +67,8 @@ func Test(c pb.UrlShortenerClient) {
 	if err != nil {
 		log.Println(err.Error())
 		return
-
 	}
+
 	short := resp.Short
 
 	ctx = metadata.NewOutgoingContext(context.Background(), md)
@@ -103,7 +108,6 @@ func Test(c pb.UrlShortenerClient) {
 	if err != nil {
 		log.Println(err.Error())
 		return
-
 	}
 
 	log.Println(getUrlresp)
@@ -114,6 +118,11 @@ func Test(c pb.UrlShortenerClient) {
 		urlsreq,
 		grpc.Header(&header), // will retrieve header
 		grpc.Trailer(&trailer))
+
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
 
 	reqDelete := &pb.DeleteRequest{}
 

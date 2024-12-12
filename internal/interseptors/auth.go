@@ -22,6 +22,12 @@ func (s *Interseptors) AuthInterceptor(ctx context.Context, req interface{},
 	//достаем токен из входных данных
 	token, err := GetTokenFromCtx(ctx)
 
+	if err != nil {
+
+		return nil, status.Error(codes.InvalidArgument, "")
+
+	}
+
 	log.Println("token: ", token)
 
 	uid, err := s.GetUserID(token)
@@ -63,7 +69,7 @@ func (s *Interseptors) AuthInterceptor(ctx context.Context, req interface{},
 	return handler(ctx, req)
 }
 
-var NoTokenErr error = errors.New("No valid token")
+var NoTokenErr error = errors.New("no valid token")
 
 func GetTokenFromCtx(ctx context.Context) (string, error) {
 
