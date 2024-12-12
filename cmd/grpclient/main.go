@@ -119,4 +119,7 @@ func Test(c pb.UrlShortenerClient) {
 		log.Println(v.Origin, " ", v.Short)
 	}
 
+	reqDelete := &pb.DeleteRequest{}
+	reqDelete.Todel = []string{}
+
 }

@@ -19,10 +19,12 @@ func (mdl *Middleware) Auth(h http.Handler) http.Handler {
 		var userid int
 		ctx := r.Context()
 
+		var token string
+
 		//получил строку токена
-		token := authv.Value
 
 		if err == nil {
+			token = authv.Value
 			mdl.logger.Info("auth: ", map[string]interface{}{
 				"auth": authv,
 			})

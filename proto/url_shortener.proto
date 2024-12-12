@@ -57,6 +57,14 @@ message GetURLsResponce {
     repeated Nested items = 1;
 }
 
+message DeleteRequest {
+repeated string todel = 1;
+}
+
+message DeleteResponce {
+
+}
+
 
 
 service UrlShortener {
@@ -64,4 +72,5 @@ service UrlShortener {
   rpc GetURL(GetURLRequest) returns (GetURLResponse);
   rpc Batcher(BatcherRequest) returns(BatcherResponce);
   rpc GetURLs(GetURLsRequest) returns(GetURLsResponce);
+  rpc Delete(DeleteRequest) returns(DeleteResponce);
 }

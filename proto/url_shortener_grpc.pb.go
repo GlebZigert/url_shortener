@@ -23,6 +23,7 @@ const (
 	UrlShortener_GetURL_FullMethodName         = "/url_shortener.UrlShortener/GetURL"
 	UrlShortener_Batcher_FullMethodName        = "/url_shortener.UrlShortener/Batcher"
 	UrlShortener_GetURLs_FullMethodName        = "/url_shortener.UrlShortener/GetURLs"
+	UrlShortener_Delete_FullMethodName         = "/url_shortener.UrlShortener/Delete"
 )
 
 // UrlShortenerClient is the client API for UrlShortener service.
@@ -33,6 +34,7 @@ type UrlShortenerClient interface {
 	GetURL(ctx context.Context, in *GetURLRequest, opts ...grpc.CallOption) (*GetURLResponse, error)
 	Batcher(ctx context.Context, in *BatcherRequest, opts ...grpc.CallOption) (*BatcherResponce, error)
 	GetURLs(ctx context.Context, in *GetURLsRequest, opts ...grpc.CallOption) (*GetURLsResponce, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponce, error)
 }
 
 type urlShortenerClient struct {
@@ -83,6 +85,16 @@ func (c *urlShortenerClient) GetURLs(ctx context.Context, in *GetURLsRequest, op
 	return out, nil
 }
 
+func (c *urlShortenerClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponce, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteResponce)
+	err := c.cc.Invoke(ctx, UrlShortener_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UrlShortenerServer is the server API for UrlShortener service.
 // All implementations must embed UnimplementedUrlShortenerServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type UrlShortenerServer interface {
 	GetURL(context.Context, *GetURLRequest) (*GetURLResponse, error)
 	Batcher(context.Context, *BatcherRequest) (*BatcherResponce, error)
 	GetURLs(context.Context, *GetURLsRequest) (*GetURLsResponce, error)
+	Delete(context.Context, *DeleteRequest) (*DeleteResponce, error)
 	mustEmbedUnimplementedUrlShortenerServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedUrlShortenerServer) Batcher(context.Context, *BatcherRequest)
 }
 func (UnimplementedUrlShortenerServer) GetURLs(context.Context, *GetURLsRequest) (*GetURLsResponce, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetURLs not implemented")
+}
+func (UnimplementedUrlShortenerServer) Delete(context.Context, *DeleteRequest) (*DeleteResponce, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedUrlShortenerServer) mustEmbedUnimplementedUrlShortenerServer() {}
 func (UnimplementedUrlShortenerServer) testEmbeddedByValue()                      {}
@@ -206,6 +222,24 @@ func _UrlShortener_GetURLs_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UrlShortener_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UrlShortenerServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UrlShortener_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UrlShortenerServer).Delete(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UrlShortener_ServiceDesc is the grpc.ServiceDesc for UrlShortener service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var UrlShortener_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetURLs",
 			Handler:    _UrlShortener_GetURLs_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _UrlShortener_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
