@@ -13,5 +13,9 @@ func (s *UrlShortenerServer) Delete(ctx context.Context, in *pb.DeleteRequest) (
 
 	log.Println("grpc Delete endpoint")
 
+	for _, v := range in.Todel {
+		log.Println(v)
+	}
+
 	return &resp, err
 }

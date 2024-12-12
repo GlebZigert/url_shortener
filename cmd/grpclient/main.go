@@ -115,11 +115,16 @@ func Test(c pb.UrlShortenerClient) {
 		grpc.Header(&header), // will retrieve header
 		grpc.Trailer(&trailer))
 
+	reqDelete := &pb.DeleteRequest{}
+
 	for _, v := range geturlresp.Items {
 		log.Println(v.Origin, " ", v.Short)
+		reqDelete.Todel = append(reqDelete.Todel, v.Short)
 	}
 
-	reqDelete := &pb.DeleteRequest{}
-	reqDelete.Todel = []string{}
+	c.Delete(ctx,
+		reqDelete,
+		grpc.Header(&header), // will retrieve header
+		grpc.Trailer(&trailer))
 
 }
