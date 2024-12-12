@@ -69,28 +69,28 @@ func (s *Interseptors) AuthInterceptor(ctx context.Context, req interface{},
 	return handler(ctx, req)
 }
 
-var NoTokenErr error = errors.New("no valid token")
+var ErrNoToken error = errors.New("no valid token")
 
 func GetTokenFromCtx(ctx context.Context) (string, error) {
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 
-		return "", NoTokenErr
+		return "", ErrNoToken
 		//	return nil, status.Error(codes.InvalidArgument, "missing metadata")
 	}
 
 	authHeader := md.Get("authorisation")
 	if len(authHeader) == 0 {
 
-		return "", NoTokenErr
+		return "", ErrNoToken
 	}
 	if len(authHeader[0]) == 0 {
 
-		return "", NoTokenErr
+		return "", ErrNoToken
 	}
 
-	return authHeader[0], NoTokenErr
+	return authHeader[0], ErrNoToken
 }
 
 func SetTokentoCtx(uid int, ctx context.Context) context.Context {
